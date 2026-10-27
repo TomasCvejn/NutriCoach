@@ -1,21 +1,21 @@
 # NutriCoach
 
-Appka pro výživového kouče a klienty (obecná + sportovní výživa). Staví ji Ralph loop: Claude v cyklu, každá iterace začíná s čistým kontextem a udělá jednu položku z plánu.
+Nutrition coaching app for coaches and their clients (general and sports nutrition). Built by a Ralph loop: Claude runs in a loop, each iteration starts with a fresh context and completes one item from the plan.
 
-- `specs/` — co se má postavit (zdroj pravdy, uprav podle sebe)
-- `IMPLEMENTATION_PLAN.md` — todo list, generuje a udržuje loop
-- `PROMPT_plan.md`, `PROMPT_build.md` — prompty pro jednotlivé režimy
-- `CLAUDE.md` — příkazy a gotchas, Claude to čte v každé iteraci
+- `specs/` — what to build (source of truth, edit freely)
+- `IMPLEMENTATION_PLAN.md` — todo list, generated and maintained by the loop
+- `PROMPT_plan.md`, `PROMPT_build.md` — prompts for each mode
+- `CLAUDE.md` — commands and gotchas, read by Claude every iteration
 
-## Spuštění
+## Running
 
 ```bash
-./loop.sh plan 1        # vytvoří IMPLEMENTATION_PLAN.md ze specs
-./loop.sh build 5       # 5 iterací, každá = 1 položka + commit
-./loop.sh build         # dokud nevypíše <ralph>DONE</ralph>
-MODEL=sonnet ./loop.sh build 10   # levnější model
+./loop.sh plan 1        # create IMPLEMENTATION_PLAN.md from specs
+./loop.sh build 5       # 5 iterations, each = 1 item + commit
+./loop.sh build         # until it prints <ralph>DONE</ralph>
+MODEL=sonnet ./loop.sh build 10   # cheaper model
 ```
 
-Mezi běhy projdi `git log` a plán. Když loop jde špatným směrem, oprav specy nebo plán (nebo smaž plán a pusť znovu `plan`), ne kód.
+Between runs, review `git log` and the plan. If the loop goes the wrong way, fix the specs or the plan (or delete the plan and run `plan` again), not the code.
 
-Loop běží s allowlistem nástrojů (soubory, npm/npx, git commit). Přes `npx` ale umí spustit cokoliv, takže je nejbezpečnější ho pouštět v kontejneru nebo VM.
+The loop runs with a tool allowlist (files, npm/npx/node, git commit). Through `npx` it can still run anything, so a container or VM is the safest place to run it.

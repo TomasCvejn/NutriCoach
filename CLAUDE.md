@@ -2,6 +2,9 @@
 
 Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENTATION_PLAN.md`. Built by a Ralph loop (`./loop.sh`, prompts `PROMPT_*.md`).
 
+## Language
+- Code, comments, README, docs and commit messages in English. User-facing text only through i18n (`cs` + `en`).
+
 ## Skills
 - Always use the `ponytail` skill for every code change. Specs are the explicit request: never simplify away anything they require.
 - Always use the `design-taste-frontend` (taste) skill for every UI screen; app screens follow its `references/app-screens.md` run.
