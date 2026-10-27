@@ -1,7 +1,7 @@
 # Nutrition plan & daily nutrition
 
 ## Nutrition plan (client screen; coach edits it in the Client Nutrition Plan Editor)
-- **Daily targets** per day type (REST / TRAINING / COMPETITION; GENERAL program only REST):
+- **Daily targets** per day type (REST / TRAINING / COMPETITION; TRAINING and COMPETITION optional, falling back to REST):
   - CALORIES: kcal, protein, carbs, fat (g); optional fiber (g), sodium (mg). Show kcal computed from macros (4/4/9) and warn if > 5 % off. Show g/kg body weight next to each macro.
   - PORTIONS: protein palms, carb cupped hands, veg fists, fat thumbs per day.
   - GUIDANCE: no numeric targets.

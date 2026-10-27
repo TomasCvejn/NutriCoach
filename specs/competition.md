@@ -1,4 +1,5 @@
-# Competitions (COMPETITION program)
+# Competitions
+Shown per the visibility rule in `00-overview.md`; the coach creates competitions from the client dashboard.
 
 ## Competition
 - Coach creates; client views. Name, date, sport/discipline, location, priority (A / B / C), notes.

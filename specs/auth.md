@@ -11,7 +11,7 @@
 
 ## Flows
 - "Continue with Google" / logout for both roles; after login redirect to `/coach` or `/app`. Visiting the other role's area redirects home.
-- Invite: coach clicks "Invite client", enters client name, optional email, program and tracking mode (optional) → copyable link `/invite/<token>`. Token random (≥128 bit), single-use, expires after 7 days, revocable. Pending invites listed on the client list.
+- Invite: coach clicks "Invite client", enters client name, optional email and tracking mode (optional) → copyable link `/invite/<token>`. Token random (≥128 bit), single-use, expires after 7 days, revocable. Pending invites listed on the client list.
 - Accept invite: shows the coach's name and "Continue with Google"; if the invite has an email, the Google account email must match. Then timezone (default from browser) and locale → continues to onboarding (`onboarding-profile.md`).
 - Coach can set a client inactive (can't log in, data kept) and reactivate.
 - Account deletion: `home-and-basics.md`.

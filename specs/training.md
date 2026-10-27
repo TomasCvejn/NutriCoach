@@ -1,5 +1,5 @@
 # Training, fueling, hydration
-Training and fueling: SPORTS and COMPETITION programs. Hydration: all programs.
+Training and fueling: shown per the visibility rule in `00-overview.md`. Hydration: always.
 
 ## Training dashboard
 - Week view (default) + list of upcoming sessions; today's sessions on client home.
@@ -20,5 +20,5 @@ Training and fueling: SPORTS and COMPETITION programs. Hydration: all programs.
 - Daily fluid target = coach-set base (suggest 35 ml/kg) + on TRAINING/COMPETITION days the during-session fluid of that day's fueling plans.
 - Logging: quick +250 / +500 ml, custom amount, drink type (water, electrolyte drink, sports drink, coffee/tea, other), optional sodium mg and carbs g. "My drinks" presets (client-saved: name, ml, sodium, carbs).
 - Progress ring, today's list (edit / delete).
-- Electrolytes (SPORTS/COMPETITION): sodium from today's drinks vs. the day's during-session sodium total.
+- Electrolytes (when Training is shown): sodium from today's drinks vs. the day's during-session sodium total.
 - Training-specific hydration: today's sessions with their fluid and sodium recommendations.

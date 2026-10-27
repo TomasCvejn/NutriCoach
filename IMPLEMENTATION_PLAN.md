@@ -4,6 +4,9 @@ Status 2026-10-27: greenfield. The repo has only specs, the loop and the taste s
 
 ## Todo
 
+### 2b. Spec change: no client programs
+- [ ] Remove client programs (spec change 2026-10-27, see `00-overview.md` "Tracking modes"): drop `program` from Client and Invite (migration), `PROGRAMS` / `Program`, the invite dialog field, seed values; add a pure `clientFeatures(client)` → { training, competition } per the visibility rule (training: profile sport or ≥ 1 session; competition: upcoming or last-7-days competition) — returns false/false until those tables exist; update invite tests / e2e — 00-overview.md, auth.md — unit: clientFeatures cases; integration: invite without program; `grep -ri program src prisma` finds nothing but "workout programming"-style text
+
 ### 3. Shells, notifications, basic settings
 - [ ] App shells: coach sidebar (Home, Clients, Check-ins, Messages, Calendar, Library, Settings; each entry appears when its page lands; replaces the interim "Clients" link in `AreaHeader`), client bottom nav (≤ 5 tabs + "More" sheet) from a pure `clientNav(program, mode)` (final tabs: Today · Nutrition · Training (SPORTS/COMPETITION only) · Messages · More); date helpers on `YYYY-MM-DD` strings (`todayIn(tz)`, addDays, weekday, diffDays); client home `/app` widget 1 (date + day type); coach home `/coach` tile "active clients by program" — home-and-basics.md — unit tests: clientNav per program/mode, todayIn where the UTC date differs, DST week; taste inspect at 1440 / 390 has no FAIL; e2e: bottom nav at 390 px, sidebar at 1440 px
 - [ ] Notifications: Notification (userId, type, payload Json, key, readAt; unique userId+type+key), `notify(userId, type, payload, key?)` as the only writer; bell with unread count in both shells; `/app/notifications` + `/coach/notifications` list, mark read / mark all read, each item links to its target; i18n text for every type in home-and-basics.md — home-and-basics.md — integration: notify writes one row, same key twice → one row, a user can't mark another user's notification; e2e: seeded unread notification → bell shows 1 → mark all read → 0
@@ -91,6 +94,7 @@ Status 2026-10-27: greenfield. The repo has only specs, the loop and the taste s
 - [ ] Demo walkthrough: seed gives each demo client two weeks of data on every screen their program/mode shows; Playwright visits every nav entry as each demo user (and coach@ on every client tab) with no console errors — 00-overview.md — `npm run test:e2e` green
 
 ## Notes
+- Spec change 2026-10-27 (user): no client programs (GENERAL / SPORTS / COMPETITION). Wherever a Todo item still mentions a program, use `clientFeatures()` and the visibility rule in `00-overview.md` instead.
 
 ### Definition of done (every item)
 - Every server action / route handler / data loader: Zod input + the auth helpers; new client data gets a cross-tenant integration test.
@@ -103,18 +107,18 @@ Status 2026-10-27: greenfield. The repo has only specs, the loop and the taste s
 ### Decisions on spec ambiguities
 - Env: no `.env` is committed (`.env*` is ignored). `DATABASE_URL` defaults to `file:./dev.db`. Tests use `test.db` and e2e uses `e2e.db` (Playwright webServer env). Better Auth's dev default secret is fine for `npm run dev`; production needs `BETTER_AUTH_SECRET`. `OFF_BASE_URL` exists only so e2e can point at an unreachable host (`http://127.0.0.1:9`): it fails fast and the e2e checks the "OFF unavailable" notice.
 - Categorical values: String columns validated by `z.enum(CONST_ARRAY)`. One const array per field gives validation, UI options and i18n keys. String lists use Json columns. Competition phases are computed and never stored, except as the key of phase-content rows.
-- Program/mode before onboarding: Client gets the invite's values, else GENERAL / CALORIES. Onboarding overwrites only what the invite left empty (it reads the Invite row). The preferred tracking style is also kept on the profile for the coach.
+- Mode before onboarding: Client gets the invite's value, else CALORIES. Onboarding overwrites only what the invite left empty (it reads the Invite row). The preferred tracking style is also kept on the profile for the coach.
 - Invite token is stored in plain text so the coach can copy a pending link again. It is single-use through a conditional `updateMany where usedAt = null` inside the acceptance transaction.
 - Invite acceptance order: the invite page asks for the timezone (browser default) before "Continue with Google", and the locale is the language the page is shown in (its header switch), so both go into the one acceptance transaction instead of a step after Google. Taken email (Google email already has a user) and email mismatch leave the invite pending.
 - Inactive client: sign-in refused, sessions deleted on deactivation, `requireUser` rejects. Inactive clients are left out of "active clients" and "needs attention".
 - Authorization is never done in middleware/proxy alone. Layouts and every action call the helpers.
-- Day type: GENERAL → always REST. SPORTS ignores competitions. An override (stored on NutritionDay with the day note) beats derivation. The coach's daily view is read-only except for the day-type override and comments.
+- Day type: competition that day → COMPETITION, any session → TRAINING, else REST (no programs). An override (stored on NutritionDay with the day note) beats derivation. The coach's daily view is read-only except for the day-type override and comments.
 - Meal slots: entries store the slot name as a snapshot, so a later plan change never moves old entries.
 - Weight for g/kg, suggestions and "latest weight": latest body-comp entry, else profile weight. Mifflin needs sex (male / female), birth date, height and weight. Without them "Suggest" is disabled with a hint.
 - Fluid target: each day-type target row has its own fluid base. On TRAINING/COMPETITION days the during-session fluid of that day's sessions is added. Race-day schedule fluid stays in the schedule and is not added.
 - Adherence %: days without a target for their day type are left out of the denominator. A day with nothing logged counts as not adherent. "7-day" = the 7 days ending yesterday, because today is still in progress. GUIDANCE planned meals = that day's meal slots. "Last logged day" = latest date with any log of the client's current mode.
 - Check-in period: due date D = latest check-in weekday ≤ today (client tz), never before the onboarding-completed date. If a CheckIn for D exists: reviewed → ok, else to review. If none: today − D ≥ 2 → overdue, else due. Before the first D → ok. The form is available from D. The coach sets the weekday on the client dashboard. The coach queue lists every unreviewed check-in, including older periods.
-- History feed: HistoryEvent rows only for plan / target / program / mode changes. Notes, check-ins + feedback and competitions + results are read from their own tables and merged by date. Coach only.
+- History feed: HistoryEvent rows only for plan / target / tracking mode changes. Notes, check-ins + feedback and competitions + results are read from their own tables and merged by date. Coach only.
 - Fueling: `priority` is an integer, lowest first, editable order in the library. Duration bounds are inclusive. Seeded rules: < 75 → max 74, 75–150 → 75..150, > 150 → min 151. Intensity order: low < moderate < high < very high. Spec fixed: "> 150 min or very high intensity" can't be one AND rule, so it is seeded as two templates.
 - Competitions: result + felt can be entered by the client or the coach. Race-day countdown in hours runs to the first EVENT item; without one, it shows "today". After the competition date there is no phase.
 - Race-day schedule: sorted by time, `position` breaks ties ("reorder" = among same-time items or by editing the time). A shift that would push any item outside 00:00–23:59 is rejected as a whole.
@@ -126,7 +130,7 @@ Status 2026-10-27: greenfield. The repo has only specs, the loop and the taste s
 - Bloodwork markers: `name` is the preset key (shown through i18n) or custom text. History groups by name. Out-of-range only when the range is entered (ranges differ by lab, so none are preset).
 - Hydration has no coach tab in coach.md, so it appears in the coach's daily nutrition view.
 - Privacy & account: Google-only sign-in, so no email / password change (spec change, user request 2026-10-27). Export and deletion for clients only (coach accounts are managed with the CLI). Coach notes are excluded from the export ("never readable by clients"). Spec fixed: added coach notification type "client deleted their account".
-- Client nav: Today · Nutrition · Training (SPORTS/COMPETITION) · Messages · More. GENERAL has 4 tabs. The rest goes under More.
+- Client nav: Today · Nutrition · Training (when `clientFeatures().training`) · Messages · More. Without training 4 tabs. The rest goes under More.
 - Lazy notifications (check-in due, phase started) are created in the `/app` layout load and deduped by `key`.
 - Coach timezone / locale: the CLI defaults to `Europe/Prague` / `cs`, editable in settings.
 - Seed language: library content (recipes, fueling and timeline templates, packages) is seeded in cs and en. Per-client content uses the client's locale: general@ cs, sports@ en, race@ cs. race@ is 10 days out → phase `2_WEEKS`.

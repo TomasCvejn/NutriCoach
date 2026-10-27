@@ -3,7 +3,7 @@
 ## Progress dashboard (client and coach)
 Range 4 / 12 / 26 weeks. Sections:
 - Nutrition: weekly adherence % (by tracking mode, `nutrition.md`); CALORIES also weekly avg kcal and protein vs. target.
-- Performance (SPORTS / COMPETITION): weekly training minutes, avg RPE and "felt" score; competition results.
+- Performance (when Training is shown): weekly training minutes, avg RPE and "felt" score; competition results.
 - Energy, recovery, mood, hunger, digestion: weekly check-in scores over time.
 - Body composition: weight and body-fat trend.
 Charts with Recharts; every chart has a table toggle.

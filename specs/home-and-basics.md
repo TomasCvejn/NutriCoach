@@ -1,18 +1,18 @@
 # Client home & basic screens
 
 ## Client home "Today" `/app`
-Widgets in this order, each only when relevant for the program / mode:
+Widgets in this order, each only when relevant (visibility rule in `00-overview.md`, tracking mode):
 1. Today overview: date, day type.
 2. Today's nutrition goals: CALORIES kcal/macro progress; PORTIONS portion progress; GUIDANCE today's planned meals with followed status.
-3. Training (SPORTS / COMPETITION): today's sessions with fueling summary.
+3. Training: today's sessions with fueling summary.
 4. Hydration: fluid progress + quick add.
-5. Competition (COMPETITION): countdown, current phase, next tasks.
+5. Competition: countdown, current phase, next tasks.
 6. Check-in reminder (due / overdue) or "new feedback from coach".
 7. Coach messages: latest unread message preview.
 8. Upcoming events (7 days): sessions, calls, check-in day, competitions.
 
 ## Navigation
-- Client: bottom nav, max 5 tabs, Messages tab with unread badge, "More" for the rest. Items hidden when the program / mode doesn't use them.
+- Client: bottom nav, max 5 tabs, Messages tab with unread badge, "More" for the rest. Training / Competition items follow the visibility rule in `00-overview.md`.
 - Coach: sidebar — Home, Clients, Check-ins, Messages, Calendar, Library, Settings.
 
 ## Notifications
