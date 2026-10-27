@@ -17,7 +17,7 @@ Widgets in this order, each only when relevant for the program / mode:
 
 ## Notifications
 - In-app only: bell with unread count, list, mark read / mark all read, each links to its target.
-- Client types: new message, check-in due, feedback published, plan updated, call scheduled, competition phase started. Coach types: onboarding completed, check-in submitted, new message.
+- Client types: new message, check-in due, feedback published, plan updated, call scheduled, competition phase started. Coach types: onboarding completed, check-in submitted, new message, client deleted their account.
 - Created only via one server-side `notify(userId, type, payload)` helper called by the action that causes the event. Phase-start and check-in-due notifications are created lazily when the user loads the app (no cron).
 
 ## Calendar

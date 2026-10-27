@@ -14,7 +14,7 @@ Training and fueling: SPORTS and COMPETITION programs. Hydration: all programs.
   - Post-training: within N min, protein g, carbs g, fluid recommendation text.
 - A session's fueling = coach override for that session, else the highest-priority matching template, else none. Pure function with tests.
 - Session detail shows totals: carbs during = g/h × duration, fluid, sodium.
-- Seeded editable templates (coach should review the numbers): "< 75 min" (during: water, 0 g/h); "75–150 min" (45 g/h, 500 ml/h, 400 mg/h); "> 150 min or very high intensity" (75 g/h, 600 ml/h, 600 mg/h).
+- Seeded editable templates (coach should review the numbers): "< 75 min" (during: water, 0 g/h); "75–150 min" (45 g/h, 500 ml/h, 400 mg/h); "> 150 min" and "very high intensity" (both 75 g/h, 600 ml/h, 600 mg/h; two templates because a matching rule is AND-only), these two with the highest priority.
 
 ## Hydration dashboard
 - Daily fluid target = coach-set base (suggest 35 ml/kg) + on TRAINING/COMPETITION days the during-session fluid of that day's fueling plans.

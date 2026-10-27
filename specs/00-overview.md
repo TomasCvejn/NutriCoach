@@ -58,9 +58,9 @@ Demo coach `coach@demo.cz` / `demo1234` and three clients (password `demo1234`),
 Plus a GUIDANCE client can be created by switching any of them.
 
 ## Build order (for planning)
-1. Scaffold, tooling (`npm run check`, `npm run test:e2e`), Prisma, seed skeleton
+1. Scaffold, tooling (`npm run check`, `npm run test:e2e`), Prisma, seed skeleton, i18n wiring (the login screen already needs it)
 2. Auth, roles, invites, coach CLI — `auth.md`
-3. i18n wiring, app shells (coach sidebar, client bottom nav, program/mode-aware), notifications helper — `home-and-basics.md`
+3. App shells (coach sidebar, client bottom nav, program/mode-aware), notifications helper, language + timezone settings — `home-and-basics.md`
 4. Onboarding + client profile — `onboarding-profile.md`
 5. Coach client list + individual client dashboard skeleton + coach notes — `coach.md`
 6. Nutrition plan + editor — `nutrition.md`
