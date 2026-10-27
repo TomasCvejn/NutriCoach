@@ -6,6 +6,11 @@ node_modules/
 uploads/
 test-results/
 playwright-report/
+/src/generated/
+next-env.d.ts
+*.tsbuildinfo
+.DS_Store
+npm-debug.log*
 # taste skill: keep only the chosen design direction
 .taste-skill/**
 !.taste-skill/**/

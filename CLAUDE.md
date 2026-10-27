@@ -14,11 +14,12 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 ## Commands (created by the scaffold item — keep this list true)
 - `npm run dev` — dev server
 - `npm run check` — typecheck + lint + unit tests; must pass before every commit
-- `npm run test:e2e` — Playwright
+- `npm run test:e2e` — Playwright (fresh `e2e.db`, `next build` + `next start` on :3100)
 - `npx prisma migrate dev --name <name>` — schema change
 - `npm run db:seed` — reset demo data (coach@demo.cz, general@ / sports@ / race@demo.cz, all `demo1234`)
 - `npm run coach:create -- --email … --name … --password …` — new coach account
 
 ## Gotchas
 - `create-next-app` refuses a non-empty directory: scaffold into a temp subfolder, then move the files up (keep the existing `.gitignore` lines).
+- Prisma 7 blocks `prisma migrate reset` for AI agents: reset with `npm run db:seed` (deletes the SQLite file + `migrate deploy`). Never run `prisma init`: it writes a `.env` and agent skills into `.agents/`, `.windsurf/`, `.claude/skills/`.
 - taste scripts need Chrome: `loop.sh` sets `CHROME_PATH` to Playwright's Chromium; elsewhere `export CHROME_PATH=$(ls -d ~/.cache/ms-playwright/chromium-*/chrome-linux*/chrome | tail -1)`.

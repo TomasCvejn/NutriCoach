@@ -5,7 +5,6 @@ Status 2026-10-27: greenfield. The repo has only specs, the loop and the taste s
 ## Todo
 
 ### 1. Scaffold, tooling, i18n
-- [ ] Scaffold Next.js (latest stable, App Router, TS `strict`, Tailwind, ESLint) via a temp subfolder (CLAUDE.md gotcha; keep the existing `.gitignore` lines); Vitest + Playwright; scripts `dev`, `check` (tsc --noEmit + eslint + vitest run), `test:e2e`; Prisma + SQLite with one shared client and `DATABASE_URL` defaulting to `file:./dev.db` in code/config (no `.env` needed); `db:seed` = reset DB (apply migrations) + run `prisma/seed.ts`; keep CLAUDE.md "Commands" true — 00-overview.md — `npm run check` green with one smoke unit test; `npm run test:e2e` green with one smoke test; fresh clone runs `npm install && npm run db:seed && npm run dev` without `.env`
 - [ ] next-intl without locale prefix: `messages/cs.json` + `messages/en.json`, request config reads the locale cookie (user locale is added by the auth item), default `cs`, `<html lang>`; formatting through next-intl formatters — 00-overview.md (i18n) — unit test: both files have identical key sets; unit test: 1234.5 formats as `1 234,5` in cs (U+00A0 separator) and `1,234.5` in en; e2e: cookie `en` → English smoke page
 
 ### 2. Auth, roles, invites
@@ -146,7 +145,11 @@ Status 2026-10-27: greenfield. The repo has only specs, the loop and the taste s
 - `training.md`: seeded "> 150 min or very high intensity" template split into two (matching rules are AND-only).
 - `home-and-basics.md`: coach notification type "client deleted their account" added (required by account deletion).
 
+### Tooling
+- Scaffold item: Next 16.4 without `cacheComponents` (every screen is per-user dynamic) and with `agentRules: false`; no Google fonts yet (the design item picks type). Prisma 7.10 (`prisma` npm `latest` is an 8.0 rc, so pinned to ^7.10) with the `prisma-client` generator → `src/generated/prisma` (gitignored, `postinstall` generates) and the better-sqlite3 adapter; client in `src/lib/db.ts`. `db:seed` deletes the SQLite file and runs `migrate deploy`, because Prisma blocks `migrate reset` for AI agents. Vitest runs `src/**/*.test.ts(x)` with `DATABASE_URL=file:./test.db`. The auth item adds a globalSetup that resets test.db with the same delete + `migrate deploy`. Playwright webServer = `db:seed` on e2e.db + `next build` + `next start` on port 3100.
+
 ### Bugs / missing tests
-- None yet: there is no application code.
+- None yet.
 
 ## Done
+- Scaffold: Next 16 + TS strict + Tailwind 4 + ESLint, Vitest + Playwright smoke tests, Prisma 7 + SQLite shared client, `check` / `test:e2e` / `db:seed` scripts, fresh install + seed + dev works without `.env`
