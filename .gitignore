@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.env*
+*.db
+*.db-journal
+uploads/
+test-results/
+playwright-report/
+# taste skill: keep only the chosen design direction
+.taste-skill/**
+!.taste-skill/**/
+!.taste-skill/**/direction.json
