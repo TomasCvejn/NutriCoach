@@ -11,8 +11,6 @@ next-env.d.ts
 *.tsbuildinfo
 .DS_Store
 npm-debug.log*
-# dangling agent-skill symlinks left by an old `prisma init`
-.claude/skills/prisma-*
 # taste skill: keep only the chosen design direction
 .taste-skill/**
 !.taste-skill/**/
