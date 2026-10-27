@@ -1,5 +1,6 @@
 You are building the NutriCoach app — exactly ONE plan item per run.
 
+0. `git status`: uncommitted changes = an interrupted run. If they belong to the top item, finish that item; if they are broken beyond repair, `git checkout .` and remove the new files they added.
 1. Read `specs/00-overview.md` and `IMPLEMENTATION_PLAN.md`. Take the top `- [ ]` item under `## Todo` and read the spec file(s) it references.
 2. Search the code before writing (use subagents); don't assume it's not implemented. Reuse existing helpers and components.
 3. Implement the item completely — no placeholders, stubs or TODOs. Add tests for the logic you wrote (authorization counts as logic).
