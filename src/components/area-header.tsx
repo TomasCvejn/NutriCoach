@@ -9,9 +9,17 @@ export async function AreaHeader({ home, userName }: { home: "/coach" | "/app"; 
   const t = await getTranslations("Shell");
   return (
     <header className="flex h-16 items-center justify-between gap-4 border-b px-4 sm:px-[29px]">
-      <Link href={home}>
-        <Logo />
-      </Link>
+      <div className="flex items-center gap-6">
+        <Link href={home}>
+          <Logo />
+        </Link>
+        {/* ponytail: the one coach page so far; the app shell item replaces this with the sidebar. */}
+        {home === "/coach" && (
+          <Link href="/coach/clients" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+            {t("clients")}
+          </Link>
+        )}
+      </div>
       <div className="flex min-w-0 items-center gap-4">
         <span className="truncate text-sm text-muted-foreground">{userName}</span>
         <form action={signOut}>

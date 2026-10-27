@@ -1,7 +1,7 @@
 import { execSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import { createUser } from "../src/lib/auth";
-import { dbUrl } from "../src/lib/db";
+import { db, dbUrl } from "../src/lib/db";
 
 // Full reset of the local SQLite DB: delete the file and re-apply every migration.
 // ponytail: file delete + `migrate deploy` instead of `migrate reset`, which Prisma blocks for AI agents.
@@ -22,6 +22,10 @@ async function seed() {
   for (const { program, trackingMode, ...user } of clients) {
     await createUser({ ...user, role: "CLIENT", client: { create: { coachId: coach.id, program, trackingMode } } });
   }
+  // One pending invite (accept it at /invite/demo-invite with dev accept).
+  await db.invite.create({
+    data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", program: "SPORTS", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },
+  });
 }
 
 seed().then(() => console.log("Seeded demo data (sign in with dev login)."));

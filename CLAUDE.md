@@ -24,4 +24,5 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 - Prisma 7 blocks `prisma migrate reset` for AI agents: reset with `npm run db:seed` (deletes the SQLite file + `migrate deploy`). Never run `prisma init`: it writes a `.env` and agent skills into `.agents/`, `.windsurf/`, `.claude/skills/`.
 - Better Auth rejects cookie-carrying POSTs without an `Origin` header (CSRF check, skipped under Vitest): API calls in Playwright need `headers: { origin: baseURL }`.
 - Better Auth checks the Prisma schema on every request and fails all of them if one of its columns is missing (e.g. the unused `account.password`): never drop a Better Auth column.
+- `npm run db:seed` deletes and recreates the SQLite file: restart a running `next dev` afterwards (it keeps the old file open). `npx shadcn add` asks before overwriting `button.tsx`: answer with `printf 'n\n' | npx shadcn@4 add <name>`.
 - taste scripts need Chrome: `loop.sh` sets `CHROME_PATH` to Playwright's Chromium; elsewhere `export CHROME_PATH=$(ls -d ~/.cache/ms-playwright/chromium-*/chrome-linux*/chrome | tail -1)`.

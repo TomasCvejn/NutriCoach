@@ -24,6 +24,7 @@ model User {
   accounts      Account[]
   client        Client?   @relation("ClientUser")
   clients       Client[]  @relation("CoachClients")
+  invites       Invite[]
 
   @@map("user")
 }
@@ -84,6 +85,27 @@ model Client {
   program      String   @default("GENERAL") // PROGRAMS
   trackingMode String   @default("CALORIES") // TRACKING_MODES
   createdAt    DateTime @default(now())
+  invite       Invite?
+
+  @@index([coachId])
+}
+
+// Pending until used, revoked or expired. The token stays readable so the coach can copy the link again.
+model Invite {
+  id           String    @id @default(cuid())
+  token        String    @unique
+  coachId      String
+  coach        User      @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  name         String
+  email        String? // lowercased; set → the Google email must match
+  program      String? // PROGRAMS; null → the client picks in onboarding
+  trackingMode String? // TRACKING_MODES; null → the client picks in onboarding
+  expiresAt    DateTime
+  usedAt       DateTime?
+  revokedAt    DateTime?
+  clientId     String?   @unique // the client it created (onboarding reads what the invite set)
+  client       Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt    DateTime  @default(now())
 
   @@index([coachId])
 }

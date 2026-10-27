@@ -24,7 +24,93 @@
     }
   },
   "Shell": {
-    "logout": "Sign out"
+    "logout": "Sign out",
+    "clients": "Clients"
+  },
+  "Programs": {
+    "GENERAL": "General",
+    "SPORTS": "Sports",
+    "COMPETITION": "Competition"
+  },
+  "TrackingModes": {
+    "CALORIES": "Calories",
+    "PORTIONS": "Portions",
+    "GUIDANCE": "Guidance"
+  },
+  "Clients": {
+    "title": "Clients",
+    "summary": "{clients, plural, one {# client} other {# clients}} · {invites, plural, =0 {no pending invites} one {# pending invite} other {# pending invites}}",
+    "invites": "Pending invites",
+    "noInvites": "No pending invites. A link you create appears here until the client accepts it.",
+    "anyEmail": "Any Google account",
+    "inviteSetup": "Program: {program} · Tracking: {mode}",
+    "clientChooses": "client chooses",
+    "expires": "Expires {date}",
+    "copyLink": "Copy link",
+    "copied": "Copied",
+    "revoke": "Revoke",
+    "revokeFor": "Revoke the invite for {name}",
+    "list": "All clients",
+    "noClients": "No clients yet. Invite your first one.",
+    "columns": {
+      "name": "Name",
+      "program": "Program",
+      "mode": "Tracking"
+    },
+    "invite": {
+      "open": "Invite client",
+      "title": "Invite client",
+      "description": "You get a link to send to the client. It works once and expires in 7 days.",
+      "name": "Client's name",
+      "nameInvalid": "Enter the client's name.",
+      "email": "Email (optional)",
+      "emailHint": "When set, the client must sign in with this Google account.",
+      "emailInvalid": "Enter a valid email or leave it empty.",
+      "program": "Program",
+      "mode": "Tracking",
+      "clientChooses": "Client chooses",
+      "cancel": "Cancel",
+      "submit": "Create link",
+      "linkTitle": "Invite link for {name}",
+      "linkNote": "Send it to the client. It works once and expires in 7 days.",
+      "linkLabel": "Invite link",
+      "done": "Done"
+    }
+  },
+  "Invite": {
+    "title": "{coach} invited you to NutriCoach",
+    "lead": "Your coach will run your nutrition plan here. Create your account with Google.",
+    "timezone": "Your time zone",
+    "timezoneHint": "Your days, logs and reminders follow it.",
+    "signIn": "Go to sign in",
+    "errors": {
+      "emailMismatch": "This invite is for a different email. Continue with the Google account your coach invited.",
+      "emailTaken": "This Google account already has an account here. Sign in instead.",
+      "failed": "Accepting the invite failed. Try again."
+    },
+    "status": {
+      "unknown": {
+        "title": "Invite not found",
+        "text": "Check the link with your coach."
+      },
+      "used": {
+        "title": "This invite has been used",
+        "text": "The account already exists. Sign in to continue."
+      },
+      "revoked": {
+        "title": "This invite was cancelled",
+        "text": "Ask your coach for a new one."
+      },
+      "expired": {
+        "title": "This invite has expired",
+        "text": "Invites work for 7 days. Ask your coach for a new one."
+      }
+    },
+    "dev": {
+      "note": "Outside production only: accept the invite without Google.",
+      "email": "Email",
+      "submit": "Accept as this email"
+    }
   },
   "CoachHome": {
     "title": "Overview"

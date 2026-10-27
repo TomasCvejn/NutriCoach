@@ -24,7 +24,93 @@
     }
   },
   "Shell": {
-    "logout": "Odhlásit se"
+    "logout": "Odhlásit se",
+    "clients": "Klienti"
+  },
+  "Programs": {
+    "GENERAL": "Obecný",
+    "SPORTS": "Sportovní",
+    "COMPETITION": "Závodní"
+  },
+  "TrackingModes": {
+    "CALORIES": "Kalorie",
+    "PORTIONS": "Porce",
+    "GUIDANCE": "Bez počítání"
+  },
+  "Clients": {
+    "title": "Klienti",
+    "summary": "{clients, plural, one {# klient} few {# klienti} other {# klientů}} · {invites, plural, =0 {žádná čekající pozvánka} one {# čekající pozvánka} few {# čekající pozvánky} other {# čekajících pozvánek}}",
+    "invites": "Čekající pozvánky",
+    "noInvites": "Žádné čekající pozvánky. Vytvořený odkaz tu zůstane, dokud ho klient nepřijme.",
+    "anyEmail": "Jakýkoli účet Google",
+    "inviteSetup": "Program: {program} · Sledování: {mode}",
+    "clientChooses": "vybere klient",
+    "expires": "Platí do {date}",
+    "copyLink": "Kopírovat odkaz",
+    "copied": "Zkopírováno",
+    "revoke": "Zrušit",
+    "revokeFor": "Zrušit pozvánku pro {name}",
+    "list": "Všichni klienti",
+    "noClients": "Zatím žádní klienti. Pozvěte prvního.",
+    "columns": {
+      "name": "Jméno",
+      "program": "Program",
+      "mode": "Sledování"
+    },
+    "invite": {
+      "open": "Pozvat klienta",
+      "title": "Pozvat klienta",
+      "description": "Dostanete odkaz, který klientovi pošlete. Funguje jednou a platí 7 dní.",
+      "name": "Jméno klienta",
+      "nameInvalid": "Zadejte jméno klienta.",
+      "email": "E-mail (nepovinný)",
+      "emailHint": "Když ho vyplníte, klient se musí přihlásit tímto účtem Google.",
+      "emailInvalid": "Zadejte platný e-mail, nebo pole nechte prázdné.",
+      "program": "Program",
+      "mode": "Sledování",
+      "clientChooses": "Vybere klient",
+      "cancel": "Zrušit",
+      "submit": "Vytvořit odkaz",
+      "linkTitle": "Odkaz pozvánky pro {name}",
+      "linkNote": "Pošlete ho klientovi. Funguje jednou a platí 7 dní.",
+      "linkLabel": "Odkaz pozvánky",
+      "done": "Hotovo"
+    }
+  },
+  "Invite": {
+    "title": "{coach} vás zve do NutriCoach",
+    "lead": "Tady s vámi trenér povede výživový plán. Založte si účet přes Google.",
+    "timezone": "Vaše časové pásmo",
+    "timezoneHint": "Podle něj se řídí vaše dny, záznamy a připomínky.",
+    "signIn": "Přejít na přihlášení",
+    "errors": {
+      "emailMismatch": "Pozvánka patří jinému e-mailu. Pokračujte účtem Google, na který vás trenér pozval.",
+      "emailTaken": "Tento účet Google už tu účet má. Přihlaste se.",
+      "failed": "Přijetí pozvánky se nepodařilo. Zkuste to znovu."
+    },
+    "status": {
+      "unknown": {
+        "title": "Pozvánka nenalezena",
+        "text": "Ověřte si odkaz u svého trenéra."
+      },
+      "used": {
+        "title": "Pozvánka už byla použita",
+        "text": "Účet už existuje. Pokračujte přihlášením."
+      },
+      "revoked": {
+        "title": "Pozvánka byla zrušena",
+        "text": "Požádejte trenéra o novou."
+      },
+      "expired": {
+        "title": "Platnost pozvánky vypršela",
+        "text": "Pozvánky platí 7 dní. Požádejte trenéra o novou."
+      }
+    },
+    "dev": {
+      "note": "Jen mimo produkci: přijetí pozvánky bez Googlu.",
+      "email": "E-mail",
+      "submit": "Přijmout jako tento e-mail"
+    }
   },
   "CoachHome": {
     "title": "Přehled"

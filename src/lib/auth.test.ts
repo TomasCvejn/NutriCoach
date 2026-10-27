@@ -1,50 +1,16 @@
 import { execFileSync } from "node:child_process";
-import { randomUUID } from "node:crypto";
 import { expect, test, vi } from "vitest";
-import { auth, createUser, requireClient, requireCoach, requireCoachOf, requireUser } from "./auth";
+import { cookiesOf, googleSignIn, notFound, post, redirectsTo, signIn, uniqueEmail } from "@/test/auth";
+import { createUser, requireClient, requireCoach, requireCoachOf, requireUser } from "./auth";
 import { db } from "./db";
 
 // The helpers read the session cookie through next/headers; tests swap the cookie per "request".
 const request = vi.hoisted(() => ({ cookie: "" }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers({ cookie: request.cookie }) }));
 
-const url = (path: string) => `http://localhost:3000/api/auth${path}`;
-const post = (path: string, body: object, cookie = "") =>
-  auth.handler(new Request(url(path), { method: "POST", headers: { "content-type": "application/json", cookie }, body: JSON.stringify(body) }));
-const cookiesOf = (res: Response) => res.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
-
-async function signIn(email: string) {
-  const res = await post("/dev-login", { email });
-  expect(res.status).toBe(200);
-  return cookiesOf(res);
-}
-
 async function as(email: string) {
   request.cookie = await signIn(email);
 }
-
-// The whole Google round trip without the network: Better Auth exchanges the code at Google's token endpoint (mocked)
-// and reads the user from the id_token in that answer. Returns the callback's redirect and the session cookie ("" = none).
-async function googleSignIn(email: string) {
-  const start = await post("/sign-in/social", { provider: "google", callbackURL: "/" });
-  const state = new URL((await start.json()).url).searchParams.get("state");
-  const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString("base64url");
-  const idToken = `${b64({ alg: "RS256" })}.${b64({ sub: `g-${email}`, email, email_verified: true, name: "From Google" })}.sig`;
-  const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ access_token: "a", id_token: idToken, token_type: "Bearer" }));
-  try {
-    const res = await auth.handler(new Request(url(`/callback/google?code=c&state=${state}`), { headers: { cookie: cookiesOf(start) } }));
-    expect(fetch).toHaveBeenCalledOnce();
-    const session = res.headers.getSetCookie().find((c) => c.startsWith("better-auth.session_token="))?.split(";")[0] ?? "";
-    return { status: res.status, location: res.headers.get("location"), session };
-  } finally {
-    fetch.mockRestore();
-  }
-}
-
-const uniqueEmail = (prefix: string) => `${prefix}-${randomUUID()}@test.cz`;
-// redirect() / notFound() throw errors whose digest carries the target.
-const redirectsTo = (path: string) => ({ digest: expect.stringContaining(`;${path};`) });
-const notFound = { digest: expect.stringContaining("404") };
 
 test("CLI-created coach signs in with Google, which links the account; invalid CLI input is rejected", { timeout: 30_000 }, async () => {
   const email = uniqueEmail("cli");
