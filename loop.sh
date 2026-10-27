@@ -11,7 +11,7 @@ export CHROME_PATH=${CHROME_PATH:-$(ls -d ~/.cache/ms-playwright/chromium-*/chro
 
 for ((i = 1; max == 0 || i <= max; i++)); do
   echo "=== $mode #$i  $(date '+%F %T') ===" >&2
-  if ! out=$(claude -p --allowedTools "$tools" --model "${MODEL:-opus}" < "$prompt" | tee /dev/stderr); then
+  if ! out=$(claude -p --allowedTools "$tools" --model "${MODEL:-opus}" < "$prompt" | tee -a /dev/stderr); then
     echo "claude failed (usage limit?), retrying in 60 s" >&2; sleep 60; ((i--)); continue
   fi
   grep -q '<ralph>DONE</ralph>' <<<"$out" && { echo "All done." >&2; break; }
