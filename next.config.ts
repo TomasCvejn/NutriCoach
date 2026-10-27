@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
 
 // ponytail: no cacheComponents — every screen is per-user and dynamic.
 const nextConfig: NextConfig = {
@@ -13,4 +14,5 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+// Reads src/i18n/request.ts (locale per request, no locale prefix in URLs).
+export default createNextIntlPlugin()(nextConfig);
