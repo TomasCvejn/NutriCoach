@@ -10,7 +10,8 @@ export default defineConfig({
     // Fresh e2e.db on every run, production build so pages don't compile on first hit.
     command: `npm run db:seed && npx next build && npx next start -p ${port}`,
     url: `http://localhost:${port}`,
-    env: { DATABASE_URL: "file:./e2e.db" },
+    // `next start` is production: Better Auth refuses its default secret there.
+    env: { DATABASE_URL: "file:./e2e.db", BETTER_AUTH_SECRET: "e2e-only-secret-never-used-in-production-4f9c2a7e" },
     timeout: 300_000,
   },
 });

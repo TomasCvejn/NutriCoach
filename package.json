@@ -10,16 +10,19 @@
     "check": "next typegen && tsc --noEmit && eslint && vitest run",
     "test:e2e": "playwright test",
     "db:seed": "tsx prisma/seed.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "coach:create": "tsx scripts/coach-create.ts"
   },
   "dependencies": {
     "@prisma/adapter-better-sqlite3": "^7.10.1",
     "@prisma/client": "^7.10.1",
+    "better-auth": "^1.7.14",
     "next": "16.4.3",
     "next-intl": "^4.14.9",
     "prisma": "^7.10.1",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@playwright/test": "^1.64.1",

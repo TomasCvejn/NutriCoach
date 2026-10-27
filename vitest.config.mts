@@ -4,6 +4,7 @@ export default defineConfig({
   resolve: { tsconfigPaths: true },
   test: {
     include: ["src/**/*.test.{ts,tsx}"],
-    env: { DATABASE_URL: "file:./test.db" },
+    globalSetup: ["./vitest.global-setup.ts"],
+    env: { DATABASE_URL: "file:./test.db", BETTER_AUTH_URL: "http://localhost:3000" },
   },
 });
