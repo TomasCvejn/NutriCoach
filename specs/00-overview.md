@@ -26,13 +26,13 @@ Everything else (nutrition plan, recipes, hydration, check-ins, progress, body c
 ## Stack (fixed — do not switch)
 - Next.js (latest stable, App Router, Server Components + Server Actions), React, TypeScript `strict`
 - Prisma + SQLite
-- Better Auth (email + password) with the Prisma adapter
+- Better Auth with the Prisma adapter — Google sign-in only (`auth.md`)
 - next-intl for i18n
 - Tailwind CSS + shadcn/ui, Recharts for charts, Zod for all input validation
 - Vitest (unit/integration), Playwright (e2e for critical flows)
 - npm
 
-No other services: no Redis, no S3, no external auth, no email sending. The app must run with `npm install && npm run db:seed && npm run dev`.
+No other services besides Google OAuth: no Redis, no S3, no email sending. The app must run with `npm install && npm run db:seed && npm run dev` even without Google credentials (dev login, `auth.md`).
 
 ## Conventions
 - Every mutation (Server Action / route handler) validates input with Zod and goes through the authorization helpers from `auth.md`.
@@ -51,7 +51,7 @@ No other services: no Redis, no S3, no external auth, no email sending. The app 
 - Open Food Facts names: `product_name_cs` / `product_name_en` with fallback to `product_name`.
 
 ## Seed
-Demo coach `coach@demo.cz` / `demo1234` and three clients (password `demo1234`), each with two weeks of data:
+Demo coach `coach@demo.cz` and three clients (no passwords — use dev login), each with two weeks of data:
 - `general@demo.cz` — GENERAL, PORTIONS
 - `sports@demo.cz` — SPORTS, CALORIES (training sessions, fueling)
 - `race@demo.cz` — COMPETITION, CALORIES (competition 10 days out, timeline, race-day schedule)

@@ -16,8 +16,8 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 - `npm run check` — typecheck + lint + unit tests; must pass before every commit
 - `npm run test:e2e` — Playwright (fresh `e2e.db`, `next build` + `next start` on :3100)
 - `npx prisma migrate dev --name <name> && npx prisma generate` — schema change (Prisma 7 `migrate dev` doesn't regenerate the client)
-- `npm run db:seed` — reset demo data (coach@demo.cz, general@ / sports@ / race@demo.cz, all `demo1234`)
-- `npm run coach:create -- --email … --name … --password …` — new coach account
+- `npm run db:seed` — reset demo data (coach@demo.cz, general@ / sports@ / race@demo.cz; sign in via dev login)
+- `npm run coach:create -- --email … --name …` — new coach account (signs in with Google)
 
 ## Gotchas
 - `create-next-app` refuses a non-empty directory: scaffold into a temp subfolder, then move the files up (keep the existing `.gitignore` lines).

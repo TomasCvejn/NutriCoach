@@ -36,7 +36,7 @@ Language, timezone, notification types on/off. Coach also: welcome text for onbo
 Static content in i18n files: using the app, tracking modes explained, hand-portion guide, how check-ins work, contacting the coach.
 
 ## Privacy & account
-- Change email, change password.
+- Shows the linked Google account (email, name). No email or password change — that lives in Google.
 - Download my data: JSON with all the client's data (file attachments listed by name).
-- Delete account: password confirmation, deletes all the client's data and files, coach is notified.
+- Delete account: confirmation by typing a confirmation word, deletes all the client's data and files, coach is notified.
 - Privacy policy page rendered from `content/privacy.cs.md` / `content/privacy.en.md` (write a reasonable GDPR-style draft; the coach will edit it).
