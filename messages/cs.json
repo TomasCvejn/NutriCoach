@@ -1,5 +1,35 @@
 {
-  "Home": {
-    "tagline": "Výživový koučink pro trenéry a jejich klienty"
+  "Language": {
+    "label": "Jazyk",
+    "cs": "Čeština",
+    "en": "English"
+  },
+  "Login": {
+    "title": "Přihlášení",
+    "tagline": "Výživový koučink pro trenéry a jejich klienty",
+    "google": "Pokračovat přes Google",
+    "googleMissing": "Přihlášení přes Google není nastavené (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET).",
+    "inviteNote": "Účet klienta vzniká z pozvánky od trenéra.",
+    "errors": {
+      "noAccount": "K tomuto účtu Google tu žádný účet není. Požádejte svého trenéra o pozvánku.",
+      "inactive": "Účet je deaktivovaný. Obraťte se na svého trenéra.",
+      "failed": "Přihlášení se nepodařilo. Zkuste to znovu."
+    },
+    "dev": {
+      "title": "Dev login",
+      "note": "Jen mimo produkci: přihlášení jedním klikem jako kterýkoli uživatel.",
+      "COACH": "Trenéři",
+      "CLIENT": "Klienti",
+      "inactive": "Deaktivovaný"
+    }
+  },
+  "Shell": {
+    "logout": "Odhlásit se"
+  },
+  "CoachHome": {
+    "title": "Přehled"
+  },
+  "ClientHome": {
+    "title": "Dnes"
   }
 }

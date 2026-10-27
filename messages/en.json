@@ -1,5 +1,35 @@
 {
-  "Home": {
-    "tagline": "Nutrition coaching for coaches and their clients"
+  "Language": {
+    "label": "Language",
+    "cs": "Čeština",
+    "en": "English"
+  },
+  "Login": {
+    "title": "Sign in",
+    "tagline": "Nutrition coaching for coaches and their clients",
+    "google": "Continue with Google",
+    "googleMissing": "Google sign-in isn't set up (GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET).",
+    "inviteNote": "Client accounts are created from your coach's invite.",
+    "errors": {
+      "noAccount": "There's no account here for this Google account. Ask your coach for an invite.",
+      "inactive": "This account is deactivated. Contact your coach.",
+      "failed": "Sign-in failed. Try again."
+    },
+    "dev": {
+      "title": "Dev login",
+      "note": "Outside production only: sign in as any user with one click.",
+      "COACH": "Coaches",
+      "CLIENT": "Clients",
+      "inactive": "Deactivated"
+    }
+  },
+  "Shell": {
+    "logout": "Sign out"
+  },
+  "CoachHome": {
+    "title": "Overview"
+  },
+  "ClientHome": {
+    "title": "Today"
   }
 }

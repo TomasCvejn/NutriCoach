@@ -8,23 +8,37 @@ import { db } from "./db";
 const request = vi.hoisted(() => ({ cookie: "" }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers({ cookie: request.cookie }) }));
 
+const url = (path: string) => `http://localhost:3000/api/auth${path}`;
 const post = (path: string, body: object, cookie = "") =>
-  auth.handler(
-    new Request(`http://localhost:3000/api/auth${path}`, {
-      method: "POST",
-      headers: { "content-type": "application/json", cookie },
-      body: JSON.stringify(body),
-    }),
-  );
+  auth.handler(new Request(url(path), { method: "POST", headers: { "content-type": "application/json", cookie }, body: JSON.stringify(body) }));
+const cookiesOf = (res: Response) => res.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
 
-async function signIn(email: string, password = "demo1234") {
-  const res = await post("/sign-in/email", { email, password });
+async function signIn(email: string) {
+  const res = await post("/dev-login", { email });
   expect(res.status).toBe(200);
-  return res.headers.getSetCookie().map((c) => c.split(";")[0]).join("; ");
+  return cookiesOf(res);
 }
 
-async function as(email: string, password?: string) {
-  request.cookie = await signIn(email, password);
+async function as(email: string) {
+  request.cookie = await signIn(email);
+}
+
+// The whole Google round trip without the network: Better Auth exchanges the code at Google's token endpoint (mocked)
+// and reads the user from the id_token in that answer. Returns the callback's redirect and the session cookie ("" = none).
+async function googleSignIn(email: string) {
+  const start = await post("/sign-in/social", { provider: "google", callbackURL: "/" });
+  const state = new URL((await start.json()).url).searchParams.get("state");
+  const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString("base64url");
+  const idToken = `${b64({ alg: "RS256" })}.${b64({ sub: `g-${email}`, email, email_verified: true, name: "From Google" })}.sig`;
+  const fetch = vi.spyOn(globalThis, "fetch").mockResolvedValue(Response.json({ access_token: "a", id_token: idToken, token_type: "Bearer" }));
+  try {
+    const res = await auth.handler(new Request(url(`/callback/google?code=c&state=${state}`), { headers: { cookie: cookiesOf(start) } }));
+    expect(fetch).toHaveBeenCalledOnce();
+    const session = res.headers.getSetCookie().find((c) => c.startsWith("better-auth.session_token="))?.split(";")[0] ?? "";
+    return { status: res.status, location: res.headers.get("location"), session };
+  } finally {
+    fetch.mockRestore();
+  }
 }
 
 const uniqueEmail = (prefix: string) => `${prefix}-${randomUUID()}@test.cz`;
@@ -32,21 +46,63 @@ const uniqueEmail = (prefix: string) => `${prefix}-${randomUUID()}@test.cz`;
 const redirectsTo = (path: string) => ({ digest: expect.stringContaining(`;${path};`) });
 const notFound = { digest: expect.stringContaining("404") };
 
-test("CLI-created coach can sign in; invalid CLI input is rejected", { timeout: 30_000 }, async () => {
+test("CLI-created coach signs in with Google, which links the account; invalid CLI input is rejected", { timeout: 30_000 }, async () => {
   const email = uniqueEmail("cli");
   const cli = (...args: string[]) => execFileSync("npx", ["tsx", "scripts/coach-create.ts", ...args], { stdio: "pipe" });
-  cli("--email", email.toUpperCase(), "--name", "CLI Coach", "--password", "secret123");
-  expect(() => cli("--email", "not-an-email", "--name", "X", "--password", "short")).toThrow(/email[\s\S]*password/);
+  cli("--email", email.toUpperCase(), "--name", "CLI Coach");
+  expect(() => cli("--email", "not-an-email", "--name", "")).toThrow(/email[\s\S]*name/);
 
-  await as(email, "secret123");
-  expect(await requireCoach()).toMatchObject({ email, role: "COACH", timezone: "Europe/Prague", locale: "cs" });
+  const res = await googleSignIn(email);
+  expect(res).toMatchObject({ status: 302, location: "/", session: expect.stringContaining("session_token") });
+  request.cookie = res.session;
+  const coach = await requireCoach();
+  expect(coach).toMatchObject({ email, name: "CLI Coach", role: "COACH", timezone: "Europe/Prague", locale: "cs" });
+  expect(await db.account.findMany({ where: { userId: coach.id } })).toMatchObject([{ providerId: "google", accountId: `g-${email}` }]);
+
+  // The second sign-in reuses the linked account.
+  expect(await googleSignIn(email)).toMatchObject({ status: 302, location: "/" });
+  expect(await db.account.count({ where: { userId: coach.id } })).toBe(1);
 });
 
-test("public sign-up is refused", async () => {
-  const email = uniqueEmail("signup");
-  const res = await post("/sign-up/email", { email, password: "secret123", name: "Stranger" });
-  expect(res.status).toBe(400);
+test("an unknown Google email creates nothing and lands on the no-account message", async () => {
+  const email = uniqueEmail("stranger");
+  expect(await googleSignIn(email)).toMatchObject({ status: 302, location: expect.stringMatching(/^\/login\?error=signup_disabled\b/), session: "" });
   expect(await db.user.count({ where: { email } })).toBe(0);
+  expect(await db.account.count({ where: { accountId: `g-${email}` } })).toBe(0);
+});
+
+test("no passwords: email sign-in and sign-up are off, no credential account exists", async () => {
+  expect((await post("/sign-in/email", { email: "coach@demo.cz", password: "demo1234" })).ok).toBe(false);
+  const email = uniqueEmail("signup");
+  expect((await post("/sign-up/email", { email, password: "secret123", name: "Stranger" })).ok).toBe(false);
+  expect(await db.user.count({ where: { email } })).toBe(0);
+  expect(await db.account.count({ where: { OR: [{ providerId: "credential" }, { password: { not: null } }] } })).toBe(0);
+});
+
+test("dev login is refused in production", async () => {
+  const before = await db.session.count();
+  vi.stubEnv("NODE_ENV", "production");
+  try {
+    const res = await post("/dev-login", { email: "coach@demo.cz" });
+    expect(res.status).toBe(404);
+    expect(cookiesOf(res)).toBe("");
+  } finally {
+    vi.unstubAllEnvs();
+  }
+  expect(await db.session.count()).toBe(before);
+});
+
+test("an inactive user can't sign in, neither by dev login nor by Google", async () => {
+  const user = await db.user.findUniqueOrThrow({ where: { email: "inactive@demo.cz" } });
+  expect(user.active).toBe(false);
+
+  const res = await post("/dev-login", { email: user.email });
+  expect(res.status).toBe(403);
+  expect(await res.json()).toMatchObject({ code: "ACCOUNT_INACTIVE" });
+  expect(cookiesOf(res)).toBe("");
+
+  expect(await googleSignIn(user.email)).toMatchObject({ status: 302, location: expect.stringMatching(/^\/login\?error=ACCOUNT_INACTIVE\b/), session: "" });
+  expect(await db.session.count({ where: { userId: user.id } })).toBe(0);
 });
 
 test("users can't change their role or active flag through Better Auth", async () => {
@@ -66,8 +122,8 @@ test("requireCoachOf rejects another coach's client", async () => {
   await as("coach@demo.cz");
   expect((await requireCoachOf(general.id)).client.id).toBe(general.id);
 
-  const other = await createUser({ email: uniqueEmail("other"), name: "Other Coach", password: "secret123", role: "COACH" });
-  await as(other.email, "secret123");
+  const other = await createUser({ email: uniqueEmail("other"), name: "Other Coach", role: "COACH" });
+  await as(other.email);
   await expect(requireCoachOf(general.id)).rejects.toMatchObject(notFound);
 });
 
@@ -83,9 +139,8 @@ test("requireCoach rejects a client, requireClient rejects a coach", async () =>
 
 test("an inactive client is rejected even with a live session", async () => {
   const coach = await db.user.findUniqueOrThrow({ where: { email: "coach@demo.cz" } });
-  const email = uniqueEmail("inactive");
-  const user = await createUser({ email, name: "Inactive", password: "secret123", role: "CLIENT", client: { create: { coachId: coach.id } } });
-  await as(email, "secret123");
+  const user = await createUser({ email: uniqueEmail("inactive"), name: "Inactive", role: "CLIENT", client: { create: { coachId: coach.id } } });
+  await as(user.email);
   expect((await requireClient()).user.id).toBe(user.id);
 
   await db.user.update({ where: { id: user.id }, data: { active: false } });

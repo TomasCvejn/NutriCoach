@@ -4,14 +4,16 @@ const port = 3100;
 
 export default defineConfig({
   testDir: "e2e",
+  // `next dev` compiles a route on its first hit.
+  expect: { timeout: 15_000 },
   use: { baseURL: `http://localhost:${port}`, trace: "retain-on-failure" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    // Fresh e2e.db on every run, production build so pages don't compile on first hit.
-    command: `npm run db:seed && npx next build && npx next start -p ${port}`,
+    // Fresh e2e.db on every run. `next dev`, not a production build: e2e signs in with dev login, which production refuses.
+    command: `npm run db:seed && npx next dev -p ${port}`,
     url: `http://localhost:${port}`,
-    // `next start` is production: Better Auth refuses its default secret there.
-    env: { DATABASE_URL: "file:./e2e.db", BETTER_AUTH_SECRET: "e2e-only-secret-never-used-in-production-4f9c2a7e" },
+    // Beats a developer's .env (Next never overrides set variables).
+    env: { DATABASE_URL: "file:./e2e.db", BETTER_AUTH_URL: `http://localhost:${port}` },
     timeout: 300_000,
   },
 });

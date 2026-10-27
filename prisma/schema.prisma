@@ -55,7 +55,7 @@ model Account {
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
   scope                 String?
-  password              String?
+  password              String? // always null (Google only); Better Auth's runtime schema check fails every request without it
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 

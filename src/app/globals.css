@@ -1,1 +1,108 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ponytail: light theme only. The variant keeps shadcn's dark: classes inert (nothing sets .dark). */
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-sans: var(--font-dm-sans), system-ui, sans-serif;
+    --text-title: 2rem;
+    --text-title--line-height: 2.5rem;
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-rule: var(--rule);
+    --color-destructive: var(--destructive);
+    --color-destructive-soft: var(--destructive-soft);
+    --color-destructive-ink: var(--destructive-ink);
+    --color-positive: var(--positive);
+    --color-positive-soft: var(--positive-soft);
+    --color-positive-ink: var(--positive-ink);
+    --color-warning: var(--warning);
+    --color-warning-soft: var(--warning-soft);
+    --color-warning-edge: var(--warning-edge);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-primary-soft: var(--primary-soft);
+    --color-primary-track: var(--primary-track);
+    --color-primary-ink: var(--primary-ink);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/*
+ * Design direction for the whole app: .taste-skill/app/direction.json (accent-ladder, raspberry, DM Sans).
+ * The full hue (primary) only on small marks: the one filled button, the data series, the active nav icon.
+ * Its pale tints (primary-soft / primary-track, with primary-ink text) carry every area: active nav row,
+ * badges, progress tracks. The ground leans toward the palest tint so page and tints read as one family.
+ * No shadows at rest, no gradients; surfaces are separated by a 1px border or one tone step.
+ */
+:root {
+    --background: #fbf7f8;
+    --foreground: #111827;
+    --card: #ffffff;
+    --card-foreground: #111827;
+    --popover: #ffffff;
+    --popover-foreground: #111827;
+    --primary: #b8336a;
+    --primary-foreground: #ffffff;
+    --primary-soft: #fdf2f7;
+    --primary-track: #f8dbe8;
+    --primary-ink: #6b1d3e;
+    --secondary: #f3f4f6;
+    --secondary-foreground: #374151;
+    --muted: #f3f4f6;
+    --muted-foreground: #5f6672;
+    --accent: #fdf2f7;
+    --accent-foreground: #6b1d3e;
+    --destructive: #c4242a;
+    --destructive-soft: #ffedea;
+    --destructive-ink: #831c1e;
+    --positive: #247b50;
+    --positive-soft: #dcfce7;
+    --positive-ink: #14532d;
+    --warning: #92400e;
+    --warning-soft: #fffbeb;
+    --warning-edge: #fde68a;
+    --border: #e5e7eb;
+    --rule: #f2f2f2;
+    --input: #d1d5db;
+    --ring: #b8336a;
+    --chart-1: #b8336a;
+    --chart-2: #6b7280;
+    --chart-3: #d4618f;
+    --radius: 0.375rem;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}

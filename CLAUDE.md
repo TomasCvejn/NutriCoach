@@ -14,7 +14,7 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 ## Commands (created by the scaffold item — keep this list true)
 - `npm run dev` — dev server
 - `npm run check` — typecheck + lint + unit tests; must pass before every commit
-- `npm run test:e2e` — Playwright (fresh `e2e.db`, `next build` + `next start` on :3100)
+- `npm run test:e2e` — Playwright (fresh `e2e.db`, `next dev` on :3100 because dev login is refused in production; Next allows one `next dev` per directory, so stop your own `npm run dev` first). Sign in with `logIn(page, email)` from `e2e/dev-login.ts`
 - `npx prisma migrate dev --name <name> && npx prisma generate` — schema change (Prisma 7 `migrate dev` doesn't regenerate the client)
 - `npm run db:seed` — reset demo data (coach@demo.cz, general@ / sports@ / race@demo.cz; sign in via dev login)
 - `npm run coach:create -- --email … --name …` — new coach account (signs in with Google)
@@ -22,5 +22,6 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 ## Gotchas
 - `create-next-app` refuses a non-empty directory: scaffold into a temp subfolder, then move the files up (keep the existing `.gitignore` lines).
 - Prisma 7 blocks `prisma migrate reset` for AI agents: reset with `npm run db:seed` (deletes the SQLite file + `migrate deploy`). Never run `prisma init`: it writes a `.env` and agent skills into `.agents/`, `.windsurf/`, `.claude/skills/`.
-- Better Auth rejects cookie-carrying POSTs without an `Origin` header (CSRF check, skipped under Vitest): API sign-in in Playwright needs `headers: { origin: baseURL }`.
+- Better Auth rejects cookie-carrying POSTs without an `Origin` header (CSRF check, skipped under Vitest): API calls in Playwright need `headers: { origin: baseURL }`.
+- Better Auth checks the Prisma schema on every request and fails all of them if one of its columns is missing (e.g. the unused `account.password`): never drop a Better Auth column.
 - taste scripts need Chrome: `loop.sh` sets `CHROME_PATH` to Playwright's Chromium; elsewhere `export CHROME_PATH=$(ls -d ~/.cache/ms-playwright/chromium-*/chrome-linux*/chrome | tail -1)`.
