@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 import { pendingInvite, requireCoach } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { PROGRAMS, TRACKING_MODES } from "@/lib/enums";
+import { TRACKING_MODES } from "@/lib/enums";
 
 const INVITE_DAYS = 7;
 
@@ -16,7 +16,6 @@ const optional = <T extends z.ZodType<string>>(schema: T) => z.union([z.literal(
 const inviteInput = z.object({
   name: z.string().trim().min(1).max(100),
   email: z.string().trim().toLowerCase().pipe(optional(z.email())),
-  program: optional(z.enum(PROGRAMS)),
   trackingMode: optional(z.enum(TRACKING_MODES)),
 });
 

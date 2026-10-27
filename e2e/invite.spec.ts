@@ -10,13 +10,14 @@ test("coach invites a client, who accepts in another browser and lands in the ap
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Jméno klienta").fill("Klára Dvořáková");
   await dialog.getByLabel("E-mail (nepovinný)").fill("klara@test.cz");
-  await dialog.getByLabel("Program").selectOption("SPORTS");
+  await dialog.getByLabel("Sledování").selectOption("PORTIONS");
   await dialog.getByRole("button", { name: "Vytvořit odkaz" }).click();
   const link = await dialog.getByLabel("Odkaz pozvánky").inputValue();
   expect(link).toMatch(/^http:\/\/localhost:3100\/invite\/[\w-]{43}$/);
   await dialog.getByRole("button", { name: "Hotovo" }).click();
   const pending = page.getByRole("region", { name: "Čekající pozvánky" });
   await expect(pending.getByText("Klára Dvořáková")).toBeVisible();
+  await expect(pending.getByText("Sledování: Porce")).toBeVisible();
 
   // A fresh browser: nobody signed in.
   const client = await (await browser.newContext()).newPage();
@@ -38,7 +39,7 @@ test("coach invites a client, who accepts in another browser and lands in the ap
 
   await page.reload();
   await expect(pending.getByText("Klára Dvořáková")).toHaveCount(0);
-  await expect(page.getByRole("row", { name: /Klára Dvořáková.*Sportovní.*Kalorie/ })).toBeVisible();
+  await expect(page.getByRole("row", { name: /Klára Dvořáková.*Porce/ })).toBeVisible();
 });
 
 test("coach revokes a pending invite and its link stops working", async ({ page }) => {

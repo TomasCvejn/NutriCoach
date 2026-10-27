@@ -82,7 +82,6 @@ model Client {
   user         User     @relation("ClientUser", fields: [userId], references: [id], onDelete: Cascade)
   coachId      String
   coach        User     @relation("CoachClients", fields: [coachId], references: [id])
-  program      String   @default("GENERAL") // PROGRAMS
   trackingMode String   @default("CALORIES") // TRACKING_MODES
   createdAt    DateTime @default(now())
   invite       Invite?
@@ -98,7 +97,6 @@ model Invite {
   coach        User      @relation(fields: [coachId], references: [id], onDelete: Cascade)
   name         String
   email        String? // lowercased; set → the Google email must match
-  program      String? // PROGRAMS; null → the client picks in onboarding
   trackingMode String? // TRACKING_MODES; null → the client picks in onboarding
   expiresAt    DateTime
   usedAt       DateTime?

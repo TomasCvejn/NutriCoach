@@ -27,11 +27,6 @@
     "logout": "Odhlásit se",
     "clients": "Klienti"
   },
-  "Programs": {
-    "GENERAL": "Obecný",
-    "SPORTS": "Sportovní",
-    "COMPETITION": "Závodní"
-  },
   "TrackingModes": {
     "CALORIES": "Kalorie",
     "PORTIONS": "Porce",
@@ -43,7 +38,7 @@
     "invites": "Čekající pozvánky",
     "noInvites": "Žádné čekající pozvánky. Vytvořený odkaz tu zůstane, dokud ho klient nepřijme.",
     "anyEmail": "Jakýkoli účet Google",
-    "inviteSetup": "Program: {program} · Sledování: {mode}",
+    "inviteSetup": "Sledování: {mode}",
     "clientChooses": "vybere klient",
     "expires": "Platí do {date}",
     "copyLink": "Kopírovat odkaz",
@@ -54,7 +49,6 @@
     "noClients": "Zatím žádní klienti. Pozvěte prvního.",
     "columns": {
       "name": "Jméno",
-      "program": "Program",
       "mode": "Sledování"
     },
     "invite": {
@@ -66,7 +60,6 @@
       "email": "E-mail (nepovinný)",
       "emailHint": "Když ho vyplníte, klient se musí přihlásit tímto účtem Google.",
       "emailInvalid": "Zadejte platný e-mail, nebo pole nechte prázdné.",
-      "program": "Program",
       "mode": "Sledování",
       "clientChooses": "Vybere klient",
       "cancel": "Zrušit",

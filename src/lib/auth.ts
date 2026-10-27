@@ -99,7 +99,7 @@ export const inviteChoices = z.object({ token: z.string().regex(/^[\w-]{1,100}$/
 export type InviteError = "unavailable" | "email_mismatch" | "email_taken" | "failed";
 
 // One transaction: checks, claims the token with a conditional update (single use, even under concurrent accepts),
-// creates the client's user + Client with the invite's program / mode (else the Client defaults until onboarding).
+// creates the client's user + Client with the invite's mode (else the Client default until onboarding).
 // Returns why it refused, or null. The caller signs the user in.
 export async function acceptInvite(input: unknown): Promise<InviteError | null> {
   const parsed = inviteChoices.extend({ email: z.email() }).safeParse(input);
@@ -113,8 +113,8 @@ export async function acceptInvite(input: unknown): Promise<InviteError | null> 
     if (await tx.user.findUnique({ where: { email } })) return "email_taken";
     const claimed = await tx.invite.updateMany({ where: { id: invite.id, ...pendingInvite() }, data: { usedAt: new Date() } });
     if (claimed.count === 0) return "unavailable";
-    const { coachId, program, trackingMode } = invite;
-    const client = { coachId, program: program ?? undefined, trackingMode: trackingMode ?? undefined, invite: { connect: { id: invite.id } } };
+    const { coachId, trackingMode } = invite;
+    const client = { coachId, trackingMode: trackingMode ?? undefined, invite: { connect: { id: invite.id } } };
     await createUser({ email, name: invite.name, role: "CLIENT", timezone, locale, client: { create: client } }, tx);
     return null;
   });

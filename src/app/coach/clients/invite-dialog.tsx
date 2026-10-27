@@ -7,7 +7,7 @@ import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, Di
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
-import { PROGRAMS, TRACKING_MODES } from "@/lib/enums";
+import { TRACKING_MODES } from "@/lib/enums";
 import { createInvite } from "./actions";
 
 // "Invite client": the form, then the link to send. Every opening starts a fresh form.
@@ -63,28 +63,16 @@ function InviteForm() {
         <Field id="invite-email" label={t("Clients.invite.email")} hint={t("Clients.invite.emailHint")} error={invalid("email") ? t("Clients.invite.emailInvalid") : undefined}>
           <Input id="invite-email" name="email" type="email" autoComplete="off" aria-invalid={invalid("email")} aria-describedby="invite-email-note" />
         </Field>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field id="invite-program" label={t("Clients.invite.program")}>
-            <NativeSelect id="invite-program" name="program" className="w-full">
-              <NativeSelectOption value="">{t("Clients.invite.clientChooses")}</NativeSelectOption>
-              {PROGRAMS.map((p) => (
-                <NativeSelectOption key={p} value={p}>
-                  {t(`Programs.${p}`)}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </Field>
-          <Field id="invite-mode" label={t("Clients.invite.mode")}>
-            <NativeSelect id="invite-mode" name="trackingMode" className="w-full">
-              <NativeSelectOption value="">{t("Clients.invite.clientChooses")}</NativeSelectOption>
-              {TRACKING_MODES.map((m) => (
-                <NativeSelectOption key={m} value={m}>
-                  {t(`TrackingModes.${m}`)}
-                </NativeSelectOption>
-              ))}
-            </NativeSelect>
-          </Field>
-        </div>
+        <Field id="invite-mode" label={t("Clients.invite.mode")}>
+          <NativeSelect id="invite-mode" name="trackingMode" className="w-full">
+            <NativeSelectOption value="">{t("Clients.invite.clientChooses")}</NativeSelectOption>
+            {TRACKING_MODES.map((m) => (
+              <NativeSelectOption key={m} value={m}>
+                {t(`TrackingModes.${m}`)}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+        </Field>
       </div>
       <DialogFooter className="-mx-6 -mb-6 px-6">
         <DialogClose render={<Button variant="outline" />}>{t("Clients.invite.cancel")}</DialogClose>

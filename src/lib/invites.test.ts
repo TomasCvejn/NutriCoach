@@ -19,9 +19,9 @@ const form = (fields: Record<string, string>) => {
 };
 
 // A pending invite of coach@demo.cz, created through the coach's action.
-async function newInvite(fields: Partial<Record<"name" | "email" | "program" | "trackingMode", string>> = {}) {
+async function newInvite(fields: Partial<Record<"name" | "email" | "trackingMode", string>> = {}) {
   await as("coach@demo.cz");
-  const state = await createInvite(null, form({ name: "Nový Klient", email: "", program: "", trackingMode: "", ...fields }));
+  const state = await createInvite(null, form({ name: "Nový Klient", email: "", trackingMode: "", ...fields }));
   if (!state || !("token" in state)) throw new Error(`invite not created: ${JSON.stringify(state)}`);
   return db.invite.findUniqueOrThrow({ where: { token: state.token } });
 }
@@ -31,38 +31,38 @@ const choices = (token: string, email: string) => ({ token, email, timezone: "Am
 test("coach creates an invite: random 256-bit token, 7 days, empty optional fields stay empty; invalid input is refused", async () => {
   const before = Date.now();
   const invite = await newInvite({ name: "  Klára  ", email: " Klara@Test.CZ " });
-  expect(invite).toMatchObject({ name: "Klára", email: "klara@test.cz", program: null, trackingMode: null, usedAt: null, revokedAt: null });
+  expect(invite).toMatchObject({ name: "Klára", email: "klara@test.cz", trackingMode: null, usedAt: null, revokedAt: null });
   expect(invite.token).toMatch(/^[\w-]{43}$/);
   expect(invite.expiresAt.getTime() - before).toBeGreaterThanOrEqual(7 * 24 * 60 * 60 * 1000);
   expect(invite.expiresAt.getTime() - Date.now()).toBeLessThanOrEqual(7 * 24 * 60 * 60 * 1000);
   expect((await newInvite()).token).not.toBe(invite.token);
 
   const count = await db.invite.count();
-  const refused = await createInvite(null, form({ name: " ", email: "not-an-email", program: "YOGA", trackingMode: "" }));
-  expect(refused).toEqual({ invalid: ["name", "email", "program"] });
+  const refused = await createInvite(null, form({ name: " ", email: "not-an-email", trackingMode: "YOGA" }));
+  expect(refused).toEqual({ invalid: ["name", "email", "trackingMode"] });
   expect(await db.invite.count()).toBe(count);
 });
 
 test("a client can't create invites", async () => {
   await as("general@demo.cz");
-  await expect(createInvite(null, form({ name: "X", email: "", program: "", trackingMode: "" }))).rejects.toMatchObject(redirectsTo("/app"));
+  await expect(createInvite(null, form({ name: "X", email: "", trackingMode: "" }))).rejects.toMatchObject(redirectsTo("/app"));
 });
 
-test("accepting creates the client user and Client in one go, with the invite's program / mode and the client's choices", async () => {
+test("accepting creates the client user and Client in one go, with the invite's mode and the client's choices", async () => {
   const email = uniqueEmail("accept");
-  const invite = await newInvite({ name: "Klára Dvořáková", email, program: "SPORTS", trackingMode: "PORTIONS" });
+  const invite = await newInvite({ name: "Klára Dvořáková", email, trackingMode: "PORTIONS" });
   expect(await acceptInvite(choices(invite.token, email.toUpperCase()))).toBeNull();
 
   const user = await db.user.findUniqueOrThrow({ where: { email }, include: { client: { include: { invite: true } } } });
   expect(user).toMatchObject({ name: "Klára Dvořáková", role: "CLIENT", active: true, timezone: "America/New_York", locale: "en" });
-  expect(user.client).toMatchObject({ coachId: invite.coachId, program: "SPORTS", trackingMode: "PORTIONS", invite: { id: invite.id } });
+  expect(user.client).toMatchObject({ coachId: invite.coachId, trackingMode: "PORTIONS", invite: { id: invite.id } });
   expect(user.client?.invite?.usedAt).toBeInstanceOf(Date);
 
-  // Without program / mode the client gets the defaults until onboarding.
+  // Without a mode the client gets the default until onboarding.
   const open = await newInvite();
   const other = uniqueEmail("defaults");
   expect(await acceptInvite(choices(open.token, other))).toBeNull();
-  expect(await db.client.findFirstOrThrow({ where: { user: { email: other } } })).toMatchObject({ program: "GENERAL", trackingMode: "CALORIES" });
+  expect(await db.client.findFirstOrThrow({ where: { user: { email: other } } })).toMatchObject({ trackingMode: "CALORIES" });
 });
 
 test("expired, used, revoked and unknown tokens are rejected and create nothing", async () => {
@@ -127,7 +127,7 @@ test("only the owning coach revokes, and only a pending invite", async () => {
 
 test("Google acceptance: the invite rides the OAuth state, the user is created and Google linked, the client is signed in", async () => {
   const email = uniqueEmail("google");
-  const invite = await newInvite({ email, program: "COMPETITION" });
+  const invite = await newInvite({ email, trackingMode: "GUIDANCE" });
   const start = { callbackURL: "/app", errorCallbackURL: `/invite/${invite.token}` };
 
   // The wrong Google account goes back to the invite page and creates nothing.
@@ -141,7 +141,7 @@ test("Google acceptance: the invite rides the OAuth state, the user is created a
   request.cookie = res.session;
   const { user, client } = await requireClient();
   expect(user).toMatchObject({ email, role: "CLIENT", timezone: "Europe/London", locale: "cs" });
-  expect(client).toMatchObject({ program: "COMPETITION", coachId: invite.coachId });
+  expect(client).toMatchObject({ trackingMode: "GUIDANCE", coachId: invite.coachId });
   expect(await db.account.findMany({ where: { userId: user.id } })).toMatchObject([{ providerId: "google", accountId: `g-${email}` }]);
 
   // The link is spent: a second round trip with it is refused (the user is already there).

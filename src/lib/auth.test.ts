@@ -95,7 +95,7 @@ test("requireCoachOf rejects another coach's client", async () => {
 
 test("requireCoach rejects a client, requireClient rejects a coach", async () => {
   await as("sports@demo.cz");
-  expect((await requireClient()).client).toMatchObject({ program: "SPORTS", trackingMode: "CALORIES" });
+  expect((await requireClient()).client).toMatchObject({ trackingMode: "CALORIES" });
   await expect(requireCoach()).rejects.toMatchObject(redirectsTo("/app"));
   await expect(requireCoachOf((await requireClient()).client.id)).rejects.toMatchObject(redirectsTo("/app"));
 

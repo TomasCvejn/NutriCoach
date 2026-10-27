@@ -15,7 +15,7 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 - `npm run dev` — dev server
 - `npm run check` — typecheck + lint + unit tests; must pass before every commit
 - `npm run test:e2e` — Playwright (fresh `e2e.db`, `next dev` on :3100 because dev login is refused in production; Next allows one `next dev` per directory, so stop your own `npm run dev` first). Sign in with `logIn(page, email)` from `e2e/dev-login.ts`
-- `npx prisma migrate dev --name <name> && npx prisma generate` — schema change (Prisma 7 `migrate dev` doesn't regenerate the client)
+- `npx prisma migrate dev --name <name> && npx prisma generate` — schema change (Prisma 7 `migrate dev` doesn't regenerate the client). A change that drops data makes `migrate dev` refuse non-interactively: `mkdir prisma/migrations/<YYYYMMDDHHMMSS>_<name> && npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script -o prisma/migrations/<…>/migration.sql`, then `npm run db:seed`
 - `npm run db:seed` — reset demo data (coach@demo.cz, general@ / sports@ / race@demo.cz; sign in via dev login)
 - `npm run coach:create -- --email … --name …` — new coach account (signs in with Google)
 

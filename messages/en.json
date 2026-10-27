@@ -27,11 +27,6 @@
     "logout": "Sign out",
     "clients": "Clients"
   },
-  "Programs": {
-    "GENERAL": "General",
-    "SPORTS": "Sports",
-    "COMPETITION": "Competition"
-  },
   "TrackingModes": {
     "CALORIES": "Calories",
     "PORTIONS": "Portions",
@@ -43,7 +38,7 @@
     "invites": "Pending invites",
     "noInvites": "No pending invites. A link you create appears here until the client accepts it.",
     "anyEmail": "Any Google account",
-    "inviteSetup": "Program: {program} · Tracking: {mode}",
+    "inviteSetup": "Tracking: {mode}",
     "clientChooses": "client chooses",
     "expires": "Expires {date}",
     "copyLink": "Copy link",
@@ -54,7 +49,6 @@
     "noClients": "No clients yet. Invite your first one.",
     "columns": {
       "name": "Name",
-      "program": "Program",
       "mode": "Tracking"
     },
     "invite": {
@@ -66,7 +60,6 @@
       "email": "Email (optional)",
       "emailHint": "When set, the client must sign in with this Google account.",
       "emailInvalid": "Enter a valid email or leave it empty.",
-      "program": "Program",
       "mode": "Tracking",
       "clientChooses": "Client chooses",
       "cancel": "Cancel",

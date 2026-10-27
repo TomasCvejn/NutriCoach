@@ -14,7 +14,6 @@ export default async function ClientsPage() {
     db.client.findMany({ where: { coachId: coach.id }, include: { user: { select: { name: true, email: true } } }, orderBy: { user: { name: "asc" } } }),
     db.invite.findMany({ where: { coachId: coach.id, ...pendingInvite() }, orderBy: { createdAt: "desc" } }),
   ]);
-  const choice = (value: string | null, group: "Programs" | "TrackingModes") => (value ? t(`${group}.${value}`) : t("Clients.clientChooses"));
 
   return (
     <div className="flex flex-col gap-8">
@@ -46,7 +45,7 @@ export default async function ClientsPage() {
                   </div>
                   <p className="truncate text-xs text-muted-foreground">{invite.email ?? t("Clients.anyEmail")}</p>
                   <p className="truncate text-xs text-muted-foreground">
-                    {t("Clients.inviteSetup", { program: choice(invite.program, "Programs"), mode: choice(invite.trackingMode, "TrackingModes") })}
+                    {t("Clients.inviteSetup", { mode: invite.trackingMode ? t(`TrackingModes.${invite.trackingMode}`) : t("Clients.clientChooses") })}
                   </p>
                   <div className="mt-2 flex gap-2">
                     <CopyLinkButton token={invite.token} />
@@ -74,7 +73,6 @@ export default async function ClientsPage() {
               <thead>
                 <tr className="text-left text-xs text-muted-foreground">
                   <th className="py-2 font-normal">{t("Clients.columns.name")}</th>
-                  <th className="w-[28%] py-2 font-normal">{t("Clients.columns.program")}</th>
                   <th className="w-[28%] py-2 font-normal">{t("Clients.columns.mode")}</th>
                 </tr>
               </thead>
@@ -85,7 +83,6 @@ export default async function ClientsPage() {
                       <p className="truncate font-medium">{client.user.name}</p>
                       <p className="truncate text-xs text-muted-foreground">{client.user.email}</p>
                     </td>
-                    <td className="py-3 pr-4">{t(`Programs.${client.program}`)}</td>
                     <td className="py-3">{t(`TrackingModes.${client.trackingMode}`)}</td>
                   </tr>
                 ))}
