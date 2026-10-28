@@ -5,6 +5,7 @@ import { Pill } from "@/components/pill";
 import { requireCoachOf } from "@/lib/auth";
 import { ageOn, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
+import { latestWeight } from "@/lib/nutrition";
 import type { Allergen, DietType, Goal, Sex, SportLevel, TrackingMode } from "@/lib/enums";
 
 // Overview: what the client works toward and what to know before planning (profile summary, allergies first in mind).
@@ -65,7 +66,7 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
   ];
 
   const figures: [string, ReactNode][] = [
-    [t("ClientDashboard.weight"), kg(client.weightKg)],
+    [t("ClientDashboard.weight"), kg(latestWeight(client.weightKg))],
     [t("ClientDashboard.targetWeight"), kg(client.targetWeightKg)],
     [t("Profile.fields.targetDate"), day(client.targetDate)],
   ];
