@@ -15,7 +15,7 @@ test("coach lands on /coach and can log out", async ({ page }) => {
 test("client lands on /app and opening /coach sends them back", async ({ page }) => {
   await logIn(page, "general@demo.cz");
   await expect(page).toHaveURL("/app");
-  await expect(page.getByRole("heading", { name: "Dnes" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Dnes", level: 1 })).toBeVisible();
 
   await page.goto("/coach");
   await expect(page).toHaveURL("/app");

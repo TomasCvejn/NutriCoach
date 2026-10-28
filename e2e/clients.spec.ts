@@ -8,6 +8,9 @@ test("coach filters the client list by mode, searches, sorts and switches status
   await page.goto("/coach/clients");
   const list = page.getByRole("region", { name: "Seznam klientů" });
   await expect(list.getByRole("link", { name: "Emma Walker" })).toBeVisible();
+  // The seeded week: sports@ adherent 6 of the 7 days ending yesterday, last logged yesterday.
+  await expect(list.getByRole("row", { name: /Emma Walker/ })).toContainText("včera");
+  await expect(list.getByRole("row", { name: /Emma Walker/ })).toContainText("86 %");
 
   // CALORIES: sports@'s mode, which no test changes (general@'s and race@'s modes are switched by other tests).
   await list.getByLabel("Sledování").selectOption("CALORIES");

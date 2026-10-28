@@ -12,7 +12,7 @@ test("logged out, / shows the login in Czech by default", async ({ page }) => {
 test("a signed-in user's locale beats the cookie", async ({ page }) => {
   await logIn(page, "sports@demo.cz"); // en user, the login page itself is cs
   await expect(page).toHaveURL("/app");
-  await expect(page.getByRole("heading", { name: "Today" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Today", level: 1 })).toBeVisible();
   await expect(page.locator("html")).toHaveAttribute("lang", "en");
 });
 

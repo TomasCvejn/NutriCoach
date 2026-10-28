@@ -3,6 +3,17 @@ import { logIn } from "./dev-login";
 
 // Everything that depends on general@'s tracking mode, in one file so it runs in order: the guidance test switches the
 // mode to GUIDANCE and back, which would break the PORTIONS tests if they ran beside it.
+test("general@'s home shows today's goals in hand portions", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "general@demo.cz");
+  await expect(page).toHaveURL("/app");
+  const goals = page.getByRole("region", { name: "Dnešní cíle" });
+  await expect(goals.getByRole("meter", { name: "Bílkoviny (dlaně)" })).toHaveAttribute("aria-valuetext", "0 / 6");
+  await expect(goals.getByRole("meter", { name: "Sacharidy (hrsti)" })).toHaveAttribute("aria-valuetext", "0 / 5");
+  await goals.getByRole("link", { name: "Zapsat" }).click();
+  await expect(page).toHaveURL("/app/nutrition");
+});
+
 test("general@ sees the seeded plan in hand portions", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await logIn(page, "general@demo.cz");

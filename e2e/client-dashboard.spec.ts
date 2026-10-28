@@ -1,6 +1,14 @@
 import { expect, test } from "@playwright/test";
 import { logIn } from "./dev-login";
 
+// race@'s mode is switched below, so race@'s home widget is checked here first.
+test("race@'s home shows today's goals in calories", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "race@demo.cz");
+  await expect(page).toHaveURL("/app");
+  await expect(page.getByRole("region", { name: "Dnešní cíle" }).getByRole("meter", { name: "Energie" })).toHaveAttribute("aria-valuetext", "0 / 2\u00a0100 kcal"); // cs groups thousands with U+00A0
+});
+
 test("coach opens race@'s dashboard and switches the tracking mode to PORTIONS and back", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await logIn(page, "coach@demo.cz");

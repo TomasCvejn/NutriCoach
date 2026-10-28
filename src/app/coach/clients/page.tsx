@@ -33,7 +33,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
     const active = params.sort === column;
     const Arrow = params.dir === "asc" ? ArrowUpIcon : ArrowDownIcon;
     return (
-      <th aria-sort={active ? (params.dir === "asc" ? "ascending" : "descending") : undefined} className={`py-2 font-normal ${className}`}>
+      <th aria-sort={active ? (params.dir === "asc" ? "ascending" : "descending") : undefined} className={`py-2 pr-4 font-normal last:pr-0 ${className}`}>
         <Link href={href({ sort: column, dir: active && params.dir === "asc" ? "desc" : "asc" })} className="inline-flex items-center gap-1 hover:text-foreground">
           {t(`Clients.columns.${column}`)}
           {active && <Arrow aria-hidden className="size-3.5" />}
@@ -41,6 +41,11 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
       </th>
     );
   };
+
+  // The last day anything of the client's current mode was logged, in the client's days; a dash when never.
+  const lastLogged = (client: ClientRow) =>
+    client.daysAgo == null ? "—" : client.daysAgo <= 1 ? t(client.daysAgo === 0 ? "Clients.today" : "Clients.yesterday") : t("Clients.daysAgo", { count: client.daysAgo });
+  const adherence = (client: ClientRow) => (client.adherence == null ? "—" : format.number(client.adherence / 100, { style: "percent" }));
 
   // Active is the normal state, so only the others get a mark.
   const statusMark = (status: ClientRow["status"]) =>
@@ -60,9 +65,9 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
         <InviteDialog />
       </div>
 
-      {/* The invites are share links: a right rail beside the list on wide screens, under it on narrow ones. */}
-      <div className="grid items-start gap-10 xl:grid-cols-[minmax(0,1fr)_384px] xl:gap-6">
-        <section aria-labelledby="client-list" className="xl:col-start-1 xl:row-start-1">
+      {/* The list takes the full width (its columns need it); the invites, share links, follow it. */}
+      <div className="flex flex-col gap-10">
+        <section aria-labelledby="client-list">
           <h2 id="client-list" className="sr-only">
             {t("Clients.list")}
           </h2>
@@ -102,8 +107,10 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                   <thead>
                     <tr className="text-left text-xs text-muted-foreground">
                       {sortHeader("name")}
-                      {sortHeader("mode", "hidden w-[22%] sm:table-cell")}
-                      {sortHeader("status", "hidden w-[22%] sm:table-cell")}
+                      {sortHeader("mode", "hidden w-28 sm:table-cell")}
+                      {sortHeader("status", "hidden w-40 lg:table-cell")}
+                      {sortHeader("lastLogged", "hidden w-32 md:table-cell")}
+                      {sortHeader("adherence", "hidden w-28 text-right md:table-cell")}
                       <th className="w-28">
                         <span className="sr-only">{t("Clients.columns.actions")}</span>
                       </th>
@@ -117,15 +124,20 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                             <Link href={`/coach/clients/${client.id}`} className="truncate font-medium hover:underline">
                               {client.name}
                             </Link>
-                            {client.status !== "ACTIVE" && <span className="sm:hidden">{statusMark(client.status)}</span>}
+                            {client.status !== "ACTIVE" && <span className="lg:hidden">{statusMark(client.status)}</span>}
                           </div>
                           <p className="truncate text-xs text-muted-foreground">
                             <span className="sm:hidden">{t(`TrackingModes.${client.trackingMode as TrackingMode}`)} · </span>
+                            <span className="md:hidden">{t("Clients.summaryLine", { last: lastLogged(client), adherence: adherence(client) })} · </span>
                             {client.email}
                           </p>
                         </td>
                         <td className="hidden py-3 pr-4 sm:table-cell">{t(`TrackingModes.${client.trackingMode as TrackingMode}`)}</td>
-                        <td className="hidden py-3 pr-4 sm:table-cell">{statusMark(client.status)}</td>
+                        <td className="hidden py-3 pr-4 lg:table-cell">{statusMark(client.status)}</td>
+                        <td className="hidden py-3 pr-4 text-muted-foreground md:table-cell" title={client.lastLogged ?? undefined}>
+                          {lastLogged(client)}
+                        </td>
+                        <td className="hidden py-3 pr-4 text-right tabular-nums md:table-cell">{adherence(client)}</td>
                         <td className="py-3 text-right">
                           {client.status === "INACTIVE" ? (
                             <form action={setClientActive}>
@@ -148,7 +160,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
           )}
         </section>
 
-        <section aria-labelledby="pending-invites" className="xl:col-start-2 xl:row-start-1">
+        <section aria-labelledby="pending-invites" className="max-w-3xl">
           <h2 id="pending-invites" className="text-lg font-semibold">
             {t("Clients.invites")}
           </h2>

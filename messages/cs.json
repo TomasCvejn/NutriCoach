@@ -145,7 +145,9 @@
       "name": "Jméno",
       "mode": "Sledování",
       "status": "Stav",
-      "actions": "Akce"
+      "actions": "Akce",
+      "lastLogged": "Naposledy zapsáno",
+      "adherence": "Adherence 7 dní"
     },
     "invite": {
       "open": "Pozvat klienta",
@@ -164,7 +166,11 @@
       "linkNote": "Pošlete ho klientovi. Funguje jednou a platí 7 dní.",
       "linkLabel": "Odkaz pozvánky",
       "done": "Hotovo"
-    }
+    },
+    "today": "dnes",
+    "yesterday": "včera",
+    "daysAgo": "před {count, plural, one {# dnem} few {# dny} other {# dny}}",
+    "summaryLine": "zapsáno {last} · adherence {adherence}"
   },
   "ClientDashboard": {
     "mode": "Sledování: {mode}",
@@ -634,7 +640,10 @@
     "activeClients": "Aktivní klienti"
   },
   "ClientHome": {
-    "title": "Dnes"
+    "title": "Dnes",
+    "nutrition": "Dnešní cíle",
+    "log": "Zapsat",
+    "meals": "Jídla dnes"
   },
   "Notifications": {
     "title": "Oznámení",

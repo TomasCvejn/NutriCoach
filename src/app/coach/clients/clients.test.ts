@@ -15,7 +15,10 @@ const form = (fields: Record<string, string>) => {
   return data;
 };
 
-const row = (name: string, trackingMode: string, status: ClientRow["status"]): ClientRow => ({ id: name, name, email: `${name}@x.cz`, trackingMode, status });
+const row = (name: string, trackingMode: string, status: ClientRow["status"], adherence: number | null = null, lastLogged: string | null = null): ClientRow => ({
+  ...{ id: name, name, email: `${name}@x.cz`, trackingMode, status },
+  ...{ adherence, lastLogged, daysAgo: null },
+});
 const rows = [row("Šárka", "PORTIONS", "ACTIVE"), row("anna", "CALORIES", "ONBOARDING"), row("Zdeněk", "GUIDANCE", "INACTIVE"), row("Bára", "CALORIES", "ACTIVE")];
 const names = (list: { rows: ClientRow[] }) => list.rows.map((r) => r.name);
 
@@ -40,6 +43,13 @@ test("sorting by mode or status keeps names in order within a group; desc revers
   expect(names(clientList(ch, listParams.parse({}), "en"))).toEqual(["Chvojka", "Horák"]);
 });
 
+test("sorting by last logged day or adherence puts never-logged / no-data clients lowest", () => {
+  const list = [row("A", "CALORIES", "ACTIVE", 86, "2026-10-27"), row("B", "PORTIONS", "ACTIVE", null, null), row("C", "CALORIES", "ACTIVE", 40, "2026-10-20")];
+  expect(names(clientList(list, listParams.parse({ sort: "adherence" }), "cs"))).toEqual(["B", "C", "A"]);
+  expect(names(clientList(list, listParams.parse({ sort: "adherence", dir: "desc" }), "cs"))).toEqual(["A", "C", "B"]);
+  expect(names(clientList(list, listParams.parse({ sort: "lastLogged" }), "cs"))).toEqual(["B", "C", "A"]);
+});
+
 test("unknown search params fall back to the default view", () => {
   expect(listParams.parse({ q: ["a", "b"], status: "deleted", mode: "YOGA", sort: "email", dir: "up" })).toEqual({ q: "", status: "active", sort: "name", dir: "asc" });
 });
@@ -60,7 +70,9 @@ test("a coach lists only their own clients", async () => {
   expect(listed.map((c) => c.id)).not.toContain(other.client.id);
 
   request.cookie = await signIn(other.coach.email);
-  expect(await coachClients()).toEqual([{ id: other.client.id, name: "List Client", email: other.user.email, trackingMode: "CALORIES", status: "ONBOARDING" }]);
+  expect(await coachClients()).toEqual([
+    { id: other.client.id, name: "List Client", email: other.user.email, trackingMode: "CALORIES", status: "ONBOARDING", lastLogged: null, daysAgo: null, adherence: null },
+  ]);
 
   request.cookie = await signIn("general@demo.cz");
   await expect(coachClients()).rejects.toMatchObject(redirectsTo("/app"));

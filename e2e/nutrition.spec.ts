@@ -22,6 +22,15 @@ test("sports@ and race@ see their seeded plans (general@'s is in general-modes.s
   await expect(race.getByRole("region", { name: "Od trenéra" })).toContainText("Bez luštěnin 3 dny před závodem");
 });
 
+test("sports@'s home shows today's goals: kcal and macros against the rest-day targets", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "sports@demo.cz");
+  await expect(page).toHaveURL("/app");
+  const goals = page.getByRole("region", { name: "Today's goals" });
+  await expect(goals.getByRole("meter", { name: "Energy" })).toHaveAttribute("aria-valuetext", "0 / 2,200 kcal");
+  await expect(goals.getByRole("meter", { name: "Protein" })).toHaveAttribute("aria-valuetext", "0 / 120 g");
+});
+
 test("sports@ sets today to a training day: the badge and the targets follow, and automatic brings the rest day back", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await logIn(page, "sports@demo.cz");
