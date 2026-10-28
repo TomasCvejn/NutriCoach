@@ -1,6 +1,6 @@
 "use client";
 
-import { ActivityIcon, EllipsisIcon, HouseIcon, type LucideIcon, SunIcon, UsersIcon } from "lucide-react";
+import { ActivityIcon, BellIcon, EllipsisIcon, HouseIcon, type LucideIcon, SunIcon, UsersIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -17,9 +17,10 @@ type User = { name: string; email: string };
 
 // Both signed-in areas. Desktop (lg+): a 230px sidebar on the page ground with every entry, no top bar (nothing real to put in one).
 // Phone and tablet: a top bar with the mark, the tabs in a bottom bar, the rest and the account in the "More" sheet.
+// The notification bell sits beside the mark in both (sidebar top, phone top bar).
 // Accent ladder: the active row is a pale tint with the hue's dark ink, only its icon takes the full hue
 // (primary-track, because primary-soft disappears on the page ground).
-export function AppShell({ nav, user, children }: { nav: Nav; user: User; children: ReactNode }) {
+export function AppShell({ nav, user, unread, children }: { nav: Nav; user: User; unread: number; children: ReactNode }) {
   const t = useTranslations();
   const pathname = usePathname();
   const home = nav.tabs[0].href;
@@ -29,9 +30,12 @@ export function AppShell({ nav, user, children }: { nav: Nav; user: User; childr
   return (
     <div className="flex flex-1">
       <aside className="sticky top-0 hidden h-dvh w-[230px] flex-none flex-col border-r lg:flex">
-        <Link href={home} className="flex h-16 flex-none items-center px-5">
-          <Logo />
-        </Link>
+        <div className="flex h-16 flex-none items-center justify-between pr-3 pl-5">
+          <Link href={home}>
+            <Logo />
+          </Link>
+          <Bell href={`${home}/notifications`} unread={unread} active={isActive(`${home}/notifications`)} />
+        </div>
         <nav aria-label={t("Shell.nav")} className="flex-1 overflow-y-auto px-3 py-2">
           <ul className="flex flex-col gap-0.5">
             {[...nav.tabs, ...nav.more].map(({ key, href }) => {
@@ -57,10 +61,11 @@ export function AppShell({ nav, user, children }: { nav: Nav; user: User; childr
       </aside>
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-14 flex-none items-center border-b px-4 lg:hidden">
+        <header className="flex h-14 flex-none items-center justify-between border-b pr-2 pl-4 lg:hidden">
           <Link href={home}>
             <Logo />
           </Link>
+          <Bell href={`${home}/notifications`} unread={unread} active={isActive(`${home}/notifications`)} />
         </header>
         <main className="flex-1 px-4 pt-6 pb-28 sm:px-[29px] sm:pt-9 lg:pb-9">{children}</main>
       </div>
@@ -81,6 +86,26 @@ export function AppShell({ nav, user, children }: { nav: Nav; user: User; childr
         </ul>
       </nav>
     </div>
+  );
+}
+
+// The unread count is a small mark, so it takes the full hue; no badge at zero.
+function Bell({ href, unread, active }: { href: string; unread: number; active: boolean }) {
+  const t = useTranslations("Notifications");
+  return (
+    <Link
+      href={href}
+      aria-label={t("bell", { count: unread })}
+      aria-current={active ? "page" : undefined}
+      className="relative flex size-11 items-center justify-center rounded-md text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 aria-[current=page]:bg-primary-track/60 aria-[current=page]:text-primary"
+    >
+      <BellIcon className="size-5" aria-hidden />
+      {unread > 0 && (
+        <span className="absolute top-1.5 right-1 min-w-4 rounded-full bg-primary px-1 text-center text-[11px] leading-4 font-medium text-primary-foreground tabular-nums">
+          {unread > 99 ? "99+" : unread}
+        </span>
+      )}
+    </Link>
   );
 }
 

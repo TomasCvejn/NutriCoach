@@ -125,5 +125,25 @@
   },
   "ClientHome": {
     "title": "Dnes"
+  },
+  "Notifications": {
+    "title": "Oznámení",
+    "bell": "{count, plural, =0 {Oznámení} one {Oznámení, # nepřečtené} few {Oznámení, # nepřečtená} other {Oznámení, # nepřečtených}}",
+    "summary": "{count, plural, =0 {Vše přečteno} one {# nepřečtené} few {# nepřečtená} other {# nepřečtených}}",
+    "unread": "Nepřečtené",
+    "markRead": "Označit jako přečtené",
+    "markAllRead": "Označit vše jako přečtené",
+    "empty": "Zatím žádná oznámení.",
+    "types": {
+      "NEW_MESSAGE": "Nová zpráva – {from}",
+      "CHECK_IN_DUE": "Je čas na týdenní check-in ({date})",
+      "FEEDBACK_PUBLISHED": "Zpětná vazba trenéra k vašemu check-inu je hotová",
+      "PLAN_UPDATED": "Váš výživový plán byl upraven",
+      "CALL_SCHEDULED": "Naplánovaný hovor: {time}",
+      "COMPETITION_PHASE_STARTED": "{competition}: začala nová fáze přípravy",
+      "ONBOARDING_COMPLETED": "Úvodní nastavení dokončeno: {client}",
+      "CHECK_IN_SUBMITTED": "Nový check-in: {client}",
+      "CLIENT_DELETED_ACCOUNT": "Účet smazán: {client}"
+    }
   }
 }

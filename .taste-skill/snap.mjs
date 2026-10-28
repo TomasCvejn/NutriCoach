@@ -7,7 +7,8 @@ import { chromium } from "@playwright/test";
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
-const base = "http://localhost:3000";
+// SNAP_BASE=http://localhost:3100 snaps a side server (NEXT_DIST_DIR=.next-e2e) while `npm run dev` keeps :3000.
+const base = process.env.SNAP_BASE ?? "http://localhost:3000";
 const out = ".taste-skill/snap";
 mkdirSync(out, { recursive: true });
 const browser = await chromium.launch();

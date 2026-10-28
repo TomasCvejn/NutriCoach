@@ -25,6 +25,7 @@ model User {
   client        Client?   @relation("ClientUser")
   clients       Client[]  @relation("CoachClients")
   invites       Invite[]
+  notifications Notification[]
 
   @@map("user")
 }
@@ -106,4 +107,19 @@ model Invite {
   createdAt    DateTime  @default(now())
 
   @@index([coachId])
+}
+
+// In-app notifications. Written only by notify() (src/lib/notifications.ts); a key dedupes lazy ones (check-in due, phase started).
+// SQLite treats NULL keys as distinct, so notifications without a key never collide.
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String // NOTIFICATION_TYPES
+  payload   Json // NotificationPayloads[type]
+  key       String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@unique([userId, type, key])
 }

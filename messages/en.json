@@ -125,5 +125,25 @@
   },
   "ClientHome": {
     "title": "Today"
+  },
+  "Notifications": {
+    "title": "Notifications",
+    "bell": "{count, plural, =0 {Notifications} one {Notifications, # unread} other {Notifications, # unread}}",
+    "summary": "{count, plural, =0 {All read} other {# unread}}",
+    "unread": "Unread",
+    "markRead": "Mark as read",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications yet.",
+    "types": {
+      "NEW_MESSAGE": "New message from {from}",
+      "CHECK_IN_DUE": "Your weekly check-in for {date} is due",
+      "FEEDBACK_PUBLISHED": "Your coach's feedback on your check-in is ready",
+      "PLAN_UPDATED": "Your nutrition plan was updated",
+      "CALL_SCHEDULED": "Call scheduled for {time}",
+      "COMPETITION_PHASE_STARTED": "{competition}: a new preparation phase has started",
+      "ONBOARDING_COMPLETED": "{client} completed onboarding",
+      "CHECK_IN_SUBMITTED": "{client} submitted a check-in",
+      "CLIENT_DELETED_ACCOUNT": "{client} deleted their account"
+    }
   }
 }

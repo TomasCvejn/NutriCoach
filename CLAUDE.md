@@ -14,7 +14,7 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 ## Commands (created by the scaffold item — keep this list true)
 - `npm run dev` — dev server
 - `npm run check` — typecheck + lint + unit tests; must pass before every commit
-- `npm run test:e2e` — Playwright (fresh `e2e.db`, `next dev` on :3100 because dev login is refused in production; Next allows one `next dev` per directory, so stop your own `npm run dev` first). Sign in with `logIn(page, email)` from `e2e/dev-login.ts`
+- `npm run test:e2e` — Playwright (fresh `e2e.db`, `next dev` on :3100 because dev login is refused in production; it builds into `.next-e2e` via `NEXT_DIST_DIR`, so a running `npm run dev` can stay). Sign in with `logIn(page, email)` from `e2e/dev-login.ts`
 - `npx prisma migrate dev --name <name> && npx prisma generate` — schema change (Prisma 7 `migrate dev` doesn't regenerate the client). A change that drops data makes `migrate dev` refuse non-interactively: `mkdir prisma/migrations/<YYYYMMDDHHMMSS>_<name> && npx prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --script -o prisma/migrations/<…>/migration.sql`, then `npm run db:seed`
 - `npm run db:seed` — reset demo data (coach@demo.cz, general@ / sports@ / race@demo.cz; sign in via dev login)
 - `npm run coach:create -- --email … --name …` — new coach account (signs in with Google)
@@ -26,4 +26,5 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 - Better Auth checks the Prisma schema on every request and fails all of them if one of its columns is missing (e.g. the unused `account.password`): never drop a Better Auth column.
 - `npm run db:seed` deletes and recreates the SQLite file: restart a running `next dev` afterwards (it keeps the old file open). `npx shadcn add` asks before overwriting `button.tsx`: answer with `printf 'n\n' | npx shadcn@4 add <name>`.
 - `inspect.mjs` can't sign in: with `npm run dev` on :3000, `node .taste-skill/snap.mjs coach@demo.cz:/coach …` saves static snapshots to inspect, and `--out` must sit under `.taste-skill/app/` or the inspector judges by page rules instead of app rules.
+- In `loop.sh` runs, `VAR=x cmd`, pipes and `;` chains need approval: set env through `node -e "require('child_process').execSync('npm run db:seed', { stdio: 'inherit', env: { ...process.env, DATABASE_URL: 'file:./e2e.db' } })"`.
 - taste scripts need Chrome: `loop.sh` sets `CHROME_PATH` to Playwright's Chromium; elsewhere `export CHROME_PATH=$(ls -d ~/.cache/ms-playwright/chromium-*/chrome-linux*/chrome | tail -1)`.
