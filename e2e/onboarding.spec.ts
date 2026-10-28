@@ -76,5 +76,7 @@ test("a new client goes through onboarding: a reload keeps the step and the answ
   await page.goto("/coach/clients");
   await expect(page.getByRole("row", { name: /Ondřej Málek.*Porce/ })).toBeVisible();
   await page.getByRole("link", { name: "Ondřej Málek" }).click();
-  await expect(page.getByText("Preferované sledování: Porce.")).toBeVisible();
+  const profile = page.getByRole("region", { name: "Profil" });
+  await expect(profile.getByText("Preferované sledování")).toBeVisible();
+  await expect(profile.getByText("Porce", { exact: true })).toBeVisible();
 });

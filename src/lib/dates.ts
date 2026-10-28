@@ -19,3 +19,8 @@ export function weekday(date: string) {
 export function diffDays(from: string, to: string) {
   return (Date.parse(`${to}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86_400_000;
 }
+
+// Whole years from a birth date to a day; the birthday counts from its own month-day (29 Feb: from 1 March in other years).
+export function ageOn(birthDate: string, today: string) {
+  return Number(today.slice(0, 4)) - Number(birthDate.slice(0, 4)) - (today.slice(5) < birthDate.slice(5) ? 1 : 0);
+}

@@ -3,10 +3,12 @@ import { expect, test, vi } from "vitest";
 import { acceptInvite, createUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { redirectsTo, signIn, uniqueEmail } from "@/test/auth";
+import { changeTrackingMode } from "@/app/coach/clients/[id]/actions";
 import { nextStep, previousStep } from "./actions";
 
 const request = vi.hoisted(() => ({ cookie: "" }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers({ cookie: request.cookie }) }));
+vi.mock("next/cache", () => ({ revalidatePath: () => {} }));
 
 const form = (fields: Record<string, string | string[]>) => {
   const data = new FormData();
@@ -81,6 +83,17 @@ test("the client can't overwrite a mode the invite set; the preference is kept f
   await nextStep(null, form({ step: "0" })).catch(() => {});
   await expect(nextStep(null, form({ ...about, preferredTrackingMode: "CALORIES" }))).rejects.toMatchObject(redirectsTo("/onboarding"));
   expect(await stored(clientId)).toMatchObject({ onboardingStep: 2, trackingMode: "PORTIONS", preferredTrackingMode: "CALORIES" });
+});
+
+test("a mode the coach already changed on the dashboard stays; the preference is kept for the coach", async () => {
+  const { coach, clientId } = await invited(null);
+  const client = request.cookie;
+  await nextStep(null, form({ step: "0" })).catch(() => {});
+  request.cookie = await signIn(coach.email);
+  await changeTrackingMode(form({ clientId, trackingMode: "PORTIONS" }));
+  request.cookie = client;
+  await expect(nextStep(null, form(about))).rejects.toMatchObject(redirectsTo("/onboarding"));
+  expect(await stored(clientId)).toMatchObject({ onboardingStep: 2, trackingMode: "PORTIONS", preferredTrackingMode: "GUIDANCE" });
 });
 
 test("invalid answers are refused with what was sent, and nothing is written; no preference leaves the mode alone", async () => {

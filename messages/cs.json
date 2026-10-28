@@ -158,6 +158,40 @@
       "done": "Hotovo"
     }
   },
+  "ClientDashboard": {
+    "mode": "Sledování: {mode}",
+    "noGoal": "Cíl zatím není zadaný",
+    "tabs": {
+      "label": "Sekce klienta",
+      "overview": "Přehled"
+    },
+    "changeMode": {
+      "open": "Změnit sledování",
+      "title": "Sledování pro {name}",
+      "text": "Nic se nesmaže: záznamy z ostatních režimů zůstanou a ukážou se, až režim vrátíte.",
+      "label": "Režim sledování",
+      "modes": {
+        "CALORIES": "Zapisuje jídla a vidí kalorie a makroživiny proti cílům.",
+        "PORTIONS": "Počítá porce rukou proti cílům porcí, bez vážení.",
+        "GUIDANCE": "Bez čísel: u každého jídla z plánu označí, jestli se ho podařilo dodržet."
+      },
+      "cancel": "Zrušit",
+      "save": "Uložit"
+    },
+    "weight": "Aktuální váha",
+    "targetWeight": "Cílová váha",
+    "success": "Podle čeho pozná úspěch",
+    "editProfile": "Upravit profil",
+    "age": "Věk",
+    "years": "{age, plural, one {# rok} few {# roky} other {# let}}",
+    "height": "Výška",
+    "sport": "Sport",
+    "sessionsPerWeek": "{count}× týdně",
+    "minutes": "{minutes} min",
+    "contact": "Kontakt",
+    "kg": "{value} kg",
+    "cm": "{value} cm"
+  },
   "Invite": {
     "title": "{coach} vás zve do NutriCoach",
     "lead": "Tady s vámi trenér povede výživový plán. Založte si účet přes Google.",

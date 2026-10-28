@@ -158,6 +158,40 @@
       "done": "Done"
     }
   },
+  "ClientDashboard": {
+    "mode": "Tracking: {mode}",
+    "noGoal": "No goal set yet",
+    "tabs": {
+      "label": "Client sections",
+      "overview": "Overview"
+    },
+    "changeMode": {
+      "open": "Change tracking",
+      "title": "Tracking for {name}",
+      "text": "Nothing is deleted: logs from the other modes stay and show again when you switch back.",
+      "label": "Tracking mode",
+      "modes": {
+        "CALORIES": "Logs foods and sees kcal and macros against the targets.",
+        "PORTIONS": "Counts hand portions against portion targets, no weighing.",
+        "GUIDANCE": "No numbers: marks whether each planned meal was followed."
+      },
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "weight": "Current weight",
+    "targetWeight": "Target weight",
+    "success": "How they'll know it worked",
+    "editProfile": "Edit profile",
+    "age": "Age",
+    "years": "{age, plural, one {# year} other {# years}}",
+    "height": "Height",
+    "sport": "Sport",
+    "sessionsPerWeek": "{count}× a week",
+    "minutes": "{minutes} min",
+    "contact": "Contact",
+    "kg": "{value} kg",
+    "cm": "{value} cm"
+  },
   "Invite": {
     "title": "{coach} invited you to NutriCoach",
     "lead": "Your coach will run your nutrition plan here. Create your account with Google.",

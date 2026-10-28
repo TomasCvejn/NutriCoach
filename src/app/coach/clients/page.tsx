@@ -1,7 +1,9 @@
 import { ArrowDownIcon, ArrowUpIcon } from "lucide-react";
 import { getFormatter, getLocale, getTranslations } from "next-intl/server";
 import Link from "next/link";
+import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
+import { UnderlineTabs } from "@/components/underline-tabs";
 import { pendingInvite, requireCoach } from "@/lib/auth";
 import { type ClientRow, clientList, coachClients, type ListParams, listParams, type SORT_COLUMNS, STATUS_FILTERS } from "@/lib/client-list";
 import { db } from "@/lib/db";
@@ -45,9 +47,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
     status === "ACTIVE" ? (
       <span className="text-muted-foreground">{t("Clients.statuses.ACTIVE")}</span>
     ) : (
-      <span className={`inline-flex h-5 flex-none items-center rounded px-1.5 text-xs font-medium whitespace-nowrap ${status === "ONBOARDING" ? "bg-primary-soft text-primary-ink" : "bg-secondary text-secondary-foreground"}`}>
-        {t(`Clients.statuses.${status}`)}
-      </span>
+      <Pill tone={status === "ONBOARDING" ? "accent" : "neutral"}>{t(`Clients.statuses.${status}`)}</Pill>
     );
 
   return (
@@ -70,19 +70,19 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
             <p className="rounded-lg border border-dashed px-4 py-3 text-sm text-muted-foreground">{t("Clients.noClients")}</p>
           ) : (
             <>
-              <nav aria-label={t("Clients.statusFilter")} className="flex gap-6 border-b">
-                {STATUS_FILTERS.map((status) => (
-                  <Link
-                    key={status}
-                    href={href({ status })}
-                    aria-current={status === params.status ? "page" : undefined}
-                    className="-mb-px flex h-10 items-center gap-1.5 border-b-2 border-transparent text-sm text-muted-foreground hover:text-foreground aria-[current=page]:border-foreground aria-[current=page]:font-medium aria-[current=page]:text-foreground"
-                  >
-                    {t(`Clients.tabs.${status}`)}
-                    <span className="font-normal text-muted-foreground tabular-nums">{format.number(counts[status])}</span>
-                  </Link>
-                ))}
-              </nav>
+              <UnderlineTabs
+                label={t("Clients.statusFilter")}
+                tabs={STATUS_FILTERS.map((status) => ({
+                  href: href({ status }),
+                  current: status === params.status,
+                  label: (
+                    <>
+                      {t(`Clients.tabs.${status}`)}
+                      <span className="font-normal text-muted-foreground tabular-nums">{format.number(counts[status])}</span>
+                    </>
+                  ),
+                }))}
+              />
               <div className="mt-6">
                 <ClientFilters params={params} />
               </div>
@@ -114,8 +114,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                       <tr key={client.id} className="border-t border-rule">
                         <td className="py-3 pr-4">
                           <div className="flex min-w-0 items-center gap-2">
-                            {/* ponytail: the profile until the client dashboard lands, which takes over this link. */}
-                            <Link href={`/coach/clients/${client.id}/profile`} className="truncate font-medium hover:underline">
+                            <Link href={`/coach/clients/${client.id}`} className="truncate font-medium hover:underline">
                               {client.name}
                             </Link>
                             {client.status !== "ACTIVE" && <span className="sm:hidden">{statusMark(client.status)}</span>}

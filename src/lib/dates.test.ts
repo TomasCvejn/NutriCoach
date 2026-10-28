@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { addDays, diffDays, todayIn, weekday } from "./dates";
+import { addDays, ageOn, diffDays, todayIn, weekday } from "./dates";
 
 test("addDays crosses months, years and leap days", () => {
   expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
@@ -38,4 +38,11 @@ test("weekday and diffDays", () => {
   expect(diffDays("2026-10-28", "2026-10-28")).toBe(0);
   expect(diffDays("2026-10-28", "2026-10-21")).toBe(-7);
   expect(diffDays("2026-12-31", "2027-01-01")).toBe(1);
+});
+
+test("ageOn counts a year on the birthday, not the day before", () => {
+  expect(ageOn("1990-05-01", "2026-04-30")).toBe(35);
+  expect(ageOn("1990-05-01", "2026-05-01")).toBe(36);
+  expect(ageOn("2000-02-29", "2027-02-28")).toBe(26);
+  expect(ageOn("2000-02-29", "2027-03-01")).toBe(27);
 });

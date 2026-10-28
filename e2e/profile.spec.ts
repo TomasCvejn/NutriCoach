@@ -24,5 +24,7 @@ test("client ticks an allergen: still ticked after reload, and the coach sees it
   await coach.goto("/coach/clients");
   await coach.getByRole("link", { name: "Petr Novák" }).click();
   await expect(coach.getByRole("heading", { name: "Petr Novák", level: 1 })).toBeVisible();
+  await expect(coach.getByRole("region", { name: "Profil" }).getByText("Sezam")).toBeVisible();
+  await coach.getByRole("link", { name: "Upravit profil" }).click();
   await expect(coach.getByRole("region", { name: "Strava a alergie" }).getByLabel("Sezam")).toBeChecked();
 });

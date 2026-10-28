@@ -53,9 +53,15 @@ export async function nextStep(_: Refused | null, form: FormData): Promise<Refus
     answers = parsed.data;
   }
   const { name, ...data } = answers;
-  // The coach decides the mode: an invite that set one keeps it, otherwise the preference becomes the mode until the coach changes it.
-  const invite = data.preferredTrackingMode && (await db.invite.findUnique({ where: { clientId: client.id }, select: { trackingMode: true } }));
-  const trackingMode = data.preferredTrackingMode && !invite?.trackingMode ? data.preferredTrackingMode : undefined;
+  // The coach decides the mode: one set by the invite or changed on the dashboard (a history row) stays, otherwise the
+  // preference becomes the mode until the coach changes it.
+  const [invite, changed] = data.preferredTrackingMode
+    ? await Promise.all([
+        db.invite.findUnique({ where: { clientId: client.id }, select: { trackingMode: true } }),
+        db.historyEvent.count({ where: { clientId: client.id, type: "TRACKING_MODE" } }),
+      ])
+    : [];
+  const trackingMode = data.preferredTrackingMode && !invite?.trackingMode && !changed ? data.preferredTrackingMode : undefined;
   await db.client.update({
     where: { id: client.id },
     data: { ...data, trackingMode, onboardingStep: step + 1, user: name ? { update: { name } } : undefined },

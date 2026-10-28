@@ -87,6 +87,7 @@ model Client {
   trackingMode String   @default("CALORIES") // TRACKING_MODES
   createdAt    DateTime @default(now())
   invite       Invite?
+  history      HistoryEvent[]
 
   // Onboarding (/onboarding): the current step, an index into ONBOARDING_STEPS, so a reload resumes; /app redirects until completed.
   onboardingStep        Int       @default(0)
@@ -153,4 +154,18 @@ model Notification {
   createdAt DateTime  @default(now())
 
   @@unique([userId, type, key])
+}
+
+// The coach-only client history (coach.md): rows only for plan / target / tracking mode changes. Notes, check-ins and
+// competitions are read from their own tables and merged into the feed by date.
+model HistoryEvent {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  type      String // HISTORY_TYPES
+  date      String // YYYY-MM-DD in the client's timezone
+  payload   Json // HistoryPayloads[type]
+  createdAt DateTime @default(now())
+
+  @@index([clientId, date])
 }
