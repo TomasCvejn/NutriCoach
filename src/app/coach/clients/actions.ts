@@ -7,11 +7,9 @@ import { z } from "zod";
 import { pendingInvite, requireCoach } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { TRACKING_MODES } from "@/lib/enums";
+import { optional } from "@/lib/forms";
 
 const INVITE_DAYS = 7;
-
-// Optional fields arrive as "" from the form: empty → null.
-const optional = <T extends z.ZodType<string>>(schema: T) => z.union([z.literal(""), schema]).transform((v) => v || null);
 
 const inviteInput = z.object({
   name: z.string().trim().min(1).max(100),

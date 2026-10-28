@@ -1,7 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type ReactNode, useActionState, useState } from "react";
+import { useActionState, useState } from "react";
+import { Field } from "@/components/field";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -81,22 +82,6 @@ function InviteForm() {
         </Button>
       </DialogFooter>
     </form>
-  );
-}
-
-// Label above the field, then the hint or the error (the field points at it with aria-describedby="<id>-note").
-function Field({ id, label, hint, error, children }: { id: string; label: string; hint?: string; error?: string; children: ReactNode }) {
-  const note = error ?? hint;
-  return (
-    <div className="flex flex-col gap-2">
-      <Label htmlFor={id}>{label}</Label>
-      {children}
-      {note && (
-        <p id={`${id}-note`} className={error ? "text-xs text-destructive-ink" : "text-xs text-muted-foreground"}>
-          {note}
-        </p>
-      )}
-    </div>
   );
 }
 

@@ -6,9 +6,9 @@ import { clientFeatures } from "@/lib/features";
 import { clientNav } from "@/lib/nav";
 
 export default async function ClientLayout({ children }: LayoutProps<"/app">) {
-  const { user } = await requireClient();
-  // ponytail: no profile sport, sessions or competitions exist yet; their items feed the real data in here.
-  const features = clientFeatures({ hasSport: false, hasSession: false, lastCompetitionDate: null }, todayIn(user.timezone));
+  const { user, client } = await requireClient();
+  // ponytail: no sessions or competitions exist yet; their items feed the real data in here.
+  const features = clientFeatures({ hasSport: Boolean(client.sports), hasSession: false, lastCompetitionDate: null }, todayIn(user.timezone));
   const unread = await db.notification.count({ where: { userId: user.id, readAt: null } });
   return (
     <AppShell nav={clientNav(features)} user={{ name: user.name, email: user.email }} unread={unread}>

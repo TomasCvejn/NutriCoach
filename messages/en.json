@@ -34,6 +34,7 @@
     "clients": "Clients",
     "today": "Today",
     "training": "Training",
+    "profile": "Profile",
     "settings": "Settings"
   },
   "DayTypes": {
@@ -45,6 +46,46 @@
     "CALORIES": "Calories",
     "PORTIONS": "Portions",
     "GUIDANCE": "Guidance"
+  },
+  "Sexes": {
+    "MALE": "Male",
+    "FEMALE": "Female"
+  },
+  "Goals": {
+    "LOSE_FAT": "Lose fat",
+    "MAINTAIN": "Maintain weight",
+    "GAIN_MUSCLE": "Gain muscle",
+    "PERFORMANCE": "Performance",
+    "HEALTH_ENERGY": "Health and energy",
+    "COMPETITION_PREP": "Competition preparation"
+  },
+  "DietTypes": {
+    "OMNIVORE": "Omnivore",
+    "PESCATARIAN": "Pescatarian",
+    "VEGETARIAN": "Vegetarian",
+    "VEGAN": "Vegan",
+    "OTHER": "Other"
+  },
+  "Allergens": {
+    "GLUTEN": "Gluten",
+    "CRUSTACEANS": "Crustaceans",
+    "EGGS": "Eggs",
+    "FISH": "Fish",
+    "PEANUTS": "Peanuts",
+    "SOY": "Soy",
+    "MILK": "Milk (lactose)",
+    "NUTS": "Tree nuts",
+    "CELERY": "Celery",
+    "MUSTARD": "Mustard",
+    "SESAME": "Sesame",
+    "SULPHITES": "Sulphites",
+    "LUPIN": "Lupin",
+    "MOLLUSCS": "Molluscs"
+  },
+  "SportLevels": {
+    "RECREATIONAL": "Recreational",
+    "AMATEUR_COMPETITIVE": "Amateur competitive",
+    "ELITE": "Elite"
   },
   "Clients": {
     "title": "Clients",
@@ -155,6 +196,67 @@
       "text": "The language of the app and the zone your days are counted in. Content people write (plans, recipes, notes) stays in the language it was written in.",
       "timezone": "Time zone",
       "now": "Days and times in the app follow it. Your time now: {time}."
+    }
+  },
+  "Profile": {
+    "title": "Profile",
+    "lead": "Your coach builds your plan from this. Update it whenever something changes.",
+    "coachLead": "Client profile. The client sees and edits it too.",
+    "notSet": "Not set",
+    "save": "Save",
+    "saved": "Saved",
+    "invalid": "Check this value.",
+    "sections": {
+      "personal": {
+        "title": "Personal information",
+        "text": "Height, weight, age and sex give the suggested daily energy intake."
+      },
+      "goals": {
+        "title": "Goals",
+        "text": "The main goal, an optional target weight and date, and what success looks like."
+      },
+      "preferences": {
+        "title": "Preferences",
+        "text": "The plan is built around the foods liked and the number of meals a day."
+      },
+      "dietary": {
+        "title": "Dietary information",
+        "text": "Diet type and allergies flag the recipes that don’t fit."
+      },
+      "training": {
+        "title": "Training and sport",
+        "text": "Entering a sport turns on the Training section."
+      },
+      "additional": {
+        "title": "Additional information",
+        "text": "Health conditions, medications and anything else the coach should know."
+      }
+    },
+    "fields": {
+      "name": "Name",
+      "sex": "Sex",
+      "birthDate": "Date of birth",
+      "heightCm": "Height (cm)",
+      "weightKg": "Current weight (kg)",
+      "phone": "Phone",
+      "primaryGoal": "Primary goal",
+      "targetWeightKg": "Target weight (kg)",
+      "targetDate": "Target date",
+      "successText": "What does success look like?",
+      "likedFoods": "Liked foods",
+      "dislikedFoods": "Disliked foods",
+      "mealsPerDay": "Meals per day",
+      "dietType": "Diet type",
+      "allergens": "Allergies and intolerances",
+      "allergiesNote": "Other allergies and intolerances",
+      "restrictions": "Other restrictions",
+      "sports": "Sport(s)",
+      "sportLevel": "Level",
+      "sessionsPerWeek": "Sessions per week",
+      "sessionMinutes": "Typical session length (min)",
+      "healthConditions": "Health conditions",
+      "medications": "Medications",
+      "otherInfo": "Anything else"
     }
   }
 }

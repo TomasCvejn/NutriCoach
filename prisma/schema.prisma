@@ -87,6 +87,31 @@ model Client {
   createdAt    DateTime @default(now())
   invite       Invite?
 
+  // Profile (onboarding-profile.md), every field optional. Validated by PROFILE_SECTIONS (src/lib/profile.ts).
+  sex              String? // SEXES
+  birthDate        String? // YYYY-MM-DD
+  heightCm         Int?
+  weightKg         Float?
+  phone            String?
+  primaryGoal      String? // GOALS
+  targetWeightKg   Float?
+  targetDate       String? // YYYY-MM-DD
+  successText      String?
+  likedFoods       String?
+  dislikedFoods    String?
+  mealsPerDay      Int?
+  dietType         String? // DIET_TYPES
+  allergens        Json     @default("[]") // ALLERGENS[]
+  allergiesNote    String?
+  restrictions     String?
+  sports           String? // set → the Training section is on (clientFeatures)
+  sportLevel       String? // SPORT_LEVELS
+  sessionsPerWeek  Int?
+  sessionMinutes   Int?
+  healthConditions String?
+  medications      String?
+  otherInfo        String?
+
   @@index([coachId])
 }
 

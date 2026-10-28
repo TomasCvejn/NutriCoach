@@ -34,6 +34,7 @@
     "clients": "Klienti",
     "today": "Dnes",
     "training": "Trénink",
+    "profile": "Profil",
     "settings": "Nastavení"
   },
   "DayTypes": {
@@ -45,6 +46,46 @@
     "CALORIES": "Kalorie",
     "PORTIONS": "Porce",
     "GUIDANCE": "Bez počítání"
+  },
+  "Sexes": {
+    "MALE": "Muž",
+    "FEMALE": "Žena"
+  },
+  "Goals": {
+    "LOSE_FAT": "Zhubnout tuk",
+    "MAINTAIN": "Udržet váhu",
+    "GAIN_MUSCLE": "Nabrat svaly",
+    "PERFORMANCE": "Výkon",
+    "HEALTH_ENERGY": "Zdraví a energie",
+    "COMPETITION_PREP": "Příprava na závod"
+  },
+  "DietTypes": {
+    "OMNIVORE": "Bez omezení",
+    "PESCATARIAN": "Pescetariánská",
+    "VEGETARIAN": "Vegetariánská",
+    "VEGAN": "Veganská",
+    "OTHER": "Jiná"
+  },
+  "Allergens": {
+    "GLUTEN": "Lepek",
+    "CRUSTACEANS": "Korýši",
+    "EGGS": "Vejce",
+    "FISH": "Ryby",
+    "PEANUTS": "Arašídy",
+    "SOY": "Sója",
+    "MILK": "Mléko (laktóza)",
+    "NUTS": "Skořápkové plody",
+    "CELERY": "Celer",
+    "MUSTARD": "Hořčice",
+    "SESAME": "Sezam",
+    "SULPHITES": "Siřičitany",
+    "LUPIN": "Vlčí bob",
+    "MOLLUSCS": "Měkkýši"
+  },
+  "SportLevels": {
+    "RECREATIONAL": "Rekreační",
+    "AMATEUR_COMPETITIVE": "Amatérský závodní",
+    "ELITE": "Elitní"
   },
   "Clients": {
     "title": "Klienti",
@@ -155,6 +196,67 @@
       "text": "Jazyk aplikace a pásmo, podle kterého počítá vaše dny. Obsah, který lidé píší (plány, recepty, poznámky), zůstává v jazyce, ve kterém vznikl.",
       "timezone": "Časové pásmo",
       "now": "Řídí se jím dny a časy v aplikaci. Teď je u vás {time}."
+    }
+  },
+  "Profile": {
+    "title": "Profil",
+    "lead": "Podle těchto údajů vám trenér sestavuje plán. Upravte je, kdykoli se něco změní.",
+    "coachLead": "Profil klienta. Klient ho vidí a může upravovat také.",
+    "notSet": "Neuvedeno",
+    "save": "Uložit",
+    "saved": "Uloženo",
+    "invalid": "Zkontrolujte tuto hodnotu.",
+    "sections": {
+      "personal": {
+        "title": "Osobní údaje",
+        "text": "Z výšky, váhy, věku a pohlaví vychází doporučený denní energetický příjem."
+      },
+      "goals": {
+        "title": "Cíle",
+        "text": "Hlavní cíl, případně cílová váha a termín, a podle čeho se pozná úspěch."
+      },
+      "preferences": {
+        "title": "Preference",
+        "text": "Plán se skládá z oblíbených jídel a podle počtu jídel za den."
+      },
+      "dietary": {
+        "title": "Strava a alergie",
+        "text": "Typ stravy a alergie označí recepty, které se nehodí."
+      },
+      "training": {
+        "title": "Trénink a sport",
+        "text": "Vyplněný sport zapne sekci Trénink."
+      },
+      "additional": {
+        "title": "Další informace",
+        "text": "Zdravotní stav, léky a cokoli dalšího, co by měl trenér vědět."
+      }
+    },
+    "fields": {
+      "name": "Jméno",
+      "sex": "Pohlaví",
+      "birthDate": "Datum narození",
+      "heightCm": "Výška (cm)",
+      "weightKg": "Aktuální váha (kg)",
+      "phone": "Telefon",
+      "primaryGoal": "Hlavní cíl",
+      "targetWeightKg": "Cílová váha (kg)",
+      "targetDate": "Termín cíle",
+      "successText": "Podle čeho poznáte úspěch?",
+      "likedFoods": "Oblíbená jídla",
+      "dislikedFoods": "Neoblíbená jídla",
+      "mealsPerDay": "Počet jídel denně",
+      "dietType": "Typ stravy",
+      "allergens": "Alergie a intolerance",
+      "allergiesNote": "Jiné alergie a intolerance",
+      "restrictions": "Další omezení",
+      "sports": "Sport(y)",
+      "sportLevel": "Úroveň",
+      "sessionsPerWeek": "Tréninků týdně",
+      "sessionMinutes": "Obvyklá délka tréninku (min)",
+      "healthConditions": "Zdravotní stav",
+      "medications": "Léky",
+      "otherInfo": "Cokoli dalšího"
     }
   }
 }

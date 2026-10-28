@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { pendingInvite, requireCoach } from "@/lib/auth";
 import { db } from "@/lib/db";
@@ -80,7 +81,10 @@ export default async function ClientsPage() {
                 {clients.map((client) => (
                   <tr key={client.id} className="border-t border-rule">
                     <td className="py-3 pr-4">
-                      <p className="truncate font-medium">{client.user.name}</p>
+                      {/* ponytail: the profile until the client dashboard lands, which takes over this link. */}
+                      <Link href={`/coach/clients/${client.id}/profile`} className="block truncate font-medium hover:underline">
+                        {client.user.name}
+                      </Link>
                       <p className="truncate text-xs text-muted-foreground">{client.user.email}</p>
                     </td>
                     <td className="py-3">{t(`TrackingModes.${client.trackingMode}`)}</td>
