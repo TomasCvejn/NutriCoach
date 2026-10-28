@@ -5,26 +5,30 @@ import { Pill } from "@/components/pill";
 import { addDays, diffDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { type DayType, MICRONUTRIENTS, type TrackingMode } from "@/lib/enums";
-import { dayType, mealSlots, targetFor } from "@/lib/nutrition";
+import { dayType, mealSlots, TARGET_FIELDS, targetFor } from "@/lib/nutrition";
 import { targetSummary } from "@/lib/target-summary";
 import { TargetBar } from "@/components/target-bar";
 import { MACRO_FIELDS, micronutrientTotals, totals } from "@/lib/food-log";
 import { AddFoodDialog, CopyDialog, EditEntryDialog } from "./calories";
 import { DayNoteForm, DayTypeSelect } from "./day-controls";
+import { PortionGuide } from "./portion-guide";
+import { PortionCounters } from "./portions";
 
 const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as const;
+const PORTION_KINDS = TARGET_FIELDS.PORTIONS;
 
 // One day of a client's nutrition, the same for the client (/app/nutrition) and their coach (the Nutrition tab's daily
 // log, read-only except the day type). The caller has authorized the viewer for this client; this only reads its rows.
 export async function DailyLog({ clientId, date, viewer, href }: { clientId: string; date: string; viewer: "CLIENT" | "COACH"; href: (date: string) => string }) {
-  const [t, format, client, day, targets, planMeals, entries] = await Promise.all([
+  const [t, format, client, day, targets, planMeals, entries, portionLogs] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.client.findUniqueOrThrow({ where: { id: clientId }, select: { trackingMode: true, user: { select: { timezone: true } } } }),
     db.nutritionDay.findUnique({ where: { clientId_date: { clientId, date } } }),
     db.nutritionTarget.findMany({ where: { clientId } }),
-    db.planMeal.findMany({ where: { clientId }, orderBy: { position: "asc" }, select: { dayType: true, name: true } }),
+    db.planMeal.findMany({ where: { clientId }, orderBy: { position: "asc" }, select: { dayType: true, name: true, palms: true, hands: true, fists: true, thumbs: true } }),
     db.foodEntry.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
+    db.portionLog.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const today = todayIn(client.user.timezone);
@@ -34,15 +38,18 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
   const type = dayType({ override });
   const target = targetFor(targets, date, type);
   const summary = target && targetSummary(target, mode, t, (v) => format.number(v, { maximumFractionDigits: 1 }));
-  // The food log shows in CALORIES mode; another mode's logs stay stored and show again when the mode comes back.
+  // Each mode shows its own log; another mode's logs stay stored and show again when the mode comes back.
   const logged = mode === "CALORIES" ? entries : [];
+  const portions = mode === "PORTIONS" ? portionLogs : [];
+  const dayMeals = planMeals.filter((m) => m.dayType === type);
   const slots = mealSlots(
-    planMeals.filter((m) => m.dayType === type).map((m) => m.name),
-    logged.map((e) => e.slot),
+    dayMeals.map((m) => m.name),
+    [...logged, ...portions].map((e) => e.slot),
     FALLBACK_SLOTS.map((s) => t(`DailyNutrition.slots.${s}`)),
   );
   const dayTotals = totals(logged);
   const micro = micronutrientTotals(logged);
+  const portionTotals = Object.fromEntries(PORTION_KINDS.map((k) => [k, portions.reduce((sum, row) => sum + row[k], 0)])) as Record<(typeof PORTION_KINDS)[number], number>;
   const n = (value: number) => format.number(value, { maximumFractionDigits: 1 });
   const amount = (e: (typeof entries)[number]) =>
     e.servingCount != null
@@ -50,6 +57,9 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
       : e.grams != null
         ? t("Calories.gramsAmount", { grams: n(e.grams) })
         : null;
+  const portionCounts = (row?: (typeof portionLogs)[number]) => Object.fromEntries(PORTION_KINDS.map((k) => [k, row?.[k] ?? 0])) as Record<(typeof PORTION_KINDS)[number], number>;
+  const portionText = (row?: (typeof portionLogs)[number]) =>
+    row && PORTION_KINDS.flatMap((k) => (row[k] ? [t(`Targets.summary.${k}`, { value: n(row[k]) })] : [])).join(" · ");
   const offset = diffDays(today, date);
   const relative = offset === 0 ? "today" : offset === -1 ? "yesterday" : offset === 1 ? "tomorrow" : null;
   // A calendar day: formatted at UTC midnight so no timezone can move it.
@@ -128,6 +138,28 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
             })}
             {Object.values(micro).some((m) => m.missing > 0) && <p className="text-xs text-muted-foreground">{t("Calories.incomplete")}</p>}
             </div>
+          ) : mode === "PORTIONS" ? (
+            // The day's hand portions against the targets; more than one portion over is outside adherence.
+            <div className="mt-4 flex flex-col gap-3">
+              {PORTION_KINDS.map((k) => {
+                const goal = target?.[k];
+                return goal != null ? (
+                  <TargetBar
+                    key={k}
+                    label={t(`Targets.fields.${k}`)}
+                    value={portionTotals[k]}
+                    target={goal}
+                    text={t("Portions.ofTarget", { value: n(portionTotals[k]), target: n(goal) })}
+                    alarm={portionTotals[k] > goal + 1 ? t("Portions.over", { value: n(portionTotals[k] - goal) }) : undefined}
+                  />
+                ) : (
+                  <p key={k} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{t(`Targets.fields.${k}`)}</span>
+                    <span className="tabular-nums">{n(portionTotals[k])}</span>
+                  </p>
+                );
+              })}
+            </div>
           ) : (
             <p className="mt-3 text-sm tabular-nums">
               <span className="text-muted-foreground">{t("DailyNutrition.targets")}: </span>
@@ -138,6 +170,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
 
         <div className="flex flex-col gap-3 lg:col-start-1 lg:row-span-2 lg:row-start-1">
           {viewer === "CLIENT" && mode === "CALORIES" && <CopyDialog date={date} />}
+          {mode === "PORTIONS" && <PortionGuide />}
           {slots.map((slot, i) => {
             const inSlot = logged.filter((e) => e.slot === slot);
             return (
@@ -156,7 +189,21 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
                     )}
                   </div>
                 </div>
-                {inSlot.length === 0 ? (
+                {mode === "PORTIONS" ? (
+                  viewer === "CLIENT" ? (
+                    <PortionCounters
+                      key={`${date}:${slot}`}
+                      date={date}
+                      slot={slot}
+                      counts={portionCounts(portions.find((p) => p.slot === slot))}
+                      plan={dayMeals.find((m) => m.name === slot) ?? null}
+                    />
+                  ) : (
+                    <p className="mt-1 text-sm text-muted-foreground tabular-nums">
+                      {portionText(portions.find((p) => p.slot === slot)) ?? t("DailyNutrition.nothingLogged")}
+                    </p>
+                  )
+                ) : inSlot.length === 0 ? (
                   <p className="mt-1 text-sm text-muted-foreground">{t("DailyNutrition.nothingLogged")}</p>
                 ) : (
                   <ul className="mt-2">

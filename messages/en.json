@@ -497,6 +497,32 @@
     "copyDayNothing": "Nothing was logged that day.",
     "incomplete": "Some foods lack fiber or sodium, so those totals are lower."
   },
+  "Portions": {
+    "plan": "plan {value}",
+    "less": "Half a portion less: {kind}",
+    "more": "Half a portion more: {kind}",
+    "ofTarget": "{value} / {target}",
+    "over": "{value} over the target",
+    "guide": {
+      "title": "How to count portions",
+      "palms": {
+        "title": "A palm of protein",
+        "text": "Meat, fish, eggs, tofu or quark as big and thick as your palm without the fingers."
+      },
+      "hands": {
+        "title": "A cupped hand of carbs",
+        "text": "Rice, pasta, potatoes, oats or fruit, as much as fits in your cupped hand."
+      },
+      "fists": {
+        "title": "A fist of vegetables",
+        "text": "Vegetables or salad the size of your closed fist."
+      },
+      "thumbs": {
+        "title": "A thumb of fats",
+        "text": "Oil, butter, nuts, seeds or cheese the size of your whole thumb."
+      }
+    }
+  },
   "Foods": {
     "title": "Foods",
     "lead": "Your own foods, per 100 g. Your clients find them when they log.",

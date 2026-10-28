@@ -126,6 +126,7 @@ model Client {
   otherInfo        String?
   nutritionDays    NutritionDay[]
   foodEntries      FoodEntry[]
+  portionLogs      PortionLog[]
 
   @@index([coachId])
 }
@@ -325,4 +326,21 @@ model FoodEntry {
   updatedAt    DateTime @updatedAt
 
   @@index([clientId, date])
+}
+
+// A PORTIONS day: hand portions eaten in one meal slot, in 0.5 steps. A row exists only while some count is above zero.
+model PortionLog {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date      String // YYYY-MM-DD in the client's timezone
+  slot      String // the meal's name, as on food entries
+  palms     Float    @default(0)
+  hands     Float    @default(0)
+  fists     Float    @default(0)
+  thumbs    Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([clientId, date, slot])
 }

@@ -306,6 +306,23 @@ async function seed() {
     ),
   });
 
+  // PORTIONS logs for general@: the plan's portions most days, the snack skipped on two (carbs then miss by 2), a bigger
+  // dinner once, two days not logged; today is left to log.
+  const planned: Record<string, [number, number, number, number]> = { Snídaně: [1, 1, 1, 1], Oběd: [2, 1, 2, 1], Svačina: [1, 1, 0, 1], Večeře: [2, 1, 2, 1] };
+  const days = ["full", "full", "noSnack", "full", null, "full", "big", "full", "noSnack", "full", "full", null, "full"] as const;
+  await db.portionLog.createMany({
+    data: days.flatMap((kind, i) =>
+      kind == null
+        ? []
+        : Object.entries(planned)
+            .filter(([slot]) => !(kind === "noSnack" && slot === "Svačina"))
+            .map(([slot, [palms, hands, fists, thumbs]]) => ({
+              ...{ clientId: general, date: addDays(today, -(i + 1)), slot, fists, thumbs },
+              ...(kind === "big" && slot === "Večeře" ? { palms: palms + 1, hands: hands + 1 } : { palms, hands }),
+            })),
+    ),
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

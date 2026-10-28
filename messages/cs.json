@@ -497,6 +497,32 @@
     "copyDayNothing": "Ten den nic zapsáno nebylo.",
     "incomplete": "U některých potravin chybí vláknina nebo sodík, součty jsou proto nižší."
   },
+  "Portions": {
+    "plan": "v plánu {value}",
+    "less": "Ubrat půl porce: {kind}",
+    "more": "Přidat půl porce: {kind}",
+    "ofTarget": "{value} / {target}",
+    "over": "o {value} víc než cíl",
+    "guide": {
+      "title": "Jak počítat porce",
+      "palms": {
+        "title": "Dlaň bílkovin",
+        "text": "Maso, ryba, vejce, tofu nebo tvaroh velké a silné jako vaše dlaň bez prstů."
+      },
+      "hands": {
+        "title": "Hrst sacharidů",
+        "text": "Rýže, těstoviny, brambory, vločky nebo ovoce, kolik se vejde do dlaně složené do misky."
+      },
+      "fists": {
+        "title": "Pěst zeleniny",
+        "text": "Zelenina nebo salát velké jako vaše sevřená pěst."
+      },
+      "thumbs": {
+        "title": "Palec tuků",
+        "text": "Olej, máslo, ořechy, semínka nebo sýr velké jako celý váš palec."
+      }
+    }
+  },
   "Foods": {
     "title": "Potraviny",
     "lead": "Vaše vlastní potraviny, na 100 g. Klienti je najdou při zapisování.",
