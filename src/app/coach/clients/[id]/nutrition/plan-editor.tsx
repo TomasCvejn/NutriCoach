@@ -15,7 +15,8 @@ import { DAY_TYPES, type DayType, type TrackingMode } from "@/lib/enums";
 import { TARGET_FIELDS } from "@/lib/nutrition";
 import { copyPlan, deleteMeal, deleteRecommendation, reorderPlan, saveMeal, saveRecommendation, saveSpecifics } from "./actions";
 
-type Meal = Pick<PlanMeal, "id" | "dayType" | "name" | "timeHint" | "guidance" | "palms" | "hands" | "fists" | "thumbs" | "note">;
+type Meal = Pick<PlanMeal, "id" | "dayType" | "name" | "timeHint" | "guidance" | "palms" | "hands" | "fists" | "thumbs" | "note" | "recipeIds">;
+type RecipeOption = { id: string; name: string };
 type Recommendation = Pick<PlanRecommendation, "id" | "title" | "text">;
 
 // A list the coach reorders with up / down, saved as one change ("Save order"), so the client gets one notification.
@@ -88,7 +89,7 @@ const editTrigger = (label: string, text: string) => (
   </Button>
 );
 
-export function MealsEditor({ clientId, mode, meals }: { clientId: string; mode: TrackingMode; meals: Meal[] }) {
+export function MealsEditor({ clientId, mode, meals, recipes }: { clientId: string; mode: TrackingMode; meals: Meal[]; recipes: RecipeOption[] }) {
   const t = useTranslations();
   const format = useFormatter();
   const [dayType, setDayType] = useState<DayType>("REST");
@@ -103,7 +104,7 @@ export function MealsEditor({ clientId, mode, meals }: { clientId: string; mode:
       save={saveMeal}
       remove={meal && deleteMeal}
     >
-      {(invalid) => <MealFields clientId={clientId} mode={mode} meal={meal} dayType={dayType} invalid={invalid} />}
+      {(invalid) => <MealFields clientId={clientId} mode={mode} meal={meal} dayType={dayType} recipes={recipes} invalid={invalid} />}
     </FormDialog>
   );
 
@@ -145,6 +146,11 @@ export function MealsEditor({ clientId, mode, meals }: { clientId: string; mode:
               </p>
               {mode === "PORTIONS" && portions(meal) && <p className="mt-0.5 text-sm tabular-nums">{portions(meal)}</p>}
               {meal.guidance && <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">{meal.guidance}</p>}
+              {(meal.recipeIds as string[]).length > 0 && (
+                <p className="mt-0.5 text-sm">
+                  {t("Plan.recipesLine", { recipes: (meal.recipeIds as string[]).flatMap((id) => recipes.find((r) => r.id === id)?.name ?? []).join(", ") })}
+                </p>
+              )}
               {dialog(meal)}
             </>
           )}
@@ -154,7 +160,7 @@ export function MealsEditor({ clientId, mode, meals }: { clientId: string; mode:
   );
 }
 
-function MealFields({ clientId, mode, meal, dayType, invalid }: { clientId: string; mode: TrackingMode; meal?: Meal; dayType: DayType; invalid: (field: string) => boolean }) {
+function MealFields({ clientId, mode, meal, dayType, recipes, invalid }: { clientId: string; mode: TrackingMode; meal?: Meal; dayType: DayType; recipes: RecipeOption[]; invalid: (field: string) => boolean }) {
   const t = useTranslations();
   const id = useId();
   const error = (field: string) => (invalid(field) ? t("Plan.invalid") : undefined);
@@ -190,6 +196,19 @@ function MealFields({ clientId, mode, meal, dayType, invalid }: { clientId: stri
             </Field>
           ))}
         </div>
+      )}
+      {recipes.length > 0 && (
+        <fieldset>
+          <legend className="mb-2 text-sm font-medium">{t("Plan.fields.recipes")}</legend>
+          <div className="flex max-h-40 flex-col gap-1 overflow-y-auto">
+            {recipes.map((r) => (
+              <label key={r.id} className="flex items-center gap-2 py-1 text-sm">
+                <input type="checkbox" name="recipeIds" value={r.id} defaultChecked={(meal?.recipeIds as string[] | undefined)?.includes(r.id)} className="size-4 accent-primary" />
+                {r.name}
+              </label>
+            ))}
+          </div>
+        </fieldset>
       )}
       <Field id={`${id}-note`} label={t("Plan.fields.note")} error={error("note")}>
         <Textarea id={`${id}-note`} name="note" maxLength={1000} rows={2} defaultValue={meal?.note ?? ""} aria-invalid={invalid("note")} aria-describedby={`${id}-note-note`} />

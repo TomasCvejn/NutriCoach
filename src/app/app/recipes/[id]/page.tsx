@@ -9,11 +9,15 @@ import { type Ingredient, recipeNutrition, recipeWarnings, type Substitution } f
 import { toggleSaved } from "../actions";
 import { ingredientFoods, publishedRecipe } from "../data";
 import { RecipePortions } from "../portions";
+import { LogRecipeForm } from "../log-recipe";
+import { FALLBACK_SLOTS, loadDay } from "../../nutrition/day-data";
+import { todayIn } from "@/lib/dates";
+
 
 // One recipe for the client: a warning when it clashes with their allergies or diet, ingredients and nutrition for the
 // chosen portions, steps, substitutions, allergens. Only their coach's published recipes.
 export default async function ClientRecipe({ params }: PageProps<"/app/recipes/[id]">) {
-  const { client } = await requireClient();
+  const { user, client } = await requireClient();
   const recipe = await publishedRecipe(client.coachId, (await params).id);
   const [t, foods, saved] = await Promise.all([
     getTranslations(),
@@ -25,6 +29,9 @@ export default async function ClientRecipe({ params }: PageProps<"/app/recipes/[
   const allergens = recipe.allergens as Allergen[];
   const warnings = recipeWarnings({ allergens, dietFlags: recipe.dietFlags as string[] }, { allergens: client.allergens as string[], dietType: client.dietType });
   const steps = recipe.steps as string[];
+  const today = todayIn(user.timezone);
+  // "Log this" is for CALORIES days; the meals offered are today's.
+  const day = client.trackingMode === "CALORIES" ? await loadDay(client.id, today, FALLBACK_SLOTS.map((s) => t(`DailyNutrition.slots.${s}`))) : null;
   const substitutions = recipe.substitutions as Substitution[];
 
   return (
@@ -62,6 +69,7 @@ export default async function ClientRecipe({ params }: PageProps<"/app/recipes/[
 
       <RecipePortions servings={recipe.servings} ingredients={ingredients.map((i) => ({ name: i.name, grams: i.grams ?? null }))} perPortion={nutrition.perPortion} />
       {nutrition.incomplete && <p className="-mt-3 text-xs text-muted-foreground">{t("Recipes.incomplete")}</p>}
+      {day && <LogRecipeForm recipeId={recipe.id} today={today} slots={day.slots} />}
 
       {steps.length > 0 && (
         <section aria-labelledby="recipe-steps" className="rounded-lg border bg-card p-5">

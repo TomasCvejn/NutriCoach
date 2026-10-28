@@ -5,6 +5,7 @@ import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { DAY_TYPES, type TrackingMode } from "@/lib/enums";
+import { RecipeLinks } from "../nutrition/recipe-links";
 import { dayType as dayTypeOf, TARGET_FIELDS, type TargetField, targetFor } from "@/lib/nutrition";
 
 const params = z.object({ day: z.enum(DAY_TYPES).optional().catch(undefined) });
@@ -19,12 +20,13 @@ const UNIT: Record<TargetField, string> = {
 // recommendations and specifics. Opens on today's day type; the other day types the plan covers are one tap away.
 export default async function ClientPlan({ searchParams }: PageProps<"/app/plan">) {
   const { user, client } = await requireClient();
-  const [t, format, targets, meals, recommendations] = await Promise.all([
+  const [t, format, targets, meals, recommendations, recipes] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.nutritionTarget.findMany({ where: { clientId: client.id } }),
     db.planMeal.findMany({ where: { clientId: client.id }, orderBy: { position: "asc" } }),
     db.planRecommendation.findMany({ where: { clientId: client.id }, orderBy: { position: "asc" } }),
+    db.recipe.findMany({ where: { coachId: client.coachId, status: "PUBLISHED" }, select: { id: true, name: true } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const today = todayIn(user.timezone);
@@ -107,6 +109,7 @@ export default async function ClientPlan({ searchParams }: PageProps<"/app/plan"
                   )}
                   {meal.guidance && <p className="mt-0.5 text-sm whitespace-pre-line text-muted-foreground">{meal.guidance}</p>}
                   {meal.note && <p className="mt-0.5 text-sm whitespace-pre-line text-muted-foreground">{meal.note}</p>}
+                  <RecipeLinks ids={meal.recipeIds as string[]} recipes={recipes} />
                 </li>
               ))}
             </ol>

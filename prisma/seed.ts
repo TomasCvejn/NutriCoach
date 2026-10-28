@@ -347,7 +347,7 @@ async function seed() {
   const food = async (name: string) => (await db.food.findFirstOrThrow({ where: { name, ownerId: coach.id } })).id;
   const [oatsF, bananaF, blueberriesF, honeyF, riceF, salmonF, yoghurtF] = await Promise.all(basics.map((b) => food(b.name)));
   const recipe = (data: Omit<Prisma.RecipeUncheckedCreateInput, "coachId">) => db.recipe.create({ data: { ...data, coachId: coach.id } });
-  await recipe({
+  const porridge = await recipe({
     name: "Ovesná kaše s banánem a borůvkami",
     status: "PUBLISHED",
     ...{ categories: ["BREAKFAST", "PRE_TRAINING"], prepMinutes: 10, servings: 1, dietFlags: ["VEGETARIAN"], allergens: ["GLUTEN"] },
@@ -372,7 +372,7 @@ async function seed() {
     steps: ["Lososa pečte 15 minut na 200 °C.", "Podávejte na rýži se zeleninou podle chuti."],
     substitutions: [{ instead: "Losos", use: "Tofu", note: "Pro vegetariány" }],
   });
-  await recipe({
+  const overnight = await recipe({
     name: "Overnight oats with berries",
     status: "PUBLISHED",
     ...{ categories: ["BREAKFAST"], prepMinutes: 5, servings: 1, dietFlags: ["VEGETARIAN", "LACTOSE_FREE"], allergens: ["GLUTEN", "MILK"] },
@@ -397,6 +397,10 @@ async function seed() {
     steps: ["Mix the warm rice with honey and salt.", "Press into a tin, chill and cut into 8 bars."],
     substitutions: [{ instead: "Honey", use: "Maple syrup", note: "Truly vegan" }],
   });
+
+  // Recipe options on plan meals: race@'s breakfasts, sports@'s rest-day breakfast.
+  await db.planMeal.updateMany({ where: { clientId: race, name: "Snídaně" }, data: { recipeIds: [porridge.id] } });
+  await db.planMeal.updateMany({ where: { clientId: sports, dayType: "REST", name: "Breakfast" }, data: { recipeIds: [overnight.id] } });
 
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({

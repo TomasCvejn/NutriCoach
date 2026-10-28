@@ -348,7 +348,8 @@
       "guidance": "Guidance",
       "note": "Note",
       "title": "Title",
-      "text": "Text"
+      "text": "Text",
+      "recipes": "Recipes for this meal"
     },
     "edit": "Edit",
     "delete": "Delete",
@@ -366,7 +367,8 @@
       "source": "Copy from",
       "cancel": "Cancel",
       "confirm": "Copy and replace"
-    }
+    },
+    "recipesLine": "Recipes: {recipes}"
   },
   "ClientPlan": {
     "title": "Your plan",
@@ -407,7 +409,8 @@
     "noMeals": "Your coach hasn't set meals for this day yet.",
     "recommendations": "From your coach",
     "noRecommendations": "No recommendations yet.",
-    "specifics": "Just for you"
+    "specifics": "Just for you",
+    "recipes": "Recipes"
   },
   "ClientRecipes": {
     "title": "Recipes",
@@ -438,7 +441,15 @@
     "forPortions": "{count, plural, one {For # portion} other {For # portions}}",
     "nutrition": "{kcal} kcal · P {protein} g · C {carbs} g · F {fat} g",
     "substitution": "Instead of {instead} → {use}",
-    "noAllergens": "None of the EU allergens."
+    "noAllergens": "None of the EU allergens.",
+    "logTitle": "Log this",
+    "logDate": "Day",
+    "logMeal": "Meal",
+    "logPortions": "Portions",
+    "log": "Log",
+    "logInvalid": "Check this value.",
+    "logged": "Logged.",
+    "openDay": "Open the day"
   },
   "DailyNutrition": {
     "title": "Nutrition",
@@ -533,7 +544,12 @@
     "copyButton": "Copy",
     "copyNothing": "Nothing was logged in this meal that day.",
     "copyDayNothing": "Nothing was logged that day.",
-    "incomplete": "Some foods lack fiber or sodium, so those totals are lower."
+    "incomplete": "Some foods lack fiber or sodium, so those totals are lower.",
+    "portion": "portion",
+    "portionsAmount": "{count} × {serving}",
+    "recipe": "Recipe",
+    "recipeLabel": "Recipe",
+    "portionsLabel": "Portions"
   },
   "Portions": {
     "plan": "plan {value}",

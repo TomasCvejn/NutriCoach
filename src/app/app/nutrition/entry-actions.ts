@@ -9,6 +9,9 @@ import { nutrientsOf, rescale } from "@/lib/food-log";
 import { type Serving, visibleFoods } from "@/lib/foods";
 import { optional } from "@/lib/forms";
 import { offProduct, upsertOffFood } from "@/lib/off";
+import { type Ingredient, recipeNutrition } from "@/lib/recipes";
+import { translatorFor } from "@/i18n/messages";
+import { ingredientFoods, publishedRecipe } from "../recipes/data";
 
 // The CALORIES food log; only the client writes it (the coach reads the day).
 export type EntryState = { invalid: string[] } | { offUnavailable: true } | null;
@@ -84,15 +87,16 @@ export async function updateEntry(form: FormData): Promise<EntryState> {
   if (!slot.success) return { invalid: ["slot"] };
 
   let data;
-  if (entry.grams == null) {
+  if (entry.servingCount != null) {
+    // By servings (a food's serving or a recipe's portions): the snapshot scales with the count.
+    const count = z.coerce.number().positive().max(50).safeParse(form.get("count"));
+    if (!count.success) return { invalid: ["count"] };
+    const factor = count.data / entry.servingCount;
+    data = { servingCount: count.data, grams: entry.grams == null ? null : entry.grams * factor, ...rescale(entry, entry.servingCount, count.data) };
+  } else if (entry.grams == null) {
     const parsed = z.object({ name: optional(z.string().trim().max(100)), ...quick }).safeParse(Object.fromEntries(form));
     if (!parsed.success) return invalid(parsed.error);
     data = parsed.data;
-  } else if (entry.servingCount != null) {
-    const count = z.coerce.number().positive().max(50).safeParse(form.get("count"));
-    if (!count.success) return { invalid: ["count"] };
-    const grams = (entry.grams / entry.servingCount) * count.data;
-    data = { servingCount: count.data, grams, ...rescale(entry, entry.grams, grams) };
   } else {
     const grams = z.coerce.number().positive().max(5000).safeParse(form.get("grams"));
     if (!grams.success) return { invalid: ["grams"] };
@@ -128,4 +132,21 @@ export async function copyEntries(form: FormData): Promise<{ copied: number } | 
   await db.foodEntry.createMany({ data: source.map((entry) => ({ ...entry, date })) });
   refresh(client.id);
   return { copied: source.length };
+}
+
+// "Log this" for a recipe (CALORIES): its nutrition for the portions eaten, as a snapshot, so a later edit of the recipe
+// or its foods never changes the entry. Only the client's coach's published recipes.
+export async function logRecipe(form: FormData): Promise<EntryState> {
+  const { user, client } = await requireClient();
+  const parsed = where.extend({ recipeId: z.string(), portions: z.coerce.number().positive().max(20) }).safeParse(Object.fromEntries(form));
+  if (!parsed.success) return invalid(parsed.error);
+  const { recipeId, date, slot, portions } = parsed.data;
+  const recipe = await publishedRecipe(client.coachId, recipeId);
+  const { perPortion } = recipeNutrition(recipe.ingredients as Ingredient[], await ingredientFoods([recipe]), recipe.servings);
+  const t = await translatorFor(user.locale);
+  await db.foodEntry.create({
+    data: { clientId: client.id, date, slot, name: recipe.name, servingLabel: t("Calories.portion"), servingCount: portions, ...rescale(perPortion, 1, portions) },
+  });
+  refresh(client.id);
+  return null;
 }

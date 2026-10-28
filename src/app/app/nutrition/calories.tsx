@@ -13,7 +13,7 @@ import type { FoodEntry } from "@/generated/prisma/client";
 import type { FoodResult } from "@/lib/food-search";
 import { nutrientsOf } from "@/lib/food-log";
 import { addDays } from "@/lib/dates";
-import { addFoodEntry, addQuickEntry, copyEntries, deleteEntry, type EntryState, updateEntry } from "./entry-actions";
+import { addFoodEntry, addQuickEntry, copyEntries, deleteEntry, type EntryState, logRecipe, updateEntry } from "./entry-actions";
 import { FoodDialog } from "./food-dialog";
 
 type Search = { results: FoodResult[]; offUnavailable: boolean };
@@ -35,10 +35,10 @@ function SlotSelect({ id, slots, slot }: { id: string; slots: string[]; slot: st
 
 // "Add" in a meal slot: search (recent foods before typing; recent → custom → Open Food Facts) → the food → grams or a
 // serving → the meal; or a quick add of kcal and macros.
-export function AddFoodDialog({ date, slot, slots }: { date: string; slot: string; slots: string[] }) {
+export function AddFoodDialog({ date, slot, slots, recipes }: { date: string; slot: string; slots: string[]; recipes: { id: string; name: string }[] }) {
   const t = useTranslations("Calories");
   const [open, setOpen] = useState(false);
-  const [quick, setQuick] = useState(false);
+  const [tab, setTab] = useState<"search" | "recipe" | "quick">("search");
   const [query, setQuery] = useState("");
   const [search, setSearch] = useState<Search | null>(null);
   const [food, setFood] = useState<FoodResult | null>(null);
@@ -46,7 +46,7 @@ export function AddFoodDialog({ date, slot, slots }: { date: string; slot: strin
 
   // Debounced; the recent foods before two characters are typed. A newer request cancels the older one.
   useEffect(() => {
-    if (!open || quick || food) return;
+    if (!open || tab !== "search" || food) return;
     const aborted = new AbortController();
     const timer = setTimeout(async () => {
       const q = query.trim();
@@ -57,7 +57,7 @@ export function AddFoodDialog({ date, slot, slots }: { date: string; slot: strin
       clearTimeout(timer);
       aborted.abort();
     };
-  }, [open, quick, food, query]);
+  }, [open, tab, food, query]);
 
   const done = (result: EntryState) => {
     setState(result);
@@ -70,7 +70,7 @@ export function AddFoodDialog({ date, slot, slots }: { date: string; slot: strin
       onOpenChange={(next) => {
         setOpen(next);
         if (next) {
-          setQuick(false);
+          setTab("search");
           setQuery("");
           setSearch(null);
           setFood(null);
@@ -85,20 +85,22 @@ export function AddFoodDialog({ date, slot, slots }: { date: string; slot: strin
           <DialogDescription className="sr-only">{t("addText")}</DialogDescription>
         </DialogHeader>
         <div role="group" aria-label={t("how")} className="flex gap-2">
-          {[false, true].map((q) => (
+          {(["search", ...(recipes.length ? ["recipe" as const] : []), "quick"] as const).map((key) => (
             <button
-              key={String(q)}
+              key={key}
               type="button"
-              aria-pressed={quick === q}
-              onClick={() => setQuick(q)}
+              aria-pressed={tab === key}
+              onClick={() => setTab(key)}
               className="flex h-10 items-center rounded-full border bg-card px-3.5 text-sm text-muted-foreground aria-pressed:border-primary aria-pressed:bg-primary-soft aria-pressed:text-primary-ink sm:h-8"
             >
-              {t(q ? "quick" : "search")}
+              {t(key)}
             </button>
           ))}
         </div>
-        {quick ? (
+        {tab === "quick" ? (
           <QuickForm date={date} slot={slot} slots={slots} state={state} done={done} onCancel={() => setOpen(false)} />
+        ) : tab === "recipe" ? (
+          <RecipeForm date={date} slot={slot} slots={slots} recipes={recipes} state={state} done={done} onCancel={() => setOpen(false)} />
         ) : food ? (
           <AmountForm date={date} slot={slot} slots={slots} food={food} state={state} done={done} onBack={() => setFood(null)} />
         ) : (
@@ -219,6 +221,41 @@ function AmountForm({ date, slot, slots, food, state, done, onBack }: FormProps 
   );
 }
 
+// A recipe from the coach's library: its portions, as a snapshot.
+function RecipeForm({ date, slot, slots, recipes, state, done, onCancel }: FormProps & { recipes: { id: string; name: string }[]; onCancel: () => void }) {
+  const t = useTranslations("Calories");
+  const id = useId();
+  const invalid = (field: string) => Boolean(state && "invalid" in state && state.invalid.includes(field));
+  return (
+    <form action={async (form) => done(await logRecipe(form))} className="flex flex-col gap-4">
+      <input type="hidden" name="date" value={date} />
+      <Field id={`${id}-recipe`} label={t("recipeLabel")}>
+        <NativeSelect id={`${id}-recipe`} name="recipeId" className="w-full [&_select]:h-10">
+          {recipes.map((r) => (
+            <NativeSelectOption key={r.id} value={r.id}>
+              {r.name}
+            </NativeSelectOption>
+          ))}
+        </NativeSelect>
+      </Field>
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field id={`${id}-portions`} label={t("portionsLabel")} error={invalid("portions") ? t("invalid") : undefined}>
+          <Input id={`${id}-portions`} name="portions" type="number" inputMode="decimal" min={0} step="any" required defaultValue="1" aria-describedby={`${id}-portions-note`} className="h-10 tabular-nums" />
+        </Field>
+        <SlotSelect id={`${id}-slot`} slots={slots} slot={slot} />
+      </div>
+      <div className="flex justify-end gap-2">
+        <Button type="button" variant="ghost" onClick={onCancel} className="h-10">
+          {t("cancel")}
+        </Button>
+        <Button type="submit" className="h-10 px-4">
+          {t("addButton")}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
 const QUICK = ["kcal", "protein", "carbs", "fat"] as const;
 
 function QuickForm({ date, slot, slots, state, done, onCancel }: FormProps & { onCancel: () => void }) {
@@ -292,7 +329,7 @@ export function EditEntryDialog({ entry, label, slots }: { entry: FoodEntry; lab
       {(invalid) => (
         <>
           <input type="hidden" name="id" value={entry.id} />
-          {entry.grams == null ? (
+          {entry.grams == null && entry.servingCount == null ? (
             <QuickFields id={id} invalid={invalid} entry={entry} />
           ) : (
             <div>
@@ -307,7 +344,7 @@ export function EditEntryDialog({ entry, label, slots }: { entry: FoodEntry; lab
                     min={0}
                     step="any"
                     required
-                    defaultValue={entry.servingCount ?? entry.grams}
+                    defaultValue={entry.servingCount ?? entry.grams ?? ""}
                     aria-describedby={`${id}-amount-note`}
                     className="h-10 tabular-nums"
                   />

@@ -3,18 +3,19 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Pill } from "@/components/pill";
 import { addDays, diffDays } from "@/lib/dates";
+import { db } from "@/lib/db";
 import type { Followed } from "@/lib/enums";
 import { totals } from "@/lib/food-log";
 import { TARGET_FIELDS } from "@/lib/nutrition";
 import { AddFoodDialog, CopyDialog, EditEntryDialog } from "./calories";
 import { DayNoteForm, DayTypeSelect } from "./day-controls";
-import { loadDay } from "./day-data";
+import { FALLBACK_SLOTS, loadDay } from "./day-data";
 import { DayProgress } from "./day-progress";
 import { GuidanceMeal } from "./guidance";
+import { RecipeLinks } from "./recipe-links";
 import { PortionGuide } from "./portion-guide";
 import { PortionCounters } from "./portions";
 
-const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as const;
 const PORTION_KINDS = TARGET_FIELDS.PORTIONS;
 
 // One day of a client's nutrition, the same for the client (/app/nutrition) and their coach (the Nutrition tab's daily
@@ -27,10 +28,14 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
     FALLBACK_SLOTS.map((s) => t(`DailyNutrition.slots.${s}`)),
   );
   const { mode, today, override, derived, type, dayMeals, logged, portions, marks, slots } = data;
+  // The coach's published recipes for "add a recipe" (the client's CALORIES day only).
+  const recipes = viewer === "CLIENT" && mode === "CALORIES" ? await db.recipe.findMany({ where: { coachId: data.coachId, status: "PUBLISHED" }, select: { id: true, name: true }, orderBy: { name: "asc" } }) : [];
   const n = (value: number) => format.number(value, { maximumFractionDigits: 1 });
   const amount = (e: (typeof logged)[number]) =>
     e.servingCount != null
-      ? t("Calories.servingAmount", { count: n(e.servingCount), serving: e.servingLabel ?? "", grams: n(e.grams ?? 0) })
+      ? e.grams != null
+        ? t("Calories.servingAmount", { count: n(e.servingCount), serving: e.servingLabel ?? "", grams: n(e.grams) })
+        : t("Calories.portionsAmount", { count: n(e.servingCount), serving: e.servingLabel ?? "" })
       : e.grams != null
         ? t("Calories.gramsAmount", { grams: n(e.grams) })
         : null;
@@ -95,7 +100,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
                     {viewer === "CLIENT" && mode === "CALORIES" && (
                       <span className="-mr-2.5 flex">
                         <CopyDialog date={date} slot={slot} />
-                        <AddFoodDialog date={date} slot={slot} slots={slots} />
+                        <AddFoodDialog date={date} slot={slot} slots={slots} recipes={recipes} />
                       </span>
                     )}
                   </div>
@@ -103,6 +108,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
                 {mode === "GUIDANCE" ? (
                   <>
                     {dayMeals.find((m) => m.name === slot)?.guidance && <p className="mt-1 text-sm whitespace-pre-line text-muted-foreground">{dayMeals.find((m) => m.name === slot)!.guidance}</p>}
+                    <RecipeLinks ids={(dayMeals.find((m) => m.name === slot)?.recipeIds as string[] | undefined) ?? []} recipes={data.recipes} viewer={viewer} />
                     {viewer === "CLIENT" ? (
                       <GuidanceMeal key={`${date}:${slot}`} date={date} slot={slot} followed={(mark(slot)?.followed ?? null) as Followed | null} note={mark(slot)?.note ?? null} />
                     ) : (

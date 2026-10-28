@@ -3,14 +3,17 @@ import { db } from "@/lib/db";
 import type { DayType, TrackingMode } from "@/lib/enums";
 import { dayType, mealSlots, targetFor } from "@/lib/nutrition";
 
+// The default meals of a day without plan meals (keys under DailyNutrition.slots).
+export const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as const;
+
 // Everything one day of a client's nutrition shows, for the day screen and the home widget. The caller has authorized
 // the viewer for this client. `fallbackSlots` are the default meal names in the viewer's language.
 export async function loadDay(clientId: string, date: string, fallbackSlots: string[]) {
   const [client, day, targets, planMeals, entries, portionLogs, guidanceLogs] = await Promise.all([
-    db.client.findUniqueOrThrow({ where: { id: clientId }, select: { trackingMode: true, user: { select: { timezone: true } } } }),
+    db.client.findUniqueOrThrow({ where: { id: clientId }, select: { trackingMode: true, coachId: true, user: { select: { timezone: true } } } }),
     db.nutritionDay.findUnique({ where: { clientId_date: { clientId, date } } }),
     db.nutritionTarget.findMany({ where: { clientId } }),
-    db.planMeal.findMany({ where: { clientId }, orderBy: { position: "asc" }, select: { dayType: true, name: true, guidance: true, palms: true, hands: true, fists: true, thumbs: true } }),
+    db.planMeal.findMany({ where: { clientId }, orderBy: { position: "asc" }, select: { dayType: true, name: true, guidance: true, palms: true, hands: true, fists: true, thumbs: true, recipeIds: true } }),
     db.foodEntry.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
     db.portionLog.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
     db.guidanceLog.findMany({ where: { clientId, date } }),
@@ -23,7 +26,14 @@ export async function loadDay(clientId: string, date: string, fallbackSlots: str
   const portions = mode === "PORTIONS" ? portionLogs : [];
   const marks = mode === "GUIDANCE" ? guidanceLogs : [];
   const dayMeals = planMeals.filter((m) => m.dayType === type);
+  // The meals' recipe options the client can open: their coach's published recipes.
+  const recipes = await db.recipe.findMany({
+    where: { id: { in: dayMeals.flatMap((m) => m.recipeIds as string[]) }, coachId: client.coachId, status: "PUBLISHED" },
+    select: { id: true, name: true },
+  });
   return {
+    coachId: client.coachId,
+    recipes,
     mode,
     today: todayIn(client.user.timezone),
     note: day?.note ?? null,

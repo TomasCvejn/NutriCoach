@@ -3,10 +3,9 @@ import Link from "next/link";
 import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import type { Followed } from "@/lib/enums";
-import { loadDay } from "./nutrition/day-data";
+import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
 import { DayProgress } from "./nutrition/day-progress";
 
-const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as const;
 
 // Client home "Today": widgets in the order of home-and-basics.md, each landing with its feature.
 export default async function ClientHome() {

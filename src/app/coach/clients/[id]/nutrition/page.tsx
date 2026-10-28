@@ -12,7 +12,7 @@ import { TargetsEditor } from "./targets-editor";
 // history. The daily log joins later.
 export default async function ClientNutrition({ params }: PageProps<"/coach/clients/[id]/nutrition">) {
   const { client } = await requireCoachOf((await params).id);
-  const [t, format, user, rows, meals, recommendations, others] = await Promise.all([
+  const [t, format, user, rows, meals, recommendations, others, recipes] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, timezone: true } }),
@@ -21,6 +21,8 @@ export default async function ClientNutrition({ params }: PageProps<"/coach/clie
     db.planRecommendation.findMany({ where: { clientId: client.id }, orderBy: { position: "asc" } }),
     // "Copy plan from": the coach's other clients.
     db.client.findMany({ where: { coachId: client.coachId, NOT: { id: client.id } }, select: { id: true, user: { select: { name: true } } }, orderBy: { user: { name: "asc" } } }),
+    // Recipe options for meals: the coach's published recipes (the ones the client can open).
+    db.recipe.findMany({ where: { coachId: client.coachId, status: "PUBLISHED" }, select: { id: true, name: true }, orderBy: { name: "asc" } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const today = todayIn(user.timezone);
@@ -60,7 +62,7 @@ export default async function ClientNutrition({ params }: PageProps<"/coach/clie
         </h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("Plan.lead")}</p>
         <div className="mt-5 grid items-start gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
-          <MealsEditor clientId={client.id} mode={mode} meals={meals} />
+          <MealsEditor clientId={client.id} mode={mode} meals={meals} recipes={recipes} />
           <div className="flex flex-col gap-6">
             <RecommendationsEditor clientId={client.id} recommendations={recommendations} />
             <SpecificsForm clientId={client.id} specifics={client.planSpecifics} />

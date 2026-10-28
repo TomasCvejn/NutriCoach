@@ -94,14 +94,17 @@ const mealInput = z.object({
   note: text(1000),
   // Sent only in PORTIONS mode; otherwise the stored counts stay as they are.
   ...{ palms: portions.optional(), hands: portions.optional(), fists: portions.optional(), thumbs: portions.optional() },
+  recipeIds: z.array(z.string()).max(10).transform((ids) => [...new Set(ids)]),
 });
 
 // Adds a meal at the end of its day type, or edits one (it can move to another day type, at the end).
 export async function saveMeal(form: FormData): Promise<PlanFormState> {
   const { client } = await coachClient(form);
-  const parsed = mealInput.safeParse(Object.fromEntries(form));
+  const parsed = mealInput.safeParse({ ...Object.fromEntries(form), recipeIds: form.getAll("recipeIds") });
   if (!parsed.success) return invalidFields(parsed.error);
   const { id, ...data } = parsed.data;
+  // Only the coach's own recipes can be offered for a meal.
+  if ((await db.recipe.count({ where: { id: { in: data.recipeIds }, coachId: client.coachId } })) !== data.recipeIds.length) return { invalid: ["recipeIds"] };
   const where = { clientId: client.id, dayType: data.dayType };
   const last = await db.planMeal.findFirst({ where, orderBy: { position: "desc" }, select: { position: true } });
   const position = (last?.position ?? -1) + 1;
@@ -204,9 +207,9 @@ export async function copyPlan(form: FormData) {
     ),
     db.planMeal.deleteMany({ where: { clientId: client.id } }),
     db.planMeal.createMany({
-      data: meals.map(({ dayType, position, name, timeHint, guidance, palms, hands, fists, thumbs, note }) => ({
+      data: meals.map(({ dayType, position, name, timeHint, guidance, palms, hands, fists, thumbs, note, recipeIds }) => ({
         ...{ clientId: client.id, dayType, position, name, timeHint, guidance, note },
-        ...{ palms, hands, fists, thumbs },
+        ...{ palms, hands, fists, thumbs, recipeIds: recipeIds ?? [] }, // same coach, so the recipes stay valid
       })),
     }),
     db.planRecommendation.deleteMany({ where: { clientId: client.id } }),

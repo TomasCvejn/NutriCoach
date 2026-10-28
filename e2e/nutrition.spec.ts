@@ -108,6 +108,27 @@ test("sports@ copies yesterday's breakfast into today; fiber counts against its 
   await expect(breakfast).toContainText("Nothing logged yet.");
 });
 
+test("sports@ logs 2 portions of a recipe from its page: the entry lands in the day", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await logIn(page, "sports@demo.cz");
+  await expect(page).toHaveURL("/app");
+  await page.goto("/app/recipes");
+  await page.getByRole("link", { name: "Overnight oats with berries" }).click();
+  const log = page.getByRole("region", { name: "Log this" });
+  await log.getByLabel("Meal").selectOption("Breakfast");
+  await log.getByLabel("Portions").fill("2");
+  await log.getByRole("button", { name: "Log" }).click();
+  await expect(log.getByRole("status")).toContainText("Logged.");
+  await log.getByRole("link", { name: "Open the day" }).click();
+
+  const breakfast = page.getByRole("region", { name: "Breakfast" });
+  await expect(breakfast.getByRole("listitem")).toContainText("Overnight oats with berries · 2 × portion");
+  await expect(breakfast.getByRole("listitem")).toContainText("838 kcal"); // 418.9 kcal per portion × 2 = 837.8
+  await breakfast.getByRole("button", { name: "Edit Overnight oats with berries" }).click();
+  await page.getByRole("dialog", { name: "Edit entry" }).getByRole("button", { name: "Delete" }).click();
+  await expect(breakfast).toContainText("Nothing logged yet.");
+});
+
 test("coach suggests sports@'s rest-day targets, saves, and the client's bell shows the plan update", async ({ page, browser }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await logIn(page, "coach@demo.cz");

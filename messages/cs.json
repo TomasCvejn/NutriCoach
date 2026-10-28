@@ -348,7 +348,8 @@
       "guidance": "Doporučení k jídlu",
       "note": "Poznámka",
       "title": "Nadpis",
-      "text": "Text"
+      "text": "Text",
+      "recipes": "Recepty k jídlu"
     },
     "edit": "Upravit",
     "delete": "Smazat",
@@ -366,7 +367,8 @@
       "source": "Kopírovat od",
       "cancel": "Zrušit",
       "confirm": "Kopírovat a nahradit"
-    }
+    },
+    "recipesLine": "Recepty: {recipes}"
   },
   "ClientPlan": {
     "title": "Váš plán",
@@ -407,7 +409,8 @@
     "noMeals": "Pro tento den vám trenér jídla zatím nenastavil.",
     "recommendations": "Od trenéra",
     "noRecommendations": "Zatím žádná doporučení.",
-    "specifics": "Jen pro vás"
+    "specifics": "Jen pro vás",
+    "recipes": "Recepty"
   },
   "ClientRecipes": {
     "title": "Recepty",
@@ -438,7 +441,15 @@
     "forPortions": "{count, plural, one {Na # porci} few {Na # porce} other {Na # porcí}}",
     "nutrition": "{kcal} kcal · B {protein} g · S {carbs} g · T {fat} g",
     "substitution": "Místo: {instead} → {use}",
-    "noAllergens": "Bez alergenů ze seznamu EU."
+    "noAllergens": "Bez alergenů ze seznamu EU.",
+    "logTitle": "Zapsat",
+    "logDate": "Den",
+    "logMeal": "Jídlo",
+    "logPortions": "Porcí",
+    "log": "Zapsat",
+    "logInvalid": "Zkontrolujte tuto hodnotu.",
+    "logged": "Zapsáno.",
+    "openDay": "Otevřít den"
   },
   "DailyNutrition": {
     "title": "Výživa",
@@ -533,7 +544,12 @@
     "copyButton": "Kopírovat",
     "copyNothing": "V tomto jídle tehdy nic zapsáno nebylo.",
     "copyDayNothing": "Ten den nic zapsáno nebylo.",
-    "incomplete": "U některých potravin chybí vláknina nebo sodík, součty jsou proto nižší."
+    "incomplete": "U některých potravin chybí vláknina nebo sodík, součty jsou proto nižší.",
+    "portion": "porce",
+    "portionsAmount": "{count} × {serving}",
+    "recipe": "Recept",
+    "recipeLabel": "Recept",
+    "portionsLabel": "Porcí"
   },
   "Portions": {
     "plan": "v plánu {value}",
