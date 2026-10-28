@@ -44,7 +44,8 @@
     "plan": "Plán",
     "nutrition": "Výživa",
     "library": "Knihovna",
-    "recipes": "Recepty"
+    "recipes": "Recepty",
+    "hydration": "Hydratace"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -592,6 +593,46 @@
     "unmarked": "Zatím neoznačeno",
     "score": "Dodržená jídla",
     "scoreText": "{value} z {total}"
+  },
+  "Hydration": {
+    "title": "Hydratace",
+    "lead": "Kolik jste dnes vypili proti cíli tekutin.",
+    "open": "Otevřít",
+    "quick": "+{ml} ml",
+    "ring": "Tekutiny dnes",
+    "ml": "{ml} ml",
+    "ofTarget": "z {ml} ml",
+    "noTarget": "cíl nenastaven",
+    "empty": "Zatím nic vypito.",
+    "custom": "Jiný nápoj",
+    "addTitle": "Přidat nápoj",
+    "editTitle": "Upravit nápoj",
+    "edit": "Upravit",
+    "editDrink": "Upravit nápoj z {time}",
+    "fields": {
+      "name": "Název",
+      "ml": "Množství (ml)",
+      "drinkType": "Nápoj",
+      "sodium": "Sodík (mg)",
+      "carbs": "Sacharidy (g)"
+    },
+    "types": {
+      "WATER": "Voda",
+      "ELECTROLYTE": "Iontový nápoj",
+      "SPORTS": "Sportovní nápoj",
+      "COFFEE_TEA": "Káva / čaj",
+      "OTHER": "Jiné"
+    },
+    "sodium": "sodík {mg} mg",
+    "carbs": "sacharidy {g} g",
+    "myDrinks": "Moje nápoje",
+    "noPresets": "Uložte si nápoje, které pijete často, a přidáte je jedním klepnutím.",
+    "logPreset": "Přidat {name}",
+    "deletePreset": "Smazat uložený nápoj {name}",
+    "savePreset": "Uložit nápoj",
+    "presetTitle": "Uložit nápoj",
+    "invalid": "Zkontrolujte tuto hodnotu.",
+    "today": "Dnes"
   },
   "Foods": {
     "title": "Potraviny",

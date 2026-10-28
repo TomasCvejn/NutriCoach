@@ -44,7 +44,8 @@
     "plan": "Plan",
     "nutrition": "Nutrition",
     "library": "Library",
-    "recipes": "Recipes"
+    "recipes": "Recipes",
+    "hydration": "Hydration"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -592,6 +593,46 @@
     "unmarked": "Not marked yet",
     "score": "Meals followed",
     "scoreText": "{value} of {total}"
+  },
+  "Hydration": {
+    "title": "Hydration",
+    "lead": "How much you drank today against your fluid target.",
+    "open": "Open",
+    "quick": "+{ml} ml",
+    "ring": "Fluid today",
+    "ml": "{ml} ml",
+    "ofTarget": "of {ml} ml",
+    "noTarget": "no target set",
+    "empty": "Nothing drunk yet.",
+    "custom": "Other drink",
+    "addTitle": "Add a drink",
+    "editTitle": "Edit drink",
+    "edit": "Edit",
+    "editDrink": "Edit the drink from {time}",
+    "fields": {
+      "name": "Name",
+      "ml": "Amount (ml)",
+      "drinkType": "Drink",
+      "sodium": "Sodium (mg)",
+      "carbs": "Carbs (g)"
+    },
+    "types": {
+      "WATER": "Water",
+      "ELECTROLYTE": "Electrolyte drink",
+      "SPORTS": "Sports drink",
+      "COFFEE_TEA": "Coffee / tea",
+      "OTHER": "Other"
+    },
+    "sodium": "sodium {mg} mg",
+    "carbs": "carbs {g} g",
+    "myDrinks": "My drinks",
+    "noPresets": "Save drinks you have often and add them with one tap.",
+    "logPreset": "Add {name}",
+    "deletePreset": "Delete saved drink {name}",
+    "savePreset": "Save a drink",
+    "presetTitle": "Save a drink",
+    "invalid": "Check this value.",
+    "today": "Today"
   },
   "Foods": {
     "title": "Foods",

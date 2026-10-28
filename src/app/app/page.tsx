@@ -4,6 +4,7 @@ import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import type { Followed } from "@/lib/enums";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
+import { HydrationCard } from "./hydration/hydration-card";
 import { DayProgress } from "./nutrition/day-progress";
 
 
@@ -55,6 +56,9 @@ export default async function ClientHome() {
           </ul>
         )}
       </section>
+
+      {/* Widget 4: today's fluid with the quick adds (widget 3, training, lands with its feature). */}
+      <HydrationCard clientId={client.id} date={today} target={day.target?.fluidMl ?? null} variant="home" />
     </div>
   );
 }

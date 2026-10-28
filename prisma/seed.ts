@@ -402,6 +402,22 @@ async function seed() {
   await db.planMeal.updateMany({ where: { clientId: race, name: "Snídaně" }, data: { recipeIds: [porridge.id] } });
   await db.planMeal.updateMany({ where: { clientId: sports, dayType: "REST", name: "Breakfast" }, data: { recipeIds: [overnight.id] } });
 
+  // Hydration: 13 days of drinks around each client's fluid target (today left empty), and sports@'s saved drink.
+  const drinks: [clientId: string, ml: number[], electrolyte?: boolean][] = [
+    [general, [500, 500, 250, 500, 500, 250, 500]],
+    [sports, [500, 250, 500, 250, 500], true],
+    [race, [500, 500, 250, 500, 250]],
+  ];
+  await db.fluidLog.createMany({
+    data: drinks.flatMap(([clientId, amounts, electrolyte]) =>
+      Array.from({ length: 13 }, (_, i) => addDays(today, -(i + 1))).flatMap((date, day) => [
+        ...amounts.slice(0, amounts.length - (day % 3 === 1 ? 1 : 0)).map((ml, k) => ({ clientId, date, ml, drinkType: "WATER", createdAt: new Date(`${date}T${String(7 + k * 2).padStart(2, "0")}:00:00Z`) })),
+        ...(electrolyte ? [{ clientId, date, ml: 500, drinkType: "ELECTROLYTE", sodium: 300, carbs: 30, createdAt: new Date(`${date}T17:30:00Z`) }] : []),
+      ]),
+    ),
+  });
+  await db.drinkPreset.create({ data: { clientId: sports, name: "Electrolyte mix", ml: 500, drinkType: "ELECTROLYTE", sodium: 300, carbs: 30 } });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

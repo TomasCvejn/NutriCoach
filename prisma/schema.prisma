@@ -130,6 +130,8 @@ model Client {
   portionLogs      PortionLog[]
   guidanceLogs     GuidanceLog[]
   savedRecipes     SavedRecipe[]
+  fluidLogs        FluidLog[]
+  drinkPresets     DrinkPreset[]
 
   @@index([coachId])
 }
@@ -397,4 +399,33 @@ model SavedRecipe {
   createdAt DateTime @default(now())
 
   @@id([clientId, recipeId])
+}
+
+// Hydration (training.md): what the client drank on a day. Only the client writes it; the coach reads it in the day.
+model FluidLog {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date      String // YYYY-MM-DD in the client's timezone
+  ml        Int
+  drinkType String // DRINK_TYPES
+  sodium    Int? // mg
+  carbs     Int? // g
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId, date])
+}
+
+// "My drinks": a client's saved drinks, logged with one tap.
+model DrinkPreset {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name      String
+  ml        Int
+  drinkType String // DRINK_TYPES
+  sodium    Int?
+  carbs     Int?
+  createdAt DateTime @default(now())
 }

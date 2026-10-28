@@ -10,8 +10,8 @@ test("clientNav: Training is a tab only when the client trains", () => {
   expect(keys(clientNav({ training: false, competition: true }).tabs)).toEqual(["today", "nutrition"]);
 });
 
-test("clientNav: plan, recipes, profile and settings under More", () => {
-  expect(keys(clientNav({ training: false, competition: false }).more)).toEqual(["plan", "recipes", "profile", "settings"]);
+test("clientNav: plan, recipes, hydration, profile and settings under More", () => {
+  expect(keys(clientNav({ training: false, competition: false }).more)).toEqual(["plan", "recipes", "hydration", "profile", "settings"]);
 });
 
 test("the bottom bar holds at most 4 tabs besides More", () => {

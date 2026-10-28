@@ -11,6 +11,7 @@ import { AddFoodDialog, CopyDialog, EditEntryDialog } from "./calories";
 import { DayNoteForm, DayTypeSelect } from "./day-controls";
 import { FALLBACK_SLOTS, loadDay } from "./day-data";
 import { DayProgress } from "./day-progress";
+import { HydrationCard } from "../hydration/hydration-card";
 import { GuidanceMeal } from "./guidance";
 import { RecipeLinks } from "./recipe-links";
 import { PortionGuide } from "./portion-guide";
@@ -156,7 +157,9 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
           })}
         </div>
 
-        <section aria-labelledby="day-note" className="rounded-lg border bg-card p-5 lg:col-start-2 lg:row-start-2">
+        <div className="flex flex-col gap-6 lg:col-start-2 lg:row-start-2">
+        <HydrationCard clientId={clientId} date={date} target={data.target?.fluidMl ?? null} variant="coach" />
+        <section aria-labelledby="day-note" className="rounded-lg border bg-card p-5">
           <h2 id="day-note" className="text-base font-semibold">
             {t(viewer === "CLIENT" ? "DailyNutrition.note" : "DailyNutrition.clientNote")}
           </h2>
@@ -166,6 +169,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
             <p className={`mt-2 text-sm whitespace-pre-line ${data.note ? "" : "text-muted-foreground"}`}>{data.note ?? t("DailyNutrition.noNote")}</p>
           )}
         </section>
+        </div>
       </div>
     </div>
   );

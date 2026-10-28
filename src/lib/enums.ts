@@ -39,6 +39,7 @@ export const ALLERGENS = [
 export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as const;
 export const NOTE_TYPES = ["NOTE", "DECISION"] as const;
 export const FOOD_SOURCES = ["OFF", "COACH", "CLIENT"] as const;
+export const DRINK_TYPES = ["WATER", "ELECTROLYTE", "SPORTS", "COFFEE_TEA", "OTHER"] as const;
 // Recipes (recipes.md): fixed categories, diet flags, statuses.
 export const RECIPE_CATEGORIES = ["BREAKFAST", "LUNCH", "DINNER", "SNACK", "PRE_TRAINING", "POST_TRAINING", "COMPETITION", "DESSERT"] as const;
 export const DIET_FLAGS = ["VEGETARIAN", "VEGAN", "GLUTEN_FREE", "LACTOSE_FREE"] as const;
@@ -69,6 +70,7 @@ export type Allergen = (typeof ALLERGENS)[number];
 export type Goal = (typeof GOALS)[number];
 export type NoteType = (typeof NOTE_TYPES)[number];
 export type Followed = (typeof FOLLOWED)[number];
+export type DrinkType = (typeof DRINK_TYPES)[number];
 export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
 export type DietFlag = (typeof DIET_FLAGS)[number];
 export type RecipeStatus = (typeof RECIPE_STATUSES)[number];
