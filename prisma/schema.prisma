@@ -129,6 +129,7 @@ model Client {
   foodEntries      FoodEntry[]
   portionLogs      PortionLog[]
   guidanceLogs     GuidanceLog[]
+  savedRecipes     SavedRecipe[]
 
   @@index([coachId])
 }
@@ -366,21 +367,33 @@ model GuidanceLog {
 // ordered JSON lists: ingredients [{ foodId?, name, grams? }] (a food from the coach's library or OFF, or free text, which
 // has no nutrition), steps [string], substitutions [{ instead, use, note? }]. Nutrition is computed from the foods.
 model Recipe {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   coachId       String
-  coach         User     @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  coach         User          @relation(fields: [coachId], references: [id], onDelete: Cascade)
   name          String
-  status        String   @default("DRAFT") // RECIPE_STATUSES
-  categories    Json     @default("[]") // RECIPE_CATEGORIES[]
+  status        String        @default("DRAFT") // RECIPE_STATUSES
+  categories    Json          @default("[]") // RECIPE_CATEGORIES[]
   prepMinutes   Int?
-  servings      Int      @default(1)
-  dietFlags     Json     @default("[]") // DIET_FLAGS[]
-  allergens     Json     @default("[]") // ALLERGENS[]
-  ingredients   Json     @default("[]")
-  steps         Json     @default("[]")
-  substitutions Json     @default("[]")
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  servings      Int           @default(1)
+  dietFlags     Json          @default("[]") // DIET_FLAGS[]
+  allergens     Json          @default("[]") // ALLERGENS[]
+  ingredients   Json          @default("[]")
+  steps         Json          @default("[]")
+  substitutions Json          @default("[]")
+  savedBy       SavedRecipe[]
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   @@index([coachId, status])
+}
+
+// A client's "Saved" recipes (the heart on a recipe card).
+model SavedRecipe {
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  recipeId  String
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@id([clientId, recipeId])
 }

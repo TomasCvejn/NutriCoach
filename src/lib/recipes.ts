@@ -17,3 +17,13 @@ export function recipeNutrition(ingredients: Ingredient[], foods: Map<string, Pe
   const perPortion = Object.fromEntries(NUTRIENT_FIELDS.map((f) => [f, round(total[f] / Math.max(servings, 1))])) as Record<NutrientField, number>;
   return { total, perPortion, incomplete: known.length < ingredients.length };
 }
+
+// Why a recipe may not suit a client (recipes.md): its allergens that are among the client's allergies, and a diet the
+// recipe isn't flagged for — a vegan needs VEGAN, a vegetarian VEGETARIAN or VEGAN. Other diets get no diet warning: the
+// flags can't tell fish from meat.
+export function recipeWarnings(recipe: { allergens: string[]; dietFlags: string[] }, profile: { allergens: string[]; dietType: string | null }) {
+  const allergens = recipe.allergens.filter((a) => profile.allergens.includes(a));
+  const vegan = recipe.dietFlags.includes("VEGAN");
+  const diet = profile.dietType === "VEGAN" && !vegan ? "VEGAN" : profile.dietType === "VEGETARIAN" && !vegan && !recipe.dietFlags.includes("VEGETARIAN") ? "VEGETARIAN" : null;
+  return { allergens, diet } as { allergens: string[]; diet: "VEGAN" | "VEGETARIAN" | null };
+}

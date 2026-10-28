@@ -1,6 +1,6 @@
 import type { clientFeatures } from "./features";
 
-export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "profile" | "settings"; href: string };
+export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "recipes" | "profile" | "settings"; href: string };
 // Phone: the tabs in the bottom bar (at most 4, plus "More") and the rest in the "More" sheet. Desktop: all of them in the sidebar.
 export type Nav = { tabs: NavItem[]; more: NavItem[] };
 
@@ -28,6 +28,7 @@ export function clientNav(features: ReturnType<typeof clientFeatures>): Nav {
     tabs,
     more: [
       { key: "plan", href: "/app/plan" },
+      { key: "recipes", href: "/app/recipes" },
       { key: "profile", href: "/app/profile" },
       { key: "settings", href: "/app/settings" },
     ],

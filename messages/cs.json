@@ -43,7 +43,8 @@
     "settings": "Nastavení",
     "plan": "Plán",
     "nutrition": "Výživa",
-    "library": "Knihovna"
+    "library": "Knihovna",
+    "recipes": "Recepty"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -407,6 +408,37 @@
     "recommendations": "Od trenéra",
     "noRecommendations": "Zatím žádná doporučení.",
     "specifics": "Jen pro vás"
+  },
+  "ClientRecipes": {
+    "title": "Recepty",
+    "tabs": "Recepty",
+    "all": "Všechny",
+    "saved": "Uložené",
+    "search": "Hledat recept",
+    "searchPlaceholder": "Název nebo ingredience",
+    "find": "Hledat",
+    "categories": "Kategorie",
+    "anyCategory": "Všechny kategorie",
+    "diet": "Strava",
+    "none": "Trenér zatím žádné recepty nezveřejnil.",
+    "noneSaved": "Zatím nemáte uložené recepty. Uložíte je srdíčkem.",
+    "noMatch": "Žádný recept neodpovídá hledání nebo filtrům.",
+    "perPortion": "{kcal} kcal · {protein} g bílkovin na porci",
+    "save": "Uložit {name}",
+    "unsave": "Odebrat z uložených: {name}",
+    "contains": "Obsahuje: {allergens}",
+    "notDiet": {
+      "VEGAN": "Recept není veganský.",
+      "VEGETARIAN": "Recept není vegetariánský."
+    },
+    "warning": "Pozor, tento recept se k vám nemusí hodit",
+    "portions": "Počet porcí",
+    "fewer": "O porci méně",
+    "more": "O porci více",
+    "forPortions": "{count, plural, one {Na # porci} few {Na # porce} other {Na # porcí}}",
+    "nutrition": "{kcal} kcal · B {protein} g · S {carbs} g · T {fat} g",
+    "substitution": "Místo: {instead} → {use}",
+    "noAllergens": "Bez alergenů ze seznamu EU."
   },
   "DailyNutrition": {
     "title": "Výživa",

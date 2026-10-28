@@ -44,7 +44,7 @@ async function seed() {
         dislikedFoods: "Houby, olivy",
         mealsPerDay: 4,
         dietType: "OMNIVORE",
-        allergens: [],
+        allergens: ["GLUTEN"],
         restrictions: "Přes týden obědvám v závodní jídelně.",
         healthConditions: "Mírně zvýšený krevní tlak, sleduje praktický lékař.",
         otherInfo: "Kancelářská práce, většinu dne sedím.",

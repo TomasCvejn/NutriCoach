@@ -43,7 +43,8 @@
     "settings": "Settings",
     "plan": "Plan",
     "nutrition": "Nutrition",
-    "library": "Library"
+    "library": "Library",
+    "recipes": "Recipes"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -407,6 +408,37 @@
     "recommendations": "From your coach",
     "noRecommendations": "No recommendations yet.",
     "specifics": "Just for you"
+  },
+  "ClientRecipes": {
+    "title": "Recipes",
+    "tabs": "Recipes",
+    "all": "All",
+    "saved": "Saved",
+    "search": "Search recipes",
+    "searchPlaceholder": "Name or ingredient",
+    "find": "Search",
+    "categories": "Categories",
+    "anyCategory": "All categories",
+    "diet": "Diet",
+    "none": "Your coach hasn't published any recipes yet.",
+    "noneSaved": "No saved recipes yet. Save one with the heart.",
+    "noMatch": "No recipe matches the search or filters.",
+    "perPortion": "{kcal} kcal · {protein} g protein per portion",
+    "save": "Save {name}",
+    "unsave": "Remove from saved: {name}",
+    "contains": "Contains: {allergens}",
+    "notDiet": {
+      "VEGAN": "This recipe isn't vegan.",
+      "VEGETARIAN": "This recipe isn't vegetarian."
+    },
+    "warning": "Careful, this recipe may not suit you",
+    "portions": "Portions",
+    "fewer": "One portion less",
+    "more": "One portion more",
+    "forPortions": "{count, plural, one {For # portion} other {For # portions}}",
+    "nutrition": "{kcal} kcal · P {protein} g · C {carbs} g · F {fat} g",
+    "substitution": "Instead of {instead} → {use}",
+    "noAllergens": "None of the EU allergens."
   },
   "DailyNutrition": {
     "title": "Nutrition",

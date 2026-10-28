@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { recipeNutrition } from "./recipes";
+import { recipeNutrition, recipeWarnings } from "./recipes";
 
 const foods = new Map([
   ["oats", { kcal: 372, protein: 13.5, carbs: 58.7, fat: 7, fiber: 10, sodium: null }],
@@ -26,4 +26,16 @@ test("a free-text ingredient, a missing amount or a deleted food makes the nutri
   expect(recipeNutrition([oats, { foodId: "banana", name: "Banán" }], foods, 1).incomplete).toBe(true);
   expect(recipeNutrition([oats, { foodId: "gone", name: "Smazaná", grams: 50 }], foods, 1).incomplete).toBe(true);
   expect(recipeNutrition([], foods, 4)).toMatchObject({ incomplete: false, perPortion: { kcal: 0 } });
+});
+
+test("warnings: the recipe's allergens the client is allergic to, and a diet the recipe isn't flagged for", () => {
+  const oats = { allergens: ["GLUTEN", "MILK"], dietFlags: ["VEGETARIAN"] };
+  expect(recipeWarnings(oats, { allergens: ["GLUTEN", "SESAME"], dietType: "OMNIVORE" })).toEqual({ allergens: ["GLUTEN"], diet: null });
+  expect(recipeWarnings(oats, { allergens: [], dietType: "VEGAN" })).toEqual({ allergens: [], diet: "VEGAN" });
+  expect(recipeWarnings(oats, { allergens: [], dietType: "VEGETARIAN" })).toEqual({ allergens: [], diet: null });
+  const salmon = { allergens: ["FISH"], dietFlags: ["GLUTEN_FREE"] };
+  expect(recipeWarnings(salmon, { allergens: [], dietType: "VEGETARIAN" })).toEqual({ allergens: [], diet: "VEGETARIAN" });
+  expect(recipeWarnings(salmon, { allergens: ["FISH"], dietType: "PESCATARIAN" })).toEqual({ allergens: ["FISH"], diet: null }); // flags can't tell fish from meat
+  expect(recipeWarnings({ allergens: [], dietFlags: ["VEGAN"] }, { allergens: ["GLUTEN"], dietType: "VEGETARIAN" })).toEqual({ allergens: [], diet: null });
+  expect(recipeWarnings(oats, { allergens: [], dietType: null })).toEqual({ allergens: [], diet: null });
 });
