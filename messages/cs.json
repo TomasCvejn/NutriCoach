@@ -523,6 +523,22 @@
       }
     }
   },
+  "Guidance": {
+    "followed": "Dodrženo?",
+    "followedIn": "Dodrženo: {slot}",
+    "options": {
+      "YES": "Ano",
+      "PARTLY": "Částečně",
+      "NO": "Ne"
+    },
+    "note": "Poznámka",
+    "noteFor": "Poznámka k jídlu {slot}",
+    "saveNote": "Uložit poznámku",
+    "saved": "Uloženo",
+    "unmarked": "Zatím neoznačeno",
+    "score": "Dodržená jídla",
+    "scoreText": "{value} z {total}"
+  },
   "Foods": {
     "title": "Potraviny",
     "lead": "Vaše vlastní potraviny, na 100 g. Klienti je najdou při zapisování.",

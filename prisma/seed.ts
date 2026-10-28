@@ -323,6 +323,16 @@ async function seed() {
     ),
   });
 
+  // GUIDANCE marks for general@ too, shown when the coach switches the mode (switching never deletes data).
+  const marks = ["YES", "YES", "PARTLY", "YES", null, "YES", "NO", "YES", "PARTLY", "YES", "YES", null, "YES"] as const;
+  await db.guidanceLog.createMany({
+    data: marks.flatMap((lunch, i) =>
+      lunch == null
+        ? []
+        : ["Snídaně", "Oběd", "Svačina", "Večeře"].map((slot) => ({ clientId: general, date: addDays(today, -(i + 1)), slot, followed: slot === "Oběd" ? lunch : "YES" })),
+    ),
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

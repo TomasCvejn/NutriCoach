@@ -4,13 +4,14 @@ import Link from "next/link";
 import { Pill } from "@/components/pill";
 import { addDays, diffDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
-import { type DayType, MICRONUTRIENTS, type TrackingMode } from "@/lib/enums";
+import { type DayType, type Followed, MICRONUTRIENTS, type TrackingMode } from "@/lib/enums";
 import { dayType, mealSlots, TARGET_FIELDS, targetFor } from "@/lib/nutrition";
 import { targetSummary } from "@/lib/target-summary";
 import { TargetBar } from "@/components/target-bar";
 import { MACRO_FIELDS, micronutrientTotals, totals } from "@/lib/food-log";
 import { AddFoodDialog, CopyDialog, EditEntryDialog } from "./calories";
 import { DayNoteForm, DayTypeSelect } from "./day-controls";
+import { GuidanceMeal } from "./guidance";
 import { PortionGuide } from "./portion-guide";
 import { PortionCounters } from "./portions";
 
@@ -20,15 +21,16 @@ const PORTION_KINDS = TARGET_FIELDS.PORTIONS;
 // One day of a client's nutrition, the same for the client (/app/nutrition) and their coach (the Nutrition tab's daily
 // log, read-only except the day type). The caller has authorized the viewer for this client; this only reads its rows.
 export async function DailyLog({ clientId, date, viewer, href }: { clientId: string; date: string; viewer: "CLIENT" | "COACH"; href: (date: string) => string }) {
-  const [t, format, client, day, targets, planMeals, entries, portionLogs] = await Promise.all([
+  const [t, format, client, day, targets, planMeals, entries, portionLogs, guidanceLogs] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.client.findUniqueOrThrow({ where: { id: clientId }, select: { trackingMode: true, user: { select: { timezone: true } } } }),
     db.nutritionDay.findUnique({ where: { clientId_date: { clientId, date } } }),
     db.nutritionTarget.findMany({ where: { clientId } }),
-    db.planMeal.findMany({ where: { clientId }, orderBy: { position: "asc" }, select: { dayType: true, name: true, palms: true, hands: true, fists: true, thumbs: true } }),
+    db.planMeal.findMany({ where: { clientId }, orderBy: { position: "asc" }, select: { dayType: true, name: true, guidance: true, palms: true, hands: true, fists: true, thumbs: true } }),
     db.foodEntry.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
     db.portionLog.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
+    db.guidanceLog.findMany({ where: { clientId, date } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const today = todayIn(client.user.timezone);
@@ -41,10 +43,11 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
   // Each mode shows its own log; another mode's logs stay stored and show again when the mode comes back.
   const logged = mode === "CALORIES" ? entries : [];
   const portions = mode === "PORTIONS" ? portionLogs : [];
+  const marks = mode === "GUIDANCE" ? guidanceLogs : [];
   const dayMeals = planMeals.filter((m) => m.dayType === type);
   const slots = mealSlots(
     dayMeals.map((m) => m.name),
-    [...logged, ...portions].map((e) => e.slot),
+    [...logged, ...portions, ...marks].map((e) => e.slot),
     FALLBACK_SLOTS.map((s) => t(`DailyNutrition.slots.${s}`)),
   );
   const dayTotals = totals(logged);
@@ -60,6 +63,8 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
   const portionCounts = (row?: (typeof portionLogs)[number]) => Object.fromEntries(PORTION_KINDS.map((k) => [k, row?.[k] ?? 0])) as Record<(typeof PORTION_KINDS)[number], number>;
   const portionText = (row?: (typeof portionLogs)[number]) =>
     row && PORTION_KINDS.flatMap((k) => (row[k] ? [t(`Targets.summary.${k}`, { value: n(row[k]) })] : [])).join(" · ");
+  const mark = (slot: string) => marks.find((m) => m.slot === slot);
+  const followedScore = marks.reduce((sum, m) => sum + (m.followed === "YES" ? 1 : m.followed === "PARTLY" ? 0.5 : 0), 0);
   const offset = diffDays(today, date);
   const relative = offset === 0 ? "today" : offset === -1 ? "yesterday" : offset === 1 ? "tomorrow" : null;
   // A calendar day: formatted at UTC midnight so no timezone can move it.
@@ -161,10 +166,18 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
               })}
             </div>
           ) : (
-            <p className="mt-3 text-sm tabular-nums">
-              <span className="text-muted-foreground">{t("DailyNutrition.targets")}: </span>
-              {summary ?? <span className="text-muted-foreground">{t("DailyNutrition.noTargets")}</span>}
-            </p>
+            <>
+              {mode === "GUIDANCE" && (
+                // (yes + ½ partly) of the day's planned meals; 75 % and up is an adherent day.
+                <div className="mt-4">
+                  <TargetBar label={t("Guidance.score")} value={followedScore} target={slots.length} text={t("Guidance.scoreText", { value: n(followedScore), total: slots.length })} />
+                </div>
+              )}
+              <p className="mt-3 text-sm tabular-nums">
+                <span className="text-muted-foreground">{t("DailyNutrition.targets")}: </span>
+                {summary ?? <span className="text-muted-foreground">{t("DailyNutrition.noTargets")}</span>}
+              </p>
+            </>
           )}
         </section>
 
@@ -189,7 +202,19 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
                     )}
                   </div>
                 </div>
-                {mode === "PORTIONS" ? (
+                {mode === "GUIDANCE" ? (
+                  <>
+                    {dayMeals.find((m) => m.name === slot)?.guidance && <p className="mt-1 text-sm whitespace-pre-line text-muted-foreground">{dayMeals.find((m) => m.name === slot)!.guidance}</p>}
+                    {viewer === "CLIENT" ? (
+                      <GuidanceMeal key={`${date}:${slot}`} date={date} slot={slot} followed={(mark(slot)?.followed ?? null) as Followed | null} note={mark(slot)?.note ?? null} />
+                    ) : (
+                      <p className="mt-2 text-sm">
+                        {mark(slot)?.followed ? t(`Guidance.options.${mark(slot)!.followed as Followed}`) : <span className="text-muted-foreground">{t("Guidance.unmarked")}</span>}
+                        {mark(slot)?.note && <span className="block whitespace-pre-line text-muted-foreground">{mark(slot)!.note}</span>}
+                      </p>
+                    )}
+                  </>
+                ) : mode === "PORTIONS" ? (
                   viewer === "CLIENT" ? (
                     <PortionCounters
                       key={`${date}:${slot}`}

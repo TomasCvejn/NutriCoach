@@ -127,6 +127,7 @@ model Client {
   nutritionDays    NutritionDay[]
   foodEntries      FoodEntry[]
   portionLogs      PortionLog[]
+  guidanceLogs     GuidanceLog[]
 
   @@index([coachId])
 }
@@ -339,6 +340,21 @@ model PortionLog {
   hands     Float    @default(0)
   fists     Float    @default(0)
   thumbs    Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([clientId, date, slot])
+}
+
+// A GUIDANCE day: per planned meal "followed? yes / partly / no" and an optional note. A row exists only while one is set.
+model GuidanceLog {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date      String // YYYY-MM-DD in the client's timezone
+  slot      String // the meal's name
+  followed  String? // FOLLOWED
+  note      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

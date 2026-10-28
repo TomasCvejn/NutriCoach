@@ -1,24 +1,11 @@
 import { expect, test } from "@playwright/test";
 import { logIn } from "./dev-login";
 
-// The nutrition plan and the day, coach and client side. One file, so the tests that change sports@'s plan run last.
-test("each demo client sees their seeded plan in their mode", async ({ page }) => {
+// The nutrition plan and the day for sports@ and race@, coach and client side. One file, so the tests that change
+// sports@'s plan run last. general@'s mode-dependent tests are in general-modes.spec.ts.
+test("sports@ and race@ see their seeded plans (general@'s is in general-modes.spec.ts)", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await logIn(page, "general@demo.cz");
-  await expect(page).toHaveURL("/app");
-  await page.getByRole("button", { name: "Více" }).click();
-  await page.getByRole("link", { name: "Plán" }).click();
-  await expect(page.getByRole("heading", { name: "Váš plán", level: 1 })).toBeVisible();
-  const targets = page.getByRole("region", { name: "Denní cíle · Odpočinkový den" });
-  await expect(targets).toContainText("6 dlaní");
-  await expect(targets).toContainText("4 palce");
-  await expect(targets).toContainText("3 300 ml");
-  await expect(page.getByRole("region", { name: "Jídla" })).toContainText("Snídaně · 10:00");
-  await expect(page.getByRole("region", { name: "Od trenéra" })).toContainText("Bílkoviny v každém jídle");
-  await expect(page.getByRole("region", { name: "Jen pro vás" })).toContainText("Pracuje na směny");
-  await expect(page.getByRole("navigation", { name: "Typ dne" })).toHaveCount(0); // general@'s plan covers rest days only
-
-  const sports = await (await page.context().browser()!.newContext()).newPage();
+  const sports = page;
   await logIn(sports, "sports@demo.cz");
   await expect(sports).toHaveURL("/app");
   await sports.goto("/app/plan");

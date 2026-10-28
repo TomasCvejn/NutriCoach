@@ -9,13 +9,12 @@ test("coach filters the client list by mode, searches, sorts and switches status
   const list = page.getByRole("region", { name: "Seznam klientů" });
   await expect(list.getByRole("link", { name: "Emma Walker" })).toBeVisible();
 
-  await list.getByLabel("Sledování").selectOption("PORTIONS");
-  await expect(page).toHaveURL(/mode=PORTIONS/);
-  await expect(list.getByRole("link", { name: "Petr Novák" })).toBeVisible();
-  await expect(list.getByRole("link", { name: "Emma Walker" })).toHaveCount(0);
-  await expect(list.getByRole("link", { name: "Tereza Svobodová" })).toHaveCount(0);
-  // Every row left is a PORTIONS client (the invite test may add one).
-  for (const row of await list.getByRole("row").all()) await expect(row).toContainText(/Sledování|Porce/);
+  // CALORIES: sports@'s mode, which no test changes (general@'s and race@'s modes are switched by other tests).
+  await list.getByLabel("Sledování").selectOption("CALORIES");
+  await expect(page).toHaveURL(/mode=CALORIES/);
+  await expect(list.getByRole("link", { name: "Emma Walker" })).toBeVisible();
+  await expect(list.getByRole("link", { name: "Petr Novák" })).toHaveCount(0);
+  for (const row of await list.getByRole("row").all()) await expect(row).toContainText(/Sledování|Kalorie/);
 
   await list.getByLabel("Sledování").selectOption("");
   await list.getByRole("searchbox", { name: "Hledat podle jména" }).fill("tereza svobodova");

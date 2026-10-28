@@ -523,6 +523,22 @@
       }
     }
   },
+  "Guidance": {
+    "followed": "Followed?",
+    "followedIn": "Followed: {slot}",
+    "options": {
+      "YES": "Yes",
+      "PARTLY": "Partly",
+      "NO": "No"
+    },
+    "note": "Note",
+    "noteFor": "Note on {slot}",
+    "saveNote": "Save note",
+    "saved": "Saved",
+    "unmarked": "Not marked yet",
+    "score": "Meals followed",
+    "scoreText": "{value} of {total}"
+  },
   "Foods": {
     "title": "Foods",
     "lead": "Your own foods, per 100 g. Your clients find them when they log.",
