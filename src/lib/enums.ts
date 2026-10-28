@@ -38,6 +38,8 @@ export const ALLERGENS = [
 ] as const;
 export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as const;
 export const NOTE_TYPES = ["NOTE", "DECISION"] as const;
+// GUIDANCE: "Followed: yes / partly / no" per planned meal.
+export const FOLLOWED = ["YES", "PARTLY", "NO"] as const;
 
 // Client history rows (HistoryEvent.type, coach.md); the payload of each type below. Plan and target changes add theirs.
 export const HISTORY_TYPES = ["TRACKING_MODE", "TARGETS", "PLAN"] as const;
@@ -58,6 +60,7 @@ export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 export type Allergen = (typeof ALLERGENS)[number];
 export type Goal = (typeof GOALS)[number];
 export type NoteType = (typeof NOTE_TYPES)[number];
+export type Followed = (typeof FOLLOWED)[number];
 export type HistoryType = (typeof HISTORY_TYPES)[number];
 export type DietType = (typeof DIET_TYPES)[number];
 export type Sex = (typeof SEXES)[number];

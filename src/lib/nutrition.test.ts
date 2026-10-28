@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { dayType, kcalFromMacros, kcalMismatch, latestWeight, perKg, suggestFluid, suggestTargets, targetFor } from "./nutrition";
+import { caloriesAdherence, dayType, guidanceAdherence, kcalFromMacros, kcalMismatch, latestWeight, mealSlots, perKg, portionsAdherence, suggestFluid, suggestTargets, targetFor } from "./nutrition";
 
 test("dayType: override > competition > session > REST", () => {
   expect(dayType({})).toBe("REST");
@@ -66,4 +66,46 @@ test("fluid: 35 ml/kg to the nearest 50 ml", () => {
   expect(suggestFluid(58.4)).toBe(2050); // 2044
   expect(suggestFluid(94.5)).toBe(3300); // 3307.5
   expect(suggestFluid(null)).toBeNull();
+});
+
+test("meal slots: the plan's meals or the default four, then other slots found in the day's entries", () => {
+  const fallback = ["Breakfast", "Lunch", "Dinner", "Snacks"];
+  expect(mealSlots([], [], fallback)).toEqual(fallback);
+  expect(mealSlots(["Snídaně", "Oběd"], [], fallback)).toEqual(["Snídaně", "Oběd"]);
+  expect(mealSlots(["Snídaně", "Oběd"], ["Oběd", "Pozdní svačina", "Pozdní svačina"], fallback)).toEqual(["Snídaně", "Oběd", "Pozdní svačina"]);
+  expect(mealSlots([], ["Lunch", "Brunch"], fallback)).toEqual([...fallback, "Brunch"]);
+});
+
+test("CALORIES adherence: kcal within ±10 % and protein ≥ 90 %, both inclusive; nothing logged; no target", () => {
+  const target = { kcal: 2000, protein: 150 };
+  const day = (kcal: number, protein: number) => [{ kcal: kcal / 2, protein: protein / 2 }, { kcal: kcal / 2, protein: protein / 2 }];
+  expect(caloriesAdherence(day(2200, 135), target)).toBe("ADHERENT");
+  expect(caloriesAdherence(day(1800, 150), target)).toBe("ADHERENT");
+  expect(caloriesAdherence(day(2202, 150), target)).toBe("MISSED");
+  expect(caloriesAdherence(day(1798, 150), target)).toBe("MISSED");
+  expect(caloriesAdherence(day(2000, 134), target)).toBe("MISSED");
+  expect(caloriesAdherence([{ kcal: 2200.4, protein: 134.6 }], target)).toBe("ADHERENT"); // compared as shown: 2200 kcal, 135 g
+  expect(caloriesAdherence(day(2000, 0), { kcal: 2000, protein: null })).toBe("ADHERENT");
+  expect(caloriesAdherence([], target)).toBe("NOT_LOGGED");
+  expect(caloriesAdherence(day(2000, 150), undefined)).toBeNull();
+  expect(caloriesAdherence(day(2000, 150), { kcal: null, protein: 150 })).toBeNull();
+});
+
+test("PORTIONS adherence: each set category within ±1, summed over the day's meals", () => {
+  const target = { palms: 4, hands: 4, fists: 5, thumbs: null };
+  expect(portionsAdherence([{ palms: 2, hands: 2.5, fists: 3 }, { palms: 1, hands: 2, fists: 3 }], target)).toBe("ADHERENT"); // 3 / 4.5 / 6
+  expect(portionsAdherence([{ palms: 5, hands: 3, fists: 4, thumbs: 9 }], target)).toBe("ADHERENT"); // thumbs not set
+  expect(portionsAdherence([{ palms: 2.5, hands: 4, fists: 5 }], target)).toBe("MISSED"); // palms 1.5 off
+  expect(portionsAdherence([{ palms: 4, hands: 4, fists: 6.5 }], target)).toBe("MISSED");
+  expect(portionsAdherence([], target)).toBe("NOT_LOGGED");
+  expect(portionsAdherence([{ palms: 4 }], { palms: null })).toBeNull();
+});
+
+test("GUIDANCE adherence: (yes + ½ partly) / planned meals ≥ 0.75", () => {
+  expect(guidanceAdherence(["YES", "YES", "YES", "NO"], 4)).toBe("ADHERENT"); // 0.75
+  expect(guidanceAdherence(["YES", "YES", "PARTLY", "PARTLY"], 4)).toBe("ADHERENT"); // 0.75
+  expect(guidanceAdherence(["YES", "YES", "PARTLY", "NO"], 4)).toBe("MISSED"); // 0.625
+  expect(guidanceAdherence(["YES", "YES", "YES"], 5)).toBe("MISSED"); // unmarked meals count as not followed
+  expect(guidanceAdherence([], 4)).toBe("NOT_LOGGED");
+  expect(guidanceAdherence(["YES"], 0)).toBeNull();
 });

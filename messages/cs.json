@@ -36,7 +36,8 @@
     "training": "Trénink",
     "profile": "Profil",
     "settings": "Nastavení",
-    "plan": "Plán"
+    "plan": "Plán",
+    "nutrition": "Výživa"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -197,7 +198,12 @@
     "targets": "Aktuální cíle",
     "editTargets": "Upravit cíle",
     "asRest": "Jako odpočinkový den",
-    "targetsSince": "Poslední změna platí od {date}."
+    "targetsSince": "Poslední změna platí od {date}.",
+    "nutritionViews": {
+      "label": "Pohledy výživy",
+      "plan": "Plán a cíle",
+      "log": "Denní záznam"
+    }
   },
   "Notes": {
     "add": "Přidat poznámku",
@@ -389,6 +395,34 @@
     "recommendations": "Od trenéra",
     "noRecommendations": "Zatím žádná doporučení.",
     "specifics": "Jen pro vás"
+  },
+  "DailyNutrition": {
+    "title": "Výživa",
+    "dateNav": "Den",
+    "previous": "Předchozí den",
+    "next": "Další den",
+    "today": "Dnes",
+    "yesterday": "Včera",
+    "tomorrow": "Zítra",
+    "backToToday": "Zpět na dnešek",
+    "dayType": "Typ dne",
+    "auto": "Automaticky ({dayType})",
+    "setByHand": "nastaveno ručně",
+    "targets": "Cíle",
+    "noTargets": "zatím nenastavené",
+    "slots": {
+      "BREAKFAST": "Snídaně",
+      "LUNCH": "Oběd",
+      "DINNER": "Večeře",
+      "SNACKS": "Svačiny"
+    },
+    "nothingLogged": "Zatím nic zapsáno.",
+    "note": "Poznámka pro trenéra",
+    "notePlaceholder": "Jak den proběhl? Cokoli, co by měl trenér vědět.",
+    "clientNote": "Poznámka klienta",
+    "noNote": "K tomuto dni žádná poznámka.",
+    "save": "Uložit",
+    "saved": "Uloženo"
   },
   "Invite": {
     "title": "{coach} vás zve do NutriCoach",

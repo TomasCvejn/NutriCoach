@@ -113,7 +113,7 @@ model Client {
   dislikedFoods    String?
   mealsPerDay      Int?
   dietType         String? // DIET_TYPES
-  allergens        Json    @default("[]") // ALLERGENS[]
+  allergens        Json           @default("[]") // ALLERGENS[]
   allergiesNote    String?
   restrictions     String?
   sports           String? // set → the Training section is on (clientFeatures)
@@ -123,6 +123,7 @@ model Client {
   healthConditions String?
   medications      String?
   otherInfo        String?
+  nutritionDays    NutritionDay[]
 
   @@index([coachId])
 }
@@ -253,4 +254,19 @@ model PlanRecommendation {
   updatedAt DateTime @updatedAt
 
   @@index([clientId, position])
+}
+
+// One client's calendar day of nutrition: the day-type override (client or coach) and the client's note for the coach.
+// The day's logs reference the client and the date, not this row, so it exists only once something is set.
+model NutritionDay {
+  id              String   @id @default(cuid())
+  clientId        String
+  client          Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date            String // YYYY-MM-DD in the client's timezone
+  dayTypeOverride String? // DAY_TYPES; null = derived (competition > session > rest)
+  note            String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([clientId, date])
 }

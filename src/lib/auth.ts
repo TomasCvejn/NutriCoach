@@ -150,3 +150,12 @@ export async function requireCoachOf(clientId: string) {
   if (!client) notFound();
   return { coach, client };
 }
+
+// Screens both the client and their coach use (profile, daily nutrition, …): the client themself or their coach.
+// Anyone else looks like it doesn't exist.
+export async function requireClientAccess(clientId: string) {
+  const user = await requireUser();
+  const { client } = user.role === "COACH" ? await requireCoachOf(clientId) : await requireClient();
+  if (client.id !== clientId) notFound();
+  return { user, client };
+}

@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { DAY_TYPES, type DayType, type TrackingMode } from "@/lib/enums";
 import { latestWeight, TARGET_VALUE_FIELDS, targetFor } from "@/lib/nutrition";
 import { CopyPlanDialog, MealsEditor, RecommendationsEditor, SpecificsForm } from "./plan-editor";
-import { targetSummary } from "./target-summary";
+import { targetSummary } from "@/lib/target-summary";
 import { TargetsEditor } from "./targets-editor";
 
 // Nutrition tab (coach): targets, the plan (meals, recommendations, specifics; copy from another client) and the targets'

@@ -1,5 +1,5 @@
 import { ageOn } from "./dates";
-import type { DayType, TrackingMode } from "./enums";
+import type { DayType, Followed, TrackingMode } from "./enums";
 
 // Day type of a date (00-overview.md): an override wins, then a competition that day, then any training session, else REST.
 export function dayType({ override, competition, session }: { override?: DayType | null; competition?: boolean; session?: boolean }): DayType {
@@ -58,3 +58,39 @@ export const TARGET_VALUE_FIELDS = [...TARGET_FIELDS.CALORIES, ...TARGET_FIELDS.
 export type TargetField = (typeof TARGET_VALUE_FIELDS)[number];
 export type TargetValues = Record<TargetField, number | null>;
 export const modeFields = (mode: TrackingMode): TargetField[] => [...TARGET_FIELDS[mode], "fluidMl"];
+
+// A day's meal slots: the plan's meals for its day type (else the default four), then any other slot that day's entries
+// were logged into (entries keep their slot name, so a later plan change never moves them).
+export function mealSlots(planMeals: string[], entrySlots: string[], fallback: string[]) {
+  return [...new Set([...(planMeals.length ? planMeals : fallback), ...entrySlots])];
+}
+
+// Adherence of one day (nutrition.md). null = no target that day, so the day is left out of any percentage.
+export type Adherence = "ADHERENT" | "MISSED" | "NOT_LOGGED";
+const total = <K extends string>(rows: Partial<Record<K, number | null>>[], key: K) => rows.reduce((sum, row) => sum + (row[key] ?? 0), 0);
+
+// CALORIES: at least one entry, kcal within ±10 % of the target and protein at least 90 % of it (when set). Totals are
+// compared as shown, in whole kcal and grams.
+export function caloriesAdherence(entries: { kcal: number; protein: number }[], target: { kcal: number | null; protein: number | null } | undefined): Adherence | null {
+  if (!target?.kcal) return null;
+  if (entries.length === 0) return "NOT_LOGGED";
+  const kcal = Math.round(total(entries, "kcal"));
+  const protein = Math.round(total(entries, "protein"));
+  return Math.abs(kcal - target.kcal) <= 0.1 * target.kcal && (target.protein == null || protein >= 0.9 * target.protein) ? "ADHERENT" : "MISSED";
+}
+
+// PORTIONS: every category the target sets is within ±1 portion of it.
+export function portionsAdherence(logs: Partial<Record<(typeof TARGET_FIELDS.PORTIONS)[number], number | null>>[], target: Partial<TargetValues> | undefined): Adherence | null {
+  const set = TARGET_FIELDS.PORTIONS.filter((p) => target?.[p] != null);
+  if (set.length === 0) return null;
+  if (logs.length === 0) return "NOT_LOGGED";
+  return set.every((p) => Math.abs(total(logs, p) - target![p]!) <= 1) ? "ADHERENT" : "MISSED";
+}
+
+// GUIDANCE: (yes + ½ × partly) / planned meals ≥ 0.75; the planned meals are the day's meal slots.
+export function guidanceAdherence(marks: Followed[], plannedMeals: number): Adherence | null {
+  if (plannedMeals === 0) return null;
+  if (marks.length === 0) return "NOT_LOGGED";
+  const score = marks.filter((m) => m === "YES").length + 0.5 * marks.filter((m) => m === "PARTLY").length;
+  return score / plannedMeals >= 0.75 ? "ADHERENT" : "MISSED";
+}

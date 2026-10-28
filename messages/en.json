@@ -36,7 +36,8 @@
     "training": "Training",
     "profile": "Profile",
     "settings": "Settings",
-    "plan": "Plan"
+    "plan": "Plan",
+    "nutrition": "Nutrition"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -197,7 +198,12 @@
     "targets": "Current targets",
     "editTargets": "Edit targets",
     "asRest": "As the rest day",
-    "targetsSince": "Last change applies from {date}."
+    "targetsSince": "Last change applies from {date}.",
+    "nutritionViews": {
+      "label": "Nutrition views",
+      "plan": "Plan and targets",
+      "log": "Daily log"
+    }
   },
   "Notes": {
     "add": "Add note",
@@ -389,6 +395,34 @@
     "recommendations": "From your coach",
     "noRecommendations": "No recommendations yet.",
     "specifics": "Just for you"
+  },
+  "DailyNutrition": {
+    "title": "Nutrition",
+    "dateNav": "Day",
+    "previous": "Previous day",
+    "next": "Next day",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "tomorrow": "Tomorrow",
+    "backToToday": "Back to today",
+    "dayType": "Day type",
+    "auto": "Automatic ({dayType})",
+    "setByHand": "set by hand",
+    "targets": "Targets",
+    "noTargets": "none set yet",
+    "slots": {
+      "BREAKFAST": "Breakfast",
+      "LUNCH": "Lunch",
+      "DINNER": "Dinner",
+      "SNACKS": "Snacks"
+    },
+    "nothingLogged": "Nothing logged yet.",
+    "note": "Note for your coach",
+    "notePlaceholder": "How did the day go? Anything your coach should know.",
+    "clientNote": "Client's note",
+    "noNote": "No note for this day.",
+    "save": "Save",
+    "saved": "Saved"
   },
   "Invite": {
     "title": "{coach} invited you to NutriCoach",

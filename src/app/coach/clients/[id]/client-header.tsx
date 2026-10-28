@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useSelectedLayoutSegment } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,31 @@ export function ClientTabs({ clientId }: { clientId: string }) {
       label={t("label")}
       tabs={TABS.map((tab) => ({ href: `/coach/clients/${clientId}${tab.segment ? `/${tab.segment}` : ""}`, label: t(tab.key), current: segment === tab.segment }))}
     />
+  );
+}
+
+// Inside the Nutrition tab: the plan and targets (segment null) and the daily log, as chips under the client's tabs.
+const NUTRITION_VIEWS = [
+  { key: "plan", segment: null },
+  { key: "log", segment: "log" },
+] as const;
+
+export function NutritionNav({ clientId }: { clientId: string }) {
+  const t = useTranslations("ClientDashboard.nutritionViews");
+  const segment = useSelectedLayoutSegment();
+  return (
+    <nav aria-label={t("label")} className="flex gap-2 overflow-x-auto">
+      {NUTRITION_VIEWS.map((view) => (
+        <Link
+          key={view.key}
+          href={`/coach/clients/${clientId}/nutrition${view.segment ? `/${view.segment}` : ""}`}
+          aria-current={segment === view.segment ? "page" : undefined}
+          className="flex h-10 flex-none items-center rounded-full border bg-card px-3.5 text-sm text-muted-foreground transition-colors hover:text-foreground aria-[current=page]:border-primary aria-[current=page]:bg-primary-soft aria-[current=page]:text-primary-ink sm:h-8"
+        >
+          {t(view.key)}
+        </Link>
+      ))}
+    </nav>
   );
 }
 

@@ -6,7 +6,7 @@ import { requireCoachOf } from "@/lib/auth";
 import { ageOn, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { latestWeight, targetFor } from "@/lib/nutrition";
-import { targetSummary } from "./nutrition/target-summary";
+import { targetSummary } from "@/lib/target-summary";
 import { type Allergen, DAY_TYPES, type DietType, type Goal, type Sex, type SportLevel, type TrackingMode } from "@/lib/enums";
 
 // Overview: what the client works toward and what to know before planning (profile summary, allergies first in mind).

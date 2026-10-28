@@ -9,7 +9,7 @@ test("client on a phone: bottom nav with Today and More, the account in the More
 
   // Only the bottom bar is visible at this width; general@ has no sport and no sessions, so no Training tab.
   const nav = page.getByRole("navigation", { name: "Hlavní navigace" });
-  await expect(nav.getByRole("link")).toHaveText(["Dnes"]);
+  await expect(nav.getByRole("link")).toHaveText(["Dnes", "Výživa"]);
   await expect(nav.getByRole("link", { name: "Dnes" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByText("Odpočinkový den")).toBeVisible();
 
