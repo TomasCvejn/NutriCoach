@@ -16,3 +16,4 @@ npm-debug.log*
 .taste-skill/**
 !.taste-skill/**/
 !.taste-skill/**/direction.json
+!.taste-skill/snap.mjs

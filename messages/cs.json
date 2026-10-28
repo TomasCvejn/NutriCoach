@@ -25,7 +25,20 @@
   },
   "Shell": {
     "logout": "Odhlásit se",
-    "clients": "Klienti"
+    "nav": "Hlavní navigace",
+    "more": "Více",
+    "close": "Zavřít"
+  },
+  "Nav": {
+    "overview": "Přehled",
+    "clients": "Klienti",
+    "today": "Dnes",
+    "training": "Trénink"
+  },
+  "DayTypes": {
+    "REST": "Odpočinkový den",
+    "TRAINING": "Tréninkový den",
+    "COMPETITION": "Závodní den"
   },
   "TrackingModes": {
     "CALORIES": "Kalorie",
@@ -106,7 +119,9 @@
     }
   },
   "CoachHome": {
-    "title": "Přehled"
+    "title": "Přehled",
+    "tiles": "Souhrn",
+    "activeClients": "Aktivní klienti"
   },
   "ClientHome": {
     "title": "Dnes"

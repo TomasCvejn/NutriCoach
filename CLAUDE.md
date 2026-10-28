@@ -25,4 +25,5 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 - Better Auth rejects cookie-carrying POSTs without an `Origin` header (CSRF check, skipped under Vitest): API calls in Playwright need `headers: { origin: baseURL }`.
 - Better Auth checks the Prisma schema on every request and fails all of them if one of its columns is missing (e.g. the unused `account.password`): never drop a Better Auth column.
 - `npm run db:seed` deletes and recreates the SQLite file: restart a running `next dev` afterwards (it keeps the old file open). `npx shadcn add` asks before overwriting `button.tsx`: answer with `printf 'n\n' | npx shadcn@4 add <name>`.
+- `inspect.mjs` can't sign in: with `npm run dev` on :3000, `node .taste-skill/snap.mjs coach@demo.cz:/coach …` saves static snapshots to inspect, and `--out` must sit under `.taste-skill/app/` or the inspector judges by page rules instead of app rules.
 - taste scripts need Chrome: `loop.sh` sets `CHROME_PATH` to Playwright's Chromium; elsewhere `export CHROME_PATH=$(ls -d ~/.cache/ms-playwright/chromium-*/chrome-linux*/chrome | tail -1)`.

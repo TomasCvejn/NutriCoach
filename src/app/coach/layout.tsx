@@ -1,12 +1,12 @@
-import { AreaHeader } from "@/components/area-header";
+import { AppShell } from "@/components/app-shell";
 import { requireCoach } from "@/lib/auth";
+import { coachNav } from "@/lib/nav";
 
 export default async function CoachLayout({ children }: LayoutProps<"/coach">) {
   const coach = await requireCoach();
   return (
-    <>
-      <AreaHeader home="/coach" userName={coach.name} />
-      <main className="flex-1 px-4 py-6 sm:px-[29px] sm:py-9">{children}</main>
-    </>
+    <AppShell nav={coachNav} user={{ name: coach.name, email: coach.email }}>
+      {children}
+    </AppShell>
   );
 }

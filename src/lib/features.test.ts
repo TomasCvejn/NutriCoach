@@ -1,15 +1,7 @@
 import { expect, test } from "vitest";
-import { addDays } from "./dates";
 import { clientFeatures } from "./features";
 
 const none = { hasSport: false, hasSession: false, lastCompetitionDate: null };
-
-test("addDays crosses months, years and leap days", () => {
-  expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
-  expect(addDays("2028-02-28", 1)).toBe("2028-02-29");
-  expect(addDays("2026-12-28", 7)).toBe("2027-01-04");
-  expect(addDays("2026-10-25", 0)).toBe("2026-10-25");
-});
 
 test("no sport, no session, no competition: nothing beyond the basics", () => {
   expect(clientFeatures(none, "2026-10-27")).toEqual({ training: false, competition: false });

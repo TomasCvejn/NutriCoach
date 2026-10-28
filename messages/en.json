@@ -25,7 +25,20 @@
   },
   "Shell": {
     "logout": "Sign out",
-    "clients": "Clients"
+    "nav": "Main navigation",
+    "more": "More",
+    "close": "Close"
+  },
+  "Nav": {
+    "overview": "Overview",
+    "clients": "Clients",
+    "today": "Today",
+    "training": "Training"
+  },
+  "DayTypes": {
+    "REST": "Rest day",
+    "TRAINING": "Training day",
+    "COMPETITION": "Competition day"
   },
   "TrackingModes": {
     "CALORIES": "Calories",
@@ -106,7 +119,9 @@
     }
   },
   "CoachHome": {
-    "title": "Overview"
+    "title": "Overview",
+    "tiles": "Summary",
+    "activeClients": "Active clients"
   },
   "ClientHome": {
     "title": "Today"

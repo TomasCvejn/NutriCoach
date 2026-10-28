@@ -3,7 +3,7 @@ import { logIn } from "./dev-login";
 
 test("coach invites a client, who accepts in another browser and lands in the app", async ({ page, browser }) => {
   await logIn(page, "coach@demo.cz");
-  await page.getByRole("link", { name: "Klienti" }).click();
+  await page.getByRole("link", { name: "Klienti", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Klienti", level: 1 })).toBeVisible();
 
   await page.getByRole("button", { name: "Pozvat klienta" }).click();
