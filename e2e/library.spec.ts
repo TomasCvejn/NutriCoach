@@ -37,3 +37,33 @@ test("coach adds a food with a serving to the library and edits it; clients' foo
   await expect(page.getByRole("region", { name: "Potraviny klientů" })).toContainText("Lactose-free skyr");
   await expect(page.getByRole("region", { name: "Potraviny klientů" })).toContainText("Emma Walker");
 });
+
+test("coach writes a recipe from a library food and a text ingredient, sees the nutrition per portion, publishes it", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await logIn(page, "coach@demo.cz");
+  await expect(page).toHaveURL("/coach");
+  await page.goto("/coach/library");
+  await page.getByRole("navigation", { name: "Sekce knihovny" }).getByRole("link", { name: "Recepty" }).click();
+  await expect(page.getByRole("row", { name: /Ovesná kaše s banánem a borůvkami/ })).toContainText("neúplné"); // seeded, has a text ingredient
+  await page.getByRole("link", { name: "Nový recept" }).click();
+
+  await page.getByLabel("Název", { exact: true }).fill("Jogurtový dezert");
+  await page.getByLabel("Počet porcí").fill("2");
+  await page.getByLabel("Dezert").check();
+  await page.getByRole("searchbox", { name: "Hledat ingredienci" }).fill("Řecký");
+  await page.getByRole("button", { name: /Řecký jogurt bez laktózy/ }).click();
+  await page.getByLabel("Gramy: Řecký jogurt bez laktózy").fill("300");
+  await page.getByRole("button", { name: "Přidat ingredienci jako text" }).click();
+  await page.getByLabel("Ingredience (text)", { exact: true }).fill("Vanilka");
+  await page.getByRole("button", { name: "Přidat krok" }).click();
+  await page.getByLabel("Krok 1", { exact: true }).fill("Jogurt prošlehejte s vanilkou.");
+
+  const rail = page.getByRole("complementary", { name: "Na porci" });
+  await expect(rail).toContainText("145,5 kcal"); // 300 g × 97 kcal / 100 g / 2 portions
+  await expect(rail).toContainText("Výživa je neúplná");
+  await page.getByRole("button", { name: "Uložit a publikovat" }).click();
+  await expect(page).toHaveURL("/coach/library/recipes");
+  const row = page.getByRole("row", { name: /Jogurtový dezert/ });
+  await expect(row).toContainText("Publikováno");
+  await expect(row).toContainText("146");
+});

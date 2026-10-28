@@ -15,7 +15,8 @@ const fromOff = (food: OffFood): FoodResult => ({ ...food, id: null, source: "OF
 // ponytail: SQLite LIKE ignores case for ASCII only, so "syr" misses "sýr" locally (OFF still finds it); a folded name column if it matters.
 export async function searchFoods(viewer: Viewer, query: string, locale: string, recent: string[] = []) {
   const local = await db.food.findMany({
-    where: { AND: [visibleFoods(viewer), { OR: [{ name: { contains: query } }, { brand: { contains: query } }] }] },
+    // A coach searches for recipe ingredients, which never come from a client's foods (they go with the client's account).
+    where: { AND: [visibleFoods(viewer), { OR: [{ name: { contains: query } }, { brand: { contains: query } }] }, viewer.role === "COACH" ? { source: { not: "CLIENT" } } : {}] },
     orderBy: { name: "asc" },
     take: 20,
   });

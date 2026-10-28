@@ -333,6 +333,71 @@ async function seed() {
     ),
   });
 
+  // Recipes (cs and en) from basic library foods; one has a text ingredient (incomplete nutrition), one is a draft.
+  const basics = [
+    { name: "Ovesné vločky", kcal: 372, protein: 13.5, carbs: 58.7, fat: 7, fiber: 10 },
+    { name: "Banán", kcal: 89, protein: 1.1, carbs: 22.8, fat: 0.3, fiber: 2.6, sodium: 1 },
+    { name: "Borůvky", kcal: 57, protein: 0.7, carbs: 14.5, fat: 0.3, fiber: 2.4, sodium: 1 },
+    { name: "Med", kcal: 304, protein: 0.3, carbs: 82, fat: 0 },
+    { name: "Rýže jasmínová, vařená", kcal: 130, protein: 2.7, carbs: 28, fat: 0.3, sodium: 1 },
+    { name: "Losos, pečený", kcal: 208, protein: 20, carbs: 0, fat: 13, sodium: 60 },
+    { name: "Řecký jogurt bez laktózy", kcal: 97, protein: 9, carbs: 4, fat: 5, sodium: 40 },
+  ];
+  await db.food.createMany({ data: basics.map((food) => ({ ...food, source: "COACH", ownerId: coach.id })) });
+  const food = async (name: string) => (await db.food.findFirstOrThrow({ where: { name, ownerId: coach.id } })).id;
+  const [oatsF, bananaF, blueberriesF, honeyF, riceF, salmonF, yoghurtF] = await Promise.all(basics.map((b) => food(b.name)));
+  const recipe = (data: Omit<Prisma.RecipeUncheckedCreateInput, "coachId">) => db.recipe.create({ data: { ...data, coachId: coach.id } });
+  await recipe({
+    name: "Ovesná kaše s banánem a borůvkami",
+    status: "PUBLISHED",
+    ...{ categories: ["BREAKFAST", "PRE_TRAINING"], prepMinutes: 10, servings: 1, dietFlags: ["VEGETARIAN"], allergens: ["GLUTEN"] },
+    ingredients: [
+      { foodId: oatsF, name: "Ovesné vločky", grams: 60 },
+      { foodId: bananaF, name: "Banán", grams: 120 },
+      { foodId: blueberriesF, name: "Borůvky", grams: 80 },
+      { foodId: honeyF, name: "Med", grams: 10 },
+      { name: "Špetka skořice" },
+    ],
+    steps: ["Vločky zalijte 200 ml vody a 5 minut vařte.", "Vmíchejte rozmačkanou polovinu banánu.", "Ozdobte zbytkem banánu a borůvkami, pokapejte medem."],
+    substitutions: [{ instead: "Banán", use: "Strouhané jablko", note: "Méně sacharidů" }],
+  });
+  await recipe({
+    name: "Rýžový bowl s lososem",
+    status: "PUBLISHED",
+    ...{ categories: ["LUNCH", "DINNER", "POST_TRAINING"], prepMinutes: 25, servings: 2, dietFlags: ["GLUTEN_FREE", "LACTOSE_FREE"], allergens: ["FISH"] },
+    ingredients: [
+      { foodId: riceF, name: "Rýže jasmínová, vařená", grams: 300 },
+      { foodId: salmonF, name: "Losos, pečený", grams: 250 },
+    ],
+    steps: ["Lososa pečte 15 minut na 200 °C.", "Podávejte na rýži se zeleninou podle chuti."],
+    substitutions: [{ instead: "Losos", use: "Tofu", note: "Pro vegetariány" }],
+  });
+  await recipe({
+    name: "Overnight oats with berries",
+    status: "PUBLISHED",
+    ...{ categories: ["BREAKFAST"], prepMinutes: 5, servings: 1, dietFlags: ["VEGETARIAN", "LACTOSE_FREE"], allergens: ["GLUTEN", "MILK"] },
+    ingredients: [
+      { foodId: oatsF, name: "Oats", grams: 50 },
+      { foodId: yoghurtF, name: "Lactose-free Greek yoghurt", grams: 150 },
+      { foodId: blueberriesF, name: "Blueberries", grams: 100 },
+      { foodId: honeyF, name: "Honey", grams: 10 },
+    ],
+    steps: ["Stir the oats into the yoghurt with 50 ml water.", "Leave in the fridge overnight.", "Top with blueberries and honey."],
+    substitutions: [],
+  });
+  await recipe({
+    name: "Pre-race rice cakes",
+    status: "DRAFT",
+    ...{ categories: ["PRE_TRAINING", "COMPETITION"], prepMinutes: 40, servings: 8, dietFlags: ["VEGAN", "VEGETARIAN", "GLUTEN_FREE", "LACTOSE_FREE"], allergens: [] },
+    ingredients: [
+      { foodId: riceF, name: "Cooked jasmine rice", grams: 400 },
+      { foodId: honeyF, name: "Honey", grams: 30 },
+      { name: "A pinch of salt" },
+    ],
+    steps: ["Mix the warm rice with honey and salt.", "Press into a tin, chill and cut into 8 bars."],
+    substitutions: [{ instead: "Honey", use: "Maple syrup", note: "Truly vegan" }],
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

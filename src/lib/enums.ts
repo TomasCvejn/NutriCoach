@@ -39,6 +39,10 @@ export const ALLERGENS = [
 export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as const;
 export const NOTE_TYPES = ["NOTE", "DECISION"] as const;
 export const FOOD_SOURCES = ["OFF", "COACH", "CLIENT"] as const;
+// Recipes (recipes.md): fixed categories, diet flags, statuses.
+export const RECIPE_CATEGORIES = ["BREAKFAST", "LUNCH", "DINNER", "SNACK", "PRE_TRAINING", "POST_TRAINING", "COMPETITION", "DESSERT"] as const;
+export const DIET_FLAGS = ["VEGETARIAN", "VEGAN", "GLUTEN_FREE", "LACTOSE_FREE"] as const;
+export const RECIPE_STATUSES = ["DRAFT", "PUBLISHED", "ARCHIVED"] as const;
 // The only micronutrients tracked (per 100 g on foods, of the amount on entries), with their unit. Nothing else: the
 // app isn't a full calorie table (user decision 2026-10-28).
 export const MICRONUTRIENTS = { fiber: "g", sodium: "mg" } as const;
@@ -65,6 +69,9 @@ export type Allergen = (typeof ALLERGENS)[number];
 export type Goal = (typeof GOALS)[number];
 export type NoteType = (typeof NOTE_TYPES)[number];
 export type Followed = (typeof FOLLOWED)[number];
+export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
+export type DietFlag = (typeof DIET_FLAGS)[number];
+export type RecipeStatus = (typeof RECIPE_STATUSES)[number];
 export type HistoryType = (typeof HISTORY_TYPES)[number];
 export type DietType = (typeof DIET_TYPES)[number];
 export type Sex = (typeof SEXES)[number];
