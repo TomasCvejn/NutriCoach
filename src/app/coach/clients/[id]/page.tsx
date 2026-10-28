@@ -5,18 +5,26 @@ import { Pill } from "@/components/pill";
 import { requireCoachOf } from "@/lib/auth";
 import { ageOn, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
-import { latestWeight } from "@/lib/nutrition";
-import type { Allergen, DietType, Goal, Sex, SportLevel, TrackingMode } from "@/lib/enums";
+import { latestWeight, targetFor } from "@/lib/nutrition";
+import { targetSummary } from "./nutrition/target-summary";
+import { type Allergen, DAY_TYPES, type DietType, type Goal, type Sex, type SportLevel, type TrackingMode } from "@/lib/enums";
 
 // Overview: what the client works toward and what to know before planning (profile summary, allergies first in mind).
 // Current targets, the last check-in and key trends join when their features land.
 export default async function ClientOverview({ params }: PageProps<"/coach/clients/[id]">) {
   const { client } = await requireCoachOf((await params).id);
-  const [t, format, user] = await Promise.all([
+  const [t, format, user, targetRows] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { email: true, timezone: true } }),
+    db.nutritionTarget.findMany({ where: { clientId: client.id } }),
   ]);
+  const today = todayIn(user.timezone);
+  const mode = client.trackingMode as TrackingMode;
+  // Today's targets per day type: its own row, else the rest day's (shown as such).
+  const targets = DAY_TYPES.map((dayType) => ({ dayType, own: targetFor(targetRows.filter((r) => r.dayType === dayType), today, dayType) }));
+  const restTarget = targets[0].own;
+  const since = targets.reduce((latest, { own }) => (own && own.effectiveFrom > latest ? own.effectiveFrom : latest), "");
   const number = (value: number) => format.number(value, { maximumFractionDigits: 1 });
   const kg = (value: number | null) => value != null && t("ClientDashboard.kg", { value: number(value) });
   // A calendar day: formatted at UTC midnight so no timezone can move it.
@@ -30,7 +38,7 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
 
   // Always shown, with a dash when empty; the free-text rows only when the client wrote something.
   const rows: [string, ReactNode][] = [
-    [t("ClientDashboard.age"), client.birthDate && t("ClientDashboard.years", { age: ageOn(client.birthDate, todayIn(user.timezone)) })],
+    [t("ClientDashboard.age"), client.birthDate && t("ClientDashboard.years", { age: ageOn(client.birthDate, today) })],
     [t("Profile.fields.sex"), client.sex && t(`Sexes.${client.sex as Sex}`)],
     [t("ClientDashboard.height"), client.heightCm != null && t("ClientDashboard.cm", { value: client.heightCm })],
     [t("Profile.fields.dietType"), client.dietType && t(`DietTypes.${client.dietType as DietType}`)],
@@ -73,31 +81,57 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
 
   return (
     <div className="flex flex-col gap-6">
-      <section aria-labelledby="overview-goals" className="rounded-lg border bg-card p-6">
-        <h2 id="overview-goals" className="text-base font-semibold">
-          {t("Profile.sections.goals.title")}
-        </h2>
-        {/* The goal, then its numbers on the same line on wide screens. */}
-        <div className="mt-4 grid grid-cols-3 gap-x-6 gap-y-4 md:grid-cols-[minmax(0,2fr)_repeat(3,minmax(0,1fr))] md:items-end">
-          <p className={`col-span-3 text-xl font-semibold md:col-span-1 ${client.primaryGoal ? "" : "text-muted-foreground"}`}>
-            {client.primaryGoal ? t(`Goals.${client.primaryGoal as Goal}`) : t("ClientDashboard.noGoal")}
-          </p>
-          <dl className="contents">
-            {figures.map(([label, value]) => (
-              <div key={label} className="flex flex-col gap-1">
-                <dt className="text-xs text-muted-foreground">{label}</dt>
-                <dd className={`tabular-nums ${value ? "text-base font-medium" : "text-muted-foreground"}`}>{value || "—"}</dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-        {client.successText && (
-          <div className="mt-6">
-            <h3 className="text-xs text-muted-foreground">{t("ClientDashboard.success")}</h3>
-            <p className="mt-1 text-sm whitespace-pre-line">{client.successText}</p>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section aria-labelledby="overview-goals" className="rounded-lg border bg-card p-6">
+          <h2 id="overview-goals" className="text-base font-semibold">
+            {t("Profile.sections.goals.title")}
+          </h2>
+          <div className="mt-4 grid grid-cols-3 gap-x-6 gap-y-4">
+            <p className={`col-span-3 text-xl font-semibold ${client.primaryGoal ? "" : "text-muted-foreground"}`}>
+              {client.primaryGoal ? t(`Goals.${client.primaryGoal as Goal}`) : t("ClientDashboard.noGoal")}
+            </p>
+            <dl className="contents">
+              {figures.map(([label, value]) => (
+                <div key={label} className="flex flex-col gap-1">
+                  <dt className="text-xs text-muted-foreground">{label}</dt>
+                  <dd className={`tabular-nums ${value ? "text-base font-medium" : "text-muted-foreground"}`}>{value || "—"}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
-        )}
-      </section>
+          {client.successText && (
+            <div className="mt-6">
+              <h3 className="text-xs text-muted-foreground">{t("ClientDashboard.success")}</h3>
+              <p className="mt-1 text-sm whitespace-pre-line">{client.successText}</p>
+            </div>
+          )}
+        </section>
+
+        <section aria-labelledby="overview-targets" className="rounded-lg border bg-card p-6">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 id="overview-targets" className="text-base font-semibold">
+              {t("ClientDashboard.targets")}
+            </h2>
+            <Link href={`/coach/clients/${client.id}/nutrition`} className="text-sm font-medium text-primary-ink hover:underline">
+              {t("ClientDashboard.editTargets")}
+            </Link>
+          </div>
+          <dl className="mt-3 text-sm">
+            {targets.map(({ dayType, own }) => {
+              const summary = own && targetSummary(own, mode, t, number);
+              return (
+                <div key={dayType} className="grid gap-1 border-b border-rule py-2.5 last:border-b-0 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-4">
+                  <dt className="text-muted-foreground">{t(`DayTypes.${dayType}`)}</dt>
+                  <dd className={summary ? "tabular-nums" : "text-muted-foreground"}>
+                    {summary ?? (dayType !== "REST" && restTarget ? t("ClientDashboard.asRest") : "—")}
+                  </dd>
+                </div>
+              );
+            })}
+          </dl>
+          {since && <p className="mt-3 text-xs text-muted-foreground">{t("ClientDashboard.targetsSince", { date: format.dateTime(new Date(since), { dateStyle: "medium", timeZone: "UTC" }) })}</p>}
+        </section>
+      </div>
 
       <section aria-labelledby="overview-profile" className="rounded-lg border bg-card p-6">
         <div className="flex items-baseline justify-between gap-4">

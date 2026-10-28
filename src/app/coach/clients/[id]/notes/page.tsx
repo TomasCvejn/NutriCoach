@@ -7,7 +7,7 @@ import type { CoachNote, HistoryEvent } from "@/generated/prisma/client";
 import { requireCoachOf } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
-import type { HistoryPayloads } from "@/lib/enums";
+import type { HistoryPayloads, HistoryType } from "@/lib/enums";
 import { FEED_TYPES, historyFeed } from "@/lib/history";
 import { NoteDialog } from "./note-dialog";
 
@@ -51,10 +51,15 @@ export default async function ClientNotes({ params, searchParams }: PageProps<"/
       note.text,
       <NoteDialog clientId={client.id} today={today} note={note} label={t("Notes.editFrom", { date: day(note.date) })} />,
     );
-  const eventRow = (event: HistoryEvent) => {
+  const eventText = (event: HistoryEvent) => {
+    if (event.type === "TARGETS") {
+      const { effectiveFrom, dayTypes } = event.payload as HistoryPayloads["TARGETS"];
+      return t("Notes.targets", { date: day(effectiveFrom), dayTypes: dayTypes.map((d) => t(`DayTypes.${d}`)).join(", ") });
+    }
     const { from, to } = event.payload as HistoryPayloads["TRACKING_MODE"];
-    return row(event.id, event.date, <Pill>{t("Notes.types.TRACKING_MODE")}</Pill>, t("Notes.trackingMode", { from: t(`TrackingModes.${from}`), to: t(`TrackingModes.${to}`) }));
+    return t("Notes.trackingMode", { from: t(`TrackingModes.${from}`), to: t(`TrackingModes.${to}`) });
   };
+  const eventRow = (event: HistoryEvent) => row(event.id, event.date, <Pill>{t(`Notes.types.${event.type as HistoryType}`)}</Pill>, eventText(event));
 
   return (
     <div className="flex max-w-3xl flex-col gap-8">

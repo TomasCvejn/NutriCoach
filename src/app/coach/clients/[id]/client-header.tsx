@@ -13,6 +13,7 @@ import { changeTrackingMode } from "./actions";
 // The segment is the tab's route under /coach/clients/[id] (null = Overview).
 const TABS = [
   { key: "overview", segment: null },
+  { key: "nutrition", segment: "nutrition" },
   { key: "notes", segment: "notes" },
 ] as const;
 

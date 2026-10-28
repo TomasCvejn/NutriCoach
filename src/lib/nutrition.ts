@@ -1,5 +1,5 @@
 import { ageOn } from "./dates";
-import type { DayType } from "./enums";
+import type { DayType, TrackingMode } from "./enums";
 
 // Day type of a date (00-overview.md): an override wins, then a competition that day, then any training session, else REST.
 export function dayType({ override, competition, session }: { override?: DayType | null; competition?: boolean; session?: boolean }): DayType {
@@ -47,3 +47,14 @@ export function suggestTargets(
 
 // Daily fluid base: 35 ml/kg, to the nearest 50 ml; null without a weight.
 export const suggestFluid = (weightKg: number | null) => (weightKg ? Math.round((weightKg * 35) / 50) * 50 : null);
+
+// The target numbers each tracking mode edits; every mode also sets fluid. A NutritionTarget row holds all of them.
+export const TARGET_FIELDS = {
+  CALORIES: ["kcal", "protein", "carbs", "fat", "fiber", "sodium"],
+  PORTIONS: ["palms", "hands", "fists", "thumbs"],
+  GUIDANCE: [],
+} as const satisfies Record<TrackingMode, readonly string[]>;
+export const TARGET_VALUE_FIELDS = [...TARGET_FIELDS.CALORIES, ...TARGET_FIELDS.PORTIONS, "fluidMl"] as const;
+export type TargetField = (typeof TARGET_VALUE_FIELDS)[number];
+export type TargetValues = Record<TargetField, number | null>;
+export const modeFields = (mode: TrackingMode): TargetField[] => [...TARGET_FIELDS[mode], "fluidMl"];

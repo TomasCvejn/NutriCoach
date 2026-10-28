@@ -89,6 +89,7 @@ model Client {
   invite       Invite?
   history      HistoryEvent[]
   coachNotes   CoachNote[]
+  targets      NutritionTarget[]
 
   // Onboarding (/onboarding): the current step, an index into ONBOARDING_STEPS, so a reload resumes; /app redirects until completed.
   onboardingStep        Int       @default(0)
@@ -184,4 +185,32 @@ model CoachNote {
   updatedAt DateTime @updatedAt
 
   @@index([clientId, date])
+}
+
+// Daily targets per day type (nutrition.md), one row per (client, day type, effective-from day); history = the older rows.
+// A row holds every mode's numbers, so switching the tracking mode keeps the others. Null = not set.
+model NutritionTarget {
+  id            String   @id @default(cuid())
+  clientId      String
+  client        Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  dayType       String // DAY_TYPES
+  effectiveFrom String // YYYY-MM-DD
+  // CALORIES
+  kcal          Int?
+  protein       Int? // g
+  carbs         Int? // g
+  fat           Int? // g
+  fiber         Int? // g
+  sodium        Int? // mg
+  // PORTIONS: hand portions per day, in 0.5 steps
+  palms         Float? // protein
+  hands         Float? // carbs, cupped hands
+  fists         Float? // vegetables
+  thumbs        Float? // fats
+  // All modes
+  fluidMl       Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([clientId, dayType, effectiveFrom])
 }

@@ -164,7 +164,8 @@
     "tabs": {
       "label": "Sekce klienta",
       "overview": "Přehled",
-      "notes": "Poznámky"
+      "notes": "Poznámky",
+      "nutrition": "Výživa"
     },
     "changeMode": {
       "open": "Změnit sledování",
@@ -191,7 +192,11 @@
     "minutes": "{minutes} min",
     "contact": "Kontakt",
     "kg": "{value} kg",
-    "cm": "{value} cm"
+    "cm": "{value} cm",
+    "targets": "Aktuální cíle",
+    "editTargets": "Upravit cíle",
+    "asRest": "Jako odpočinkový den",
+    "targetsSince": "Poslední změna platí od {date}."
   },
   "Notes": {
     "add": "Přidat poznámku",
@@ -206,7 +211,8 @@
     "types": {
       "NOTE": "Poznámka",
       "DECISION": "Rozhodnutí",
-      "TRACKING_MODE": "Změna sledování"
+      "TRACKING_MODE": "Změna sledování",
+      "TARGETS": "Změna cílů"
     },
     "invalid": {
       "date": "Zadejte platné datum.",
@@ -220,13 +226,75 @@
       "all": "Vše",
       "NOTE": "Poznámky",
       "DECISION": "Rozhodnutí",
-      "TRACKING_MODE": "Změny sledování"
+      "TRACKING_MODE": "Změny sledování",
+      "TARGETS": "Změny cílů"
     },
     "pinned": "Připnuté",
     "history": "Historie",
     "trackingMode": "Sledování změněno z {from} na {to}.",
     "empty": "Zatím žádné poznámky. Objeví se tu vaše poznámky a rozhodnutí i změny režimu sledování. Klient je nikdy neuvidí.",
-    "emptyFiltered": "Tohoto typu tu zatím nic není."
+    "emptyFiltered": "Tohoto typu tu zatím nic není.",
+    "targets": "Cíle upraveny, platí od {date}: {dayTypes}."
+  },
+  "Targets": {
+    "title": "Denní cíle",
+    "lead": {
+      "CALORIES": "Energie, makroživiny a tekutiny pro každý typ dne. Klient sleduje kalorie.",
+      "PORTIONS": "Porce rukou a tekutiny pro každý typ dne. Klient počítá porce.",
+      "GUIDANCE": "Klient sleduje bez čísel, takže se tu nastavují jen tekutiny."
+    },
+    "effectiveFrom": "Platí od",
+    "dayType": "Typ dne",
+    "values": "Cíle",
+    "save": "Uložit cíle",
+    "saved": "Uloženo",
+    "invalid": "Zkontrolujte tuto hodnotu.",
+    "empty": "Vyplňte aspoň jeden cíl.",
+    "restText": "Platí i pro tréninkové a závodní dny, které necháte prázdné.",
+    "fallbackText": "Když zůstane prázdný, platí cíle odpočinkového dne.",
+    "fields": {
+      "kcal": "Energie (kcal)",
+      "protein": "Bílkoviny (g)",
+      "carbs": "Sacharidy (g)",
+      "fat": "Tuky (g)",
+      "fiber": "Vláknina (g)",
+      "sodium": "Sodík (mg)",
+      "palms": "Bílkoviny (dlaně)",
+      "hands": "Sacharidy (hrsti)",
+      "fists": "Zelenina (pěsti)",
+      "thumbs": "Tuky (palce)",
+      "fluidMl": "Tekutiny (ml)"
+    },
+    "perKg": "{value} g/kg",
+    "fromMacros": "Makroživiny dávají {kcal} kcal",
+    "mismatch": "o víc než 5 % jinak než zadaná energie",
+    "activity": "Aktivita",
+    "factor": "{level} (×{factor})",
+    "factors": {
+      "0": "Sedavá",
+      "1": "Lehká aktivita",
+      "2": "Střední aktivita",
+      "3": "Vysoká aktivita"
+    },
+    "suggest": "Navrhnout odpočinkový den",
+    "suggestMissing": "K návrhu cílů potřebuje profil pohlaví, datum narození, výšku a váhu.",
+    "suggestMissingWeight": "K návrhu tekutin potřebuje profil váhu.",
+    "copy": "Kopírovat odpočinkový den do ostatních",
+    "history": "Historie cílů",
+    "historyEmpty": "Zatím žádné cíle.",
+    "summary": {
+      "kcal": "{value} kcal",
+      "protein": "B {value} g",
+      "carbs": "S {value} g",
+      "fat": "T {value} g",
+      "fiber": "vláknina {value} g",
+      "sodium": "sodík {value} mg",
+      "palms": "dlaně {value}",
+      "hands": "hrsti {value}",
+      "fists": "pěsti {value}",
+      "thumbs": "palce {value}",
+      "fluidMl": "{value} ml"
+    }
   },
   "Invite": {
     "title": "{coach} vás zve do NutriCoach",

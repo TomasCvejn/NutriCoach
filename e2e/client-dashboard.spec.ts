@@ -10,7 +10,7 @@ test("coach opens race@'s dashboard and switches the tracking mode to PORTIONS a
   await expect(page.getByRole("heading", { name: "Tereza Svobodová", level: 1 })).toBeVisible();
   await expect(page.getByRole("navigation", { name: "Sekce klienta" }).getByRole("link", { name: "Přehled" })).toHaveAttribute("aria-current", "page");
 
-  const goals = page.getByRole("region", { name: "Cíle" });
+  const goals = page.getByRole("region", { name: "Cíle", exact: true });
   await expect(goals).toContainText("Příprava na závod");
   await expect(goals).toContainText("Maraton pod 3:30");
   const profile = page.getByRole("region", { name: "Profil" });

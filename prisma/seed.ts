@@ -142,6 +142,32 @@ async function seed() {
     ],
   });
 
+  // Nutrition targets from onboarding on; general@'s portion targets came with the mode change a week ago (calories carried over).
+  const from = addDays(today, -14);
+  const target = (clientId: string, dayType: string, effectiveFrom: string, values: object) => ({ clientId, dayType, effectiveFrom, ...values });
+  const generalCalories = { kcal: 2300, protein: 170, carbs: 230, fat: 75, fluidMl: 3300 };
+  await db.nutritionTarget.createMany({
+    data: [
+      target(general, "REST", from, generalCalories),
+      target(general, "REST", addDays(today, -7), { ...generalCalories, palms: 6, hands: 5, fists: 6, thumbs: 4 }),
+      target(sports, "REST", from, { kcal: 2200, protein: 120, carbs: 280, fat: 65, fiber: 30, fluidMl: 2150 }),
+      target(sports, "TRAINING", from, { kcal: 2700, protein: 125, carbs: 390, fat: 70, fiber: 30, fluidMl: 2650 }),
+      target(race, "REST", from, { kcal: 2100, protein: 110, carbs: 270, fat: 62, fluidMl: 2050 }),
+      target(race, "TRAINING", from, { kcal: 2600, protein: 115, carbs: 380, fat: 65, fluidMl: 2500 }),
+      target(race, "COMPETITION", from, { kcal: 2900, protein: 100, carbs: 500, fat: 55, fluidMl: 2500 }),
+    ],
+  });
+  const targetsSet = (clientId: string, date: string, dayTypes: HistoryPayloads["TARGETS"]["dayTypes"], days: number) =>
+    ({ clientId, type: "TARGETS", date, payload: { effectiveFrom: date, dayTypes } satisfies HistoryPayloads["TARGETS"], createdAt: daysAgo(days) });
+  await db.historyEvent.createMany({
+    data: [
+      targetsSet(general, from, ["REST"], 14),
+      targetsSet(general, addDays(today, -7), ["REST"], 7),
+      targetsSet(sports, from, ["REST", "TRAINING"], 14),
+      targetsSet(race, from, ["REST", "TRAINING", "COMPETITION"], 14),
+    ],
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

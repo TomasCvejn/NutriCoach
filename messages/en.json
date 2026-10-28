@@ -164,7 +164,8 @@
     "tabs": {
       "label": "Client sections",
       "overview": "Overview",
-      "notes": "Notes"
+      "notes": "Notes",
+      "nutrition": "Nutrition"
     },
     "changeMode": {
       "open": "Change tracking",
@@ -191,7 +192,11 @@
     "minutes": "{minutes} min",
     "contact": "Contact",
     "kg": "{value} kg",
-    "cm": "{value} cm"
+    "cm": "{value} cm",
+    "targets": "Current targets",
+    "editTargets": "Edit targets",
+    "asRest": "As the rest day",
+    "targetsSince": "Last change applies from {date}."
   },
   "Notes": {
     "add": "Add note",
@@ -206,7 +211,8 @@
     "types": {
       "NOTE": "Note",
       "DECISION": "Decision",
-      "TRACKING_MODE": "Tracking change"
+      "TRACKING_MODE": "Tracking change",
+      "TARGETS": "Targets change"
     },
     "invalid": {
       "date": "Enter a valid date.",
@@ -220,13 +226,75 @@
       "all": "All",
       "NOTE": "Notes",
       "DECISION": "Decisions",
-      "TRACKING_MODE": "Tracking changes"
+      "TRACKING_MODE": "Tracking changes",
+      "TARGETS": "Target changes"
     },
     "pinned": "Pinned",
     "history": "History",
     "trackingMode": "Tracking changed from {from} to {to}.",
     "empty": "No notes yet. Notes and decisions you add, and changes to the tracking mode, show up here. The client never sees them.",
-    "emptyFiltered": "Nothing of this type yet."
+    "emptyFiltered": "Nothing of this type yet.",
+    "targets": "Targets updated, applying from {date}: {dayTypes}."
+  },
+  "Targets": {
+    "title": "Daily targets",
+    "lead": {
+      "CALORIES": "Energy, macros and fluid for each day type. The client tracks calories.",
+      "PORTIONS": "Hand portions and fluid for each day type. The client counts portions.",
+      "GUIDANCE": "The client tracks without numbers, so only fluid is set here."
+    },
+    "effectiveFrom": "Applies from",
+    "dayType": "Day type",
+    "values": "Targets",
+    "save": "Save targets",
+    "saved": "Saved",
+    "invalid": "Check this value.",
+    "empty": "Fill in at least one target.",
+    "restText": "Also used on training and competition days left empty.",
+    "fallbackText": "Left empty, the rest day's targets apply.",
+    "fields": {
+      "kcal": "Energy (kcal)",
+      "protein": "Protein (g)",
+      "carbs": "Carbs (g)",
+      "fat": "Fat (g)",
+      "fiber": "Fiber (g)",
+      "sodium": "Sodium (mg)",
+      "palms": "Protein palms",
+      "hands": "Carb cupped hands",
+      "fists": "Veg fists",
+      "thumbs": "Fat thumbs",
+      "fluidMl": "Fluid (ml)"
+    },
+    "perKg": "{value} g/kg",
+    "fromMacros": "Macros add up to {kcal} kcal",
+    "mismatch": "more than 5 % off the energy entered",
+    "activity": "Activity",
+    "factor": "{level} (×{factor})",
+    "factors": {
+      "0": "Sedentary",
+      "1": "Lightly active",
+      "2": "Moderately active",
+      "3": "Very active"
+    },
+    "suggest": "Suggest the rest day",
+    "suggestMissing": "To suggest targets, the profile needs sex, birth date, height and weight.",
+    "suggestMissingWeight": "To suggest fluid, the profile needs a weight.",
+    "copy": "Copy the rest day to the others",
+    "history": "Targets history",
+    "historyEmpty": "No targets yet.",
+    "summary": {
+      "kcal": "{value} kcal",
+      "protein": "P {value} g",
+      "carbs": "C {value} g",
+      "fat": "F {value} g",
+      "fiber": "fiber {value} g",
+      "sodium": "sodium {value} mg",
+      "palms": "palms {value}",
+      "hands": "hands {value}",
+      "fists": "fists {value}",
+      "thumbs": "thumbs {value}",
+      "fluidMl": "{value} ml"
+    }
   },
   "Invite": {
     "title": "{coach} invited you to NutriCoach",
