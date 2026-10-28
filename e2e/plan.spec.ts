@@ -1,6 +1,40 @@
 import { expect, test } from "@playwright/test";
 import { logIn } from "./dev-login";
 
+// The nutrition plan, coach and client side. One file, so the changes to sports@'s plan below run after this read-only test.
+test("each demo client sees their seeded plan in their mode", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "general@demo.cz");
+  await expect(page).toHaveURL("/app");
+  await page.getByRole("button", { name: "Více" }).click();
+  await page.getByRole("link", { name: "Plán" }).click();
+  await expect(page.getByRole("heading", { name: "Váš plán", level: 1 })).toBeVisible();
+  const targets = page.getByRole("region", { name: "Denní cíle · Odpočinkový den" });
+  await expect(targets).toContainText("6 dlaní");
+  await expect(targets).toContainText("4 palce");
+  await expect(targets).toContainText("3 300 ml");
+  await expect(page.getByRole("region", { name: "Jídla" })).toContainText("Snídaně · 10:00");
+  await expect(page.getByRole("region", { name: "Od trenéra" })).toContainText("Bílkoviny v každém jídle");
+  await expect(page.getByRole("region", { name: "Jen pro vás" })).toContainText("Pracuje na směny");
+  await expect(page.getByRole("navigation", { name: "Typ dne" })).toHaveCount(0); // general@'s plan covers rest days only
+
+  const sports = await (await page.context().browser()!.newContext()).newPage();
+  await logIn(sports, "sports@demo.cz");
+  await expect(sports).toHaveURL("/app");
+  await sports.goto("/app/plan");
+  await expect(sports.getByRole("region", { name: "Daily targets · Rest day" })).toContainText("2,200 kcal");
+  await sports.getByRole("navigation", { name: "Day type" }).getByRole("link", { name: "Training day" }).click();
+  await expect(sports.getByRole("region", { name: "Daily targets · Training day" })).toContainText("2,700 kcal");
+  await expect(sports.getByRole("region", { name: "Meals" })).toContainText("Pre-training · 5:30");
+
+  const race = await (await page.context().browser()!.newContext()).newPage();
+  await logIn(race, "race@demo.cz");
+  await expect(race).toHaveURL("/app");
+  await race.goto("/app/plan?day=COMPETITION");
+  await expect(race.getByRole("region", { name: "Jídla" })).toContainText("Snídaně · 3 h před startem");
+  await expect(race.getByRole("region", { name: "Od trenéra" })).toContainText("Bez luštěnin 3 dny před závodem");
+});
+
 test("coach suggests sports@'s rest-day targets, saves, and the client's bell shows the plan update", async ({ page, browser }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await logIn(page, "coach@demo.cz");

@@ -3,6 +3,7 @@ import { createUser } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { notFound, redirectsTo, signIn, uniqueEmail } from "@/test/auth";
+import ClientPlan from "@/app/app/plan/page";
 import { copyPlan, deleteMeal, deleteRecommendation, reorderPlan, saveMeal, saveRecommendation, saveSpecifics } from "./actions";
 
 const request = vi.hoisted(() => ({ cookie: "" }));
@@ -138,4 +139,12 @@ test("another coach's client can't be copied from or edited, a client can't touc
   await expect(copyPlan(form({ clientId: bara.client.id, sourceId: anna.client.id }))).rejects.toMatchObject(redirectsTo("/app"));
   expect(await mealsOf(anna.client.id)).toEqual([]);
   expect(await db.planRecommendation.count({ where: { clientId: bara.client.id } })).toBe(0);
+});
+
+test("the client plan page is the signed-in client's own: a coach or nobody is sent away", async () => {
+  await setup();
+  const searchParams = Promise.resolve({});
+  await expect(ClientPlan({ params: Promise.resolve({}), searchParams })).rejects.toMatchObject(redirectsTo("/coach"));
+  request.cookie = "";
+  await expect(ClientPlan({ params: Promise.resolve({}), searchParams })).rejects.toMatchObject(redirectsTo("/login"));
 });

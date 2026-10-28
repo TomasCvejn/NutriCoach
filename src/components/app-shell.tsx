@@ -1,6 +1,6 @@
 "use client";
 
-import { ActivityIcon, BellIcon, EllipsisIcon, HouseIcon, type LucideIcon, SettingsIcon, SunIcon, UserRoundIcon, UsersIcon } from "lucide-react";
+import { ActivityIcon, BellIcon, ClipboardListIcon, EllipsisIcon, HouseIcon, type LucideIcon, SettingsIcon, SunIcon, UserRoundIcon, UsersIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -16,6 +16,7 @@ const ICONS: Record<NavItem["key"], LucideIcon> = {
   clients: UsersIcon,
   today: SunIcon,
   training: ActivityIcon,
+  plan: ClipboardListIcon,
   profile: UserRoundIcon,
   settings: SettingsIcon,
 };

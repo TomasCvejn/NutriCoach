@@ -35,7 +35,8 @@
     "today": "Dnes",
     "training": "Trénink",
     "profile": "Profil",
-    "settings": "Nastavení"
+    "settings": "Nastavení",
+    "plan": "Plán"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -347,6 +348,47 @@
       "cancel": "Zrušit",
       "confirm": "Kopírovat a nahradit"
     }
+  },
+  "ClientPlan": {
+    "title": "Váš plán",
+    "lead": {
+      "CALORIES": "Denní cíle energie a makroživin, vaše jídla a doporučení od trenéra.",
+      "PORTIONS": "Porce počítáte rukou: dlaň bílkovin, hrst sacharidů, pěst zeleniny, palec tuků.",
+      "GUIDANCE": "Bez počítání: držte se jídel a doporučení níže."
+    },
+    "dayType": "Typ dne",
+    "today": "{dayType} (dnes)",
+    "targets": "Denní cíle · {dayType}",
+    "noTargets": "Trenér vám cíle zatím nenastavil.",
+    "guidance": "Sledujete bez čísel: u každého jídla z plánu jen označíte, jestli se ho podařilo dodržet.",
+    "fields": {
+      "kcal": "Energie",
+      "protein": "Bílkoviny",
+      "carbs": "Sacharidy",
+      "fat": "Tuky",
+      "fiber": "Vláknina",
+      "sodium": "Sodík",
+      "palms": "Bílkoviny",
+      "hands": "Sacharidy",
+      "fists": "Zelenina",
+      "thumbs": "Tuky",
+      "fluidMl": "Tekutiny"
+    },
+    "units": {
+      "kcal": "{formatted} kcal",
+      "g": "{formatted} g",
+      "mg": "{formatted} mg",
+      "ml": "{formatted} ml",
+      "palms": "{value, plural, one {# dlaň} few {# dlaně} many {# dlaně} other {# dlaní}}",
+      "hands": "{value, plural, one {# hrst} few {# hrsti} many {# hrsti} other {# hrstí}}",
+      "fists": "{value, plural, one {# pěst} few {# pěsti} many {# pěsti} other {# pěstí}}",
+      "thumbs": "{value, plural, one {# palec} few {# palce} many {# palce} other {# palců}}"
+    },
+    "meals": "Jídla",
+    "noMeals": "Pro tento den vám trenér jídla zatím nenastavil.",
+    "recommendations": "Od trenéra",
+    "noRecommendations": "Zatím žádná doporučení.",
+    "specifics": "Jen pro vás"
   },
   "Invite": {
     "title": "{coach} vás zve do NutriCoach",

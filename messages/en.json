@@ -35,7 +35,8 @@
     "today": "Today",
     "training": "Training",
     "profile": "Profile",
-    "settings": "Settings"
+    "settings": "Settings",
+    "plan": "Plan"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -347,6 +348,47 @@
       "cancel": "Cancel",
       "confirm": "Copy and replace"
     }
+  },
+  "ClientPlan": {
+    "title": "Your plan",
+    "lead": {
+      "CALORIES": "Daily energy and macro targets, your meals and your coach's recommendations.",
+      "PORTIONS": "Count portions by hand: a palm of protein, a cupped hand of carbs, a fist of veg, a thumb of fat.",
+      "GUIDANCE": "No counting: follow the meals and recommendations below."
+    },
+    "dayType": "Day type",
+    "today": "{dayType} (today)",
+    "targets": "Daily targets · {dayType}",
+    "noTargets": "Your coach hasn't set targets yet.",
+    "guidance": "You track without numbers: for each planned meal you just mark whether you followed it.",
+    "fields": {
+      "kcal": "Energy",
+      "protein": "Protein",
+      "carbs": "Carbs",
+      "fat": "Fat",
+      "fiber": "Fiber",
+      "sodium": "Sodium",
+      "palms": "Protein",
+      "hands": "Carbs",
+      "fists": "Vegetables",
+      "thumbs": "Fats",
+      "fluidMl": "Fluid"
+    },
+    "units": {
+      "kcal": "{formatted} kcal",
+      "g": "{formatted} g",
+      "mg": "{formatted} mg",
+      "ml": "{formatted} ml",
+      "palms": "{value, plural, one {# palm} other {# palms}}",
+      "hands": "{value, plural, one {# cupped hand} other {# cupped hands}}",
+      "fists": "{value, plural, one {# fist} other {# fists}}",
+      "thumbs": "{value, plural, one {# thumb} other {# thumbs}}"
+    },
+    "meals": "Meals",
+    "noMeals": "Your coach hasn't set meals for this day yet.",
+    "recommendations": "From your coach",
+    "noRecommendations": "No recommendations yet.",
+    "specifics": "Just for you"
   },
   "Invite": {
     "title": "{coach} invited you to NutriCoach",
