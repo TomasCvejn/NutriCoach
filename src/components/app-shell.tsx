@@ -1,6 +1,6 @@
 "use client";
 
-import { ActivityIcon, BellIcon, EllipsisIcon, HouseIcon, type LucideIcon, SunIcon, UsersIcon } from "lucide-react";
+import { ActivityIcon, BellIcon, EllipsisIcon, HouseIcon, type LucideIcon, SettingsIcon, SunIcon, UsersIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,7 +11,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import type { Nav, NavItem } from "@/lib/nav";
 import { Logo } from "./logo";
 
-const ICONS: Record<NavItem["key"], LucideIcon> = { overview: HouseIcon, clients: UsersIcon, today: SunIcon, training: ActivityIcon };
+const ICONS: Record<NavItem["key"], LucideIcon> = { overview: HouseIcon, clients: UsersIcon, today: SunIcon, training: ActivityIcon, settings: SettingsIcon };
 
 type User = { name: string; email: string };
 

@@ -33,7 +33,8 @@
     "overview": "Overview",
     "clients": "Clients",
     "today": "Today",
-    "training": "Training"
+    "training": "Training",
+    "settings": "Settings"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -144,6 +145,16 @@
       "ONBOARDING_COMPLETED": "{client} completed onboarding",
       "CHECK_IN_SUBMITTED": "{client} submitted a check-in",
       "CLIENT_DELETED_ACCOUNT": "{client} deleted their account"
+    }
+  },
+  "Settings": {
+    "title": "Settings",
+    "save": "Save",
+    "region": {
+      "title": "Language and time zone",
+      "text": "The language of the app and the zone your days are counted in. Content people write (plans, recipes, notes) stays in the language it was written in.",
+      "timezone": "Time zone",
+      "now": "Days and times in the app follow it. Your time now: {time}."
     }
   }
 }

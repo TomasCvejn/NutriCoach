@@ -33,7 +33,8 @@
     "overview": "Přehled",
     "clients": "Klienti",
     "today": "Dnes",
-    "training": "Trénink"
+    "training": "Trénink",
+    "settings": "Nastavení"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -144,6 +145,16 @@
       "ONBOARDING_COMPLETED": "Úvodní nastavení dokončeno: {client}",
       "CHECK_IN_SUBMITTED": "Nový check-in: {client}",
       "CLIENT_DELETED_ACCOUNT": "Účet smazán: {client}"
+    }
+  },
+  "Settings": {
+    "title": "Nastavení",
+    "save": "Uložit",
+    "region": {
+      "title": "Jazyk a časové pásmo",
+      "text": "Jazyk aplikace a pásmo, podle kterého počítá vaše dny. Obsah, který lidé píší (plány, recepty, poznámky), zůstává v jazyce, ve kterém vznikl.",
+      "timezone": "Časové pásmo",
+      "now": "Řídí se jím dny a časy v aplikaci. Teď je u vás {time}."
     }
   }
 }
