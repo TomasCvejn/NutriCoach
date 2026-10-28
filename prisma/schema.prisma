@@ -9,22 +9,22 @@ datasource db {
 
 // Better Auth core tables. role / active / timezone / locale are Better Auth additional fields (src/lib/auth.ts).
 model User {
-  id            String    @id @default(cuid())
+  id            String         @id @default(cuid())
   name          String
-  email         String    @unique
-  emailVerified Boolean   @default(false)
+  email         String         @unique
+  emailVerified Boolean        @default(false)
   image         String?
   role          String // ROLES
-  active        Boolean   @default(true)
-  timezone      String    @default("Europe/Prague")
-  locale        String    @default("cs")
+  active        Boolean        @default(true)
+  timezone      String         @default("Europe/Prague")
+  locale        String         @default("cs")
   welcomeText   String? // coach only: the first onboarding screen; null → the i18n default
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
   sessions      Session[]
   accounts      Account[]
-  client        Client?   @relation("ClientUser")
-  clients       Client[]  @relation("CoachClients")
+  client        Client?        @relation("ClientUser")
+  clients       Client[]       @relation("CoachClients")
   invites       Invite[]
   notifications Notification[]
 
@@ -79,17 +79,20 @@ model Verification {
 }
 
 model Client {
-  id           String   @id @default(cuid())
-  userId       String   @unique
-  user         User     @relation("ClientUser", fields: [userId], references: [id], onDelete: Cascade)
-  coachId      String
-  coach        User     @relation("CoachClients", fields: [coachId], references: [id])
-  trackingMode String   @default("CALORIES") // TRACKING_MODES
-  createdAt    DateTime @default(now())
-  invite       Invite?
-  history      HistoryEvent[]
-  coachNotes   CoachNote[]
-  targets      NutritionTarget[]
+  id                  String               @id @default(cuid())
+  userId              String               @unique
+  user                User                 @relation("ClientUser", fields: [userId], references: [id], onDelete: Cascade)
+  coachId             String
+  coach               User                 @relation("CoachClients", fields: [coachId], references: [id])
+  trackingMode        String               @default("CALORIES") // TRACKING_MODES
+  createdAt           DateTime             @default(now())
+  invite              Invite?
+  history             HistoryEvent[]
+  coachNotes          CoachNote[]
+  targets             NutritionTarget[]
+  planMeals           PlanMeal[]
+  planRecommendations PlanRecommendation[]
+  planSpecifics       String? // the plan's "specifics for this client" (nutrition.md)
 
   // Onboarding (/onboarding): the current step, an index into ONBOARDING_STEPS, so a reload resumes; /app redirects until completed.
   onboardingStep        Int       @default(0)
@@ -110,7 +113,7 @@ model Client {
   dislikedFoods    String?
   mealsPerDay      Int?
   dietType         String? // DIET_TYPES
-  allergens        Json     @default("[]") // ALLERGENS[]
+  allergens        Json    @default("[]") // ALLERGENS[]
   allergiesNote    String?
   restrictions     String?
   sports           String? // set → the Training section is on (clientFeatures)
@@ -213,4 +216,41 @@ model NutritionTarget {
   updatedAt     DateTime @updatedAt
 
   @@unique([clientId, dayType, effectiveFrom])
+}
+
+// The plan's meals per day type, in order (nutrition.md). Logged entries keep the slot name as a snapshot, so changing
+// or deleting a meal never moves old entries.
+model PlanMeal {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  dayType   String // DAY_TYPES
+  position  Int
+  name      String
+  timeHint  String? // free text: "7:00", "before training"
+  guidance  String?
+  // PORTIONS: hand portions for this meal, in 0.5 steps
+  palms     Float?
+  hands     Float?
+  fists     Float?
+  thumbs    Float?
+  note      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId, dayType, position])
+}
+
+// The coach's recommendations in the plan, in order ("Protein in every meal").
+model PlanRecommendation {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  position  Int
+  title     String
+  text      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId, position])
 }

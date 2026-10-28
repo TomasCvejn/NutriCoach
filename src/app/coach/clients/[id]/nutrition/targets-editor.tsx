@@ -41,9 +41,15 @@ export function TargetsEditor({ clientId, mode, today, weightKg, profile, curren
   const dayTypes = useTranslations("DayTypes");
   const format = useFormatter();
   const fields = modeFields(mode);
-  const [values, setValues] = useState<Values>(
-    () => Object.fromEntries(DAY_TYPES.map((d) => [d, Object.fromEntries(TARGET_VALUE_FIELDS.map((f) => [f, current[d]?.[f]?.toString() ?? ""]))])) as Values,
-  );
+  const fromServer = () =>
+    Object.fromEntries(DAY_TYPES.map((d) => [d, Object.fromEntries(TARGET_VALUE_FIELDS.map((f) => [f, current[d]?.[f]?.toString() ?? ""]))])) as Values;
+  const [values, setValues] = useState<Values>(fromServer);
+  // Targets changed on the server (a save, a copied plan): show them instead of what was typed before.
+  const [shown, setShown] = useState(JSON.stringify(current));
+  if (shown !== JSON.stringify(current)) {
+    setShown(JSON.stringify(current));
+    setValues(fromServer());
+  }
   const [factor, setFactor] = useState<(typeof ACTIVITY_FACTORS)[number]>(1.55);
   const [state, save, pending] = useActionState(saveTargets, null);
   const [edited, setEdited] = useState(false); // "Saved" shows until the next change

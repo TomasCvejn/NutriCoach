@@ -40,10 +40,12 @@ export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as 
 export const NOTE_TYPES = ["NOTE", "DECISION"] as const;
 
 // Client history rows (HistoryEvent.type, coach.md); the payload of each type below. Plan and target changes add theirs.
-export const HISTORY_TYPES = ["TRACKING_MODE", "TARGETS"] as const;
+export const HISTORY_TYPES = ["TRACKING_MODE", "TARGETS", "PLAN"] as const;
 export type HistoryPayloads = {
   TRACKING_MODE: { from: TrackingMode; to: TrackingMode };
   TARGETS: { effectiveFrom: string; dayTypes: DayType[] };
+  // Meals of one day type, the recommendations, the specifics, or the whole plan copied from another client (name snapshot).
+  PLAN: { change: "MEALS"; dayType: DayType } | { change: "RECOMMENDATIONS" | "SPECIFICS" } | { change: "COPY"; source: string };
 };
 
 // Onboarding steps in order; Client.onboardingStep is the index.

@@ -26,3 +26,44 @@ test("coach suggests sports@'s rest-day targets, saves, and the client's bell sh
   await client.getByRole("link", { name: "Notifications, 1 unread" }).click();
   await expect(client.getByRole("button", { name: "Unread: Your nutrition plan was updated" })).toBeVisible();
 });
+
+// Same file as the targets test, so the two changes to sports@'s plan run one after the other.
+test("coach adds a meal and a recommendation for race@, then copies race@'s plan to sports@", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await logIn(page, "coach@demo.cz");
+  await expect(page).toHaveURL("/coach");
+  const nutritionOf = async (name: string) => {
+    await page.goto("/coach/clients");
+    await page.getByRole("link", { name }).click();
+    await page.getByRole("navigation", { name: "Sekce klienta" }).getByRole("link", { name: "Výživa" }).click();
+  };
+
+  await nutritionOf("Tereza Svobodová");
+  const meals = page.getByRole("region", { name: "Jídla" });
+  await meals.getByRole("button", { name: "Přidat jídlo" }).click();
+  const mealDialog = page.getByRole("dialog", { name: "Nové jídlo" });
+  await mealDialog.getByLabel("Název").fill("Pozdní svačina");
+  await mealDialog.getByLabel("Čas").fill("22:00");
+  await mealDialog.getByRole("button", { name: "Uložit" }).click();
+  await expect(mealDialog).toBeHidden();
+  await expect(meals.getByRole("listitem").last()).toContainText("Pozdní svačina · 22:00");
+
+  const recommendations = page.getByRole("region", { name: "Doporučení", exact: true });
+  await recommendations.getByRole("button", { name: "Přidat doporučení" }).click();
+  const recDialog = page.getByRole("dialog", { name: "Nové doporučení" });
+  await recDialog.getByLabel("Nadpis").fill("Spánek před závodem");
+  await recDialog.getByRole("button", { name: "Uložit" }).click();
+  await expect(recommendations.getByText("Spánek před závodem")).toBeVisible();
+
+  await nutritionOf("Emma Walker");
+  await expect(meals.getByText("Oats with lactose-free yoghurt and fruit.")).toBeVisible();
+  await page.getByRole("button", { name: "Kopírovat plán od klienta" }).click();
+  const copy = page.getByRole("dialog", { name: "Kopírovat plán pro Emma Walker" });
+  await copy.getByLabel("Kopírovat od").selectOption({ label: "Tereza Svobodová" });
+  await copy.getByRole("button", { name: "Kopírovat a nahradit" }).click();
+  await expect(copy).toBeHidden();
+  await expect(meals.getByText("Pozdní svačina")).toBeVisible();
+  await expect(meals.getByText("Oats with lactose-free yoghurt and fruit.")).toHaveCount(0);
+  await expect(recommendations.getByText("Spánek před závodem")).toBeVisible();
+  await expect(page.getByRole("region", { name: "Odpočinkový den" }).getByLabel("Energie (kcal)")).toHaveValue("2100");
+});

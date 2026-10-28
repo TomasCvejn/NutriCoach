@@ -212,7 +212,8 @@
       "NOTE": "Note",
       "DECISION": "Decision",
       "TRACKING_MODE": "Tracking change",
-      "TARGETS": "Targets change"
+      "TARGETS": "Targets change",
+      "PLAN": "Plan change"
     },
     "invalid": {
       "date": "Enter a valid date.",
@@ -227,14 +228,21 @@
       "NOTE": "Notes",
       "DECISION": "Decisions",
       "TRACKING_MODE": "Tracking changes",
-      "TARGETS": "Target changes"
+      "TARGETS": "Target changes",
+      "PLAN": "Plan changes"
     },
     "pinned": "Pinned",
     "history": "History",
     "trackingMode": "Tracking changed from {from} to {to}.",
     "empty": "No notes yet. Notes and decisions you add, and changes to the tracking mode, show up here. The client never sees them.",
     "emptyFiltered": "Nothing of this type yet.",
-    "targets": "Targets updated, applying from {date}: {dayTypes}."
+    "targets": "Targets updated, applying from {date}: {dayTypes}.",
+    "plan": {
+      "MEALS": "Meals changed: {dayType}.",
+      "RECOMMENDATIONS": "Recommendations changed.",
+      "SPECIFICS": "Specifics changed.",
+      "COPY": "Plan copied from {source}."
+    }
   },
   "Targets": {
     "title": "Daily targets",
@@ -294,6 +302,50 @@
       "fists": "fists {value}",
       "thumbs": "thumbs {value}",
       "fluidMl": "{value} ml"
+    }
+  },
+  "Plan": {
+    "title": "Plan",
+    "lead": "Meals for each day type, your recommendations and what is specific to this client.",
+    "meals": "Meals",
+    "addMeal": "Add meal",
+    "mealAddTitle": "New meal",
+    "mealEditTitle": "Edit meal",
+    "editMeal": "Edit {name}",
+    "noMeals": "No meals for this day type. Without them the client's day uses Breakfast, Lunch, Dinner and Snacks.",
+    "dayType": "Day type",
+    "recommendations": "Recommendations",
+    "addRecommendation": "Add recommendation",
+    "recommendationAddTitle": "New recommendation",
+    "recommendationEditTitle": "Edit recommendation",
+    "editRecommendation": "Edit {title}",
+    "noRecommendations": "No recommendations yet.",
+    "specifics": "Specifics for this client",
+    "specificsText": "Anything about this client the plan should follow, shown with the plan.",
+    "fields": {
+      "name": "Name",
+      "timeHint": "Time",
+      "guidance": "Guidance",
+      "note": "Note",
+      "title": "Title",
+      "text": "Text"
+    },
+    "edit": "Edit",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saved": "Saved",
+    "saveOrder": "Save order",
+    "invalid": "Check this value.",
+    "up": "Move {name} up",
+    "down": "Move {name} down",
+    "copy": {
+      "open": "Copy plan from a client",
+      "title": "Copy a plan to {name}",
+      "text": "The chosen client's current targets apply from today, and their meals and recommendations replace these. The specifics stay. Older targets remain in the history.",
+      "source": "Copy from",
+      "cancel": "Cancel",
+      "confirm": "Copy and replace"
     }
   },
   "Invite": {

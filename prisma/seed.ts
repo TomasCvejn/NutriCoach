@@ -168,6 +168,81 @@ async function seed() {
     ],
   });
 
+  // Plans: meals per day type (in order), recommendations and specifics, in the client's language.
+  type SeedMeal = [name: string, timeHint: string, guidance: string, portions?: [number, number, number, number]];
+  const meals = (clientId: string, dayType: string, list: SeedMeal[]) =>
+    list.map(([name, timeHint, guidance, p], position) => ({
+      ...{ clientId, dayType, position, name, timeHint, guidance },
+      ...(p && { palms: p[0], hands: p[1], fists: p[2], thumbs: p[3] }),
+    }));
+  await db.planMeal.createMany({
+    data: [
+      ...meals(general, "REST", [
+        ["Snídaně", "10:00", "Vajíčka nebo tvaroh, kus pečiva, zelenina.", [1, 1, 1, 1]],
+        ["Oběd", "13:30", "Maso nebo luštěniny, příloha, půl talíře zeleniny.", [2, 1, 2, 1]],
+        ["Svačina", "16:30", "Jogurt nebo ovoce s hrstí ořechů.", [1, 1, 0, 1]],
+        ["Večeře", "19:30", "Bílkoviny a zelenina, příloha jen malá.", [2, 1, 2, 1]],
+      ]),
+      ...meals(sports, "REST", [
+        ["Breakfast", "7:00", "Oats with lactose-free yoghurt and fruit."],
+        ["Lunch", "12:30", "Rice or potatoes, fish or tofu, vegetables."],
+        ["Snack", "16:00", "Fruit and a handful of nuts."],
+        ["Dinner", "19:30", "Protein, vegetables, a smaller portion of carbs."],
+      ]),
+      ...meals(sports, "TRAINING", [
+        ["Pre-training", "5:30", "Banana or toast with honey, 300 ml water."],
+        ["Recovery breakfast", "8:00", "Oats, yoghurt, fruit and eggs within an hour of the session."],
+        ["Lunch", "12:30", "Rice or pasta, fish or tofu, vegetables."],
+        ["Snack", "16:00", "Bagel with peanut butter."],
+        ["Dinner", "19:30", "Protein, vegetables and potatoes."],
+      ]),
+      ...meals(race, "REST", [
+        ["Snídaně", "7:00", "Ovesná kaše s banánem a cottage."],
+        ["Oběd", "12:00", "Těstoviny nebo rýže, vejce či sýr, zelenina."],
+        ["Svačina", "15:30", "Rýžové chlebíčky s cottage a ovocem."],
+        ["Večeře", "19:00", "Brambory, tofu nebo vejce, zelenina."],
+        ["Večerní svačina", "21:00", "Tvaroh nebo jogurt."],
+      ]),
+      ...meals(race, "TRAINING", [
+        ["Před tréninkem", "6:00", "Rýžový chlebíček s medem, 300 ml vody."],
+        ["Snídaně", "8:00", "Ovesná kaše, banán, cottage do hodiny po tréninku."],
+        ["Oběd", "12:00", "Těstoviny, vejce, zelenina."],
+        ["Svačina", "15:30", "Banán a jogurt."],
+        ["Večeře", "19:00", "Rýže, tofu, zelenina."],
+      ]),
+      ...meals(race, "COMPETITION", [
+        ["Snídaně", "3 h před startem", "Bílé pečivo s medem nebo rýže, 500 ml iontového nápoje."],
+        ["Před startem", "30 min před startem", "Gel a 200 ml vody."],
+        ["Po závodě", "do 30 min", "Sacharidy a bílkoviny: recovery nápoj nebo jogurt s banánem."],
+        ["Večeře", "19:00", "Těstoviny se sýrem, zelenina."],
+      ]),
+    ],
+  });
+  const recommendations = (clientId: string, list: [string, string][]) => list.map(([title, text], position) => ({ clientId, position, title, text }));
+  await db.planRecommendation.createMany({
+    data: [
+      ...recommendations(general, [
+        ["Bílkoviny v každém jídle", "Dlaň masa, ryby, vajec nebo tvarohu ke každému hlavnímu jídlu."],
+        ["Sladké večer naplánovat", "Když je chuť na sladké, dejte si ho po večeři, ne místo ní."],
+      ]),
+      ...recommendations(sports, [
+        ["Carbs around training", "Most of the day's carbs before, during and after sessions."],
+        ["Lactose-free dairy", "Choose lactose-free yoghurt and milk; hard cheese is fine."],
+      ]),
+      ...recommendations(race, [
+        ["Bez luštěnin 3 dny před závodem", "Luštěniny a hodně vlákniny vynechat od středy."],
+        ["Pít průběžně", "Každou hodinu sklenici vody, při tréninku podle plánu fuelingu."],
+      ]),
+    ],
+  });
+  for (const [clientId, planSpecifics] of [
+    [general, "Pracuje na směny: po noční směně se snídaně posouvá na 14:00 a oběd vynechává."],
+    [sports, "Early sessions at 6:00: keep the pre-training snack small and easy to digest."],
+    [race, "Občasné žaludeční potíže na dlouhých bězích: nové gely zkoušet jen na tréninku."],
+  ]) {
+    await db.client.update({ where: { id: clientId }, data: { planSpecifics } });
+  }
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

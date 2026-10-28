@@ -52,6 +52,12 @@ export default async function ClientNotes({ params, searchParams }: PageProps<"/
       <NoteDialog clientId={client.id} today={today} note={note} label={t("Notes.editFrom", { date: day(note.date) })} />,
     );
   const eventText = (event: HistoryEvent) => {
+    if (event.type === "PLAN") {
+      const plan = event.payload as HistoryPayloads["PLAN"];
+      if (plan.change === "MEALS") return t("Notes.plan.MEALS", { dayType: t(`DayTypes.${plan.dayType}`) });
+      if (plan.change === "COPY") return t("Notes.plan.COPY", { source: plan.source });
+      return t(`Notes.plan.${plan.change}`);
+    }
     if (event.type === "TARGETS") {
       const { effectiveFrom, dayTypes } = event.payload as HistoryPayloads["TARGETS"];
       return t("Notes.targets", { date: day(effectiveFrom), dayTypes: dayTypes.map((d) => t(`DayTypes.${d}`)).join(", ") });

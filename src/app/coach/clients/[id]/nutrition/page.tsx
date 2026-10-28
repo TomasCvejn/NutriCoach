@@ -4,17 +4,23 @@ import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { DAY_TYPES, type DayType, type TrackingMode } from "@/lib/enums";
 import { latestWeight, TARGET_VALUE_FIELDS, targetFor } from "@/lib/nutrition";
+import { CopyPlanDialog, MealsEditor, RecommendationsEditor, SpecificsForm } from "./plan-editor";
 import { targetSummary } from "./target-summary";
 import { TargetsEditor } from "./targets-editor";
 
-// Nutrition tab (coach): the targets editor and the targets' history. Meals, recommendations and the daily log join later.
+// Nutrition tab (coach): targets, the plan (meals, recommendations, specifics; copy from another client) and the targets'
+// history. The daily log joins later.
 export default async function ClientNutrition({ params }: PageProps<"/coach/clients/[id]/nutrition">) {
   const { client } = await requireCoachOf((await params).id);
-  const [t, format, user, rows] = await Promise.all([
+  const [t, format, user, rows, meals, recommendations, others] = await Promise.all([
     getTranslations(),
     getFormatter(),
-    db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { timezone: true } }),
+    db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, timezone: true } }),
     db.nutritionTarget.findMany({ where: { clientId: client.id }, orderBy: [{ effectiveFrom: "desc" }, { createdAt: "desc" }] }),
+    db.planMeal.findMany({ where: { clientId: client.id }, orderBy: { position: "asc" } }),
+    db.planRecommendation.findMany({ where: { clientId: client.id }, orderBy: { position: "asc" } }),
+    // "Copy plan from": the coach's other clients.
+    db.client.findMany({ where: { coachId: client.coachId, NOT: { id: client.id } }, select: { id: true, user: { select: { name: true } } }, orderBy: { user: { name: "asc" } } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const today = todayIn(user.timezone);
@@ -27,10 +33,15 @@ export default async function ClientNutrition({ params }: PageProps<"/coach/clie
   return (
     <div className="flex flex-col gap-10">
       <section aria-labelledby="targets-title">
-        <h2 id="targets-title" className="text-lg font-semibold">
-          {t("Targets.title")}
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">{t(`Targets.lead.${mode}`)}</p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h2 id="targets-title" className="text-lg font-semibold">
+              {t("Targets.title")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t(`Targets.lead.${mode}`)}</p>
+          </div>
+          <CopyPlanDialog clientId={client.id} name={user.name} sources={others.map((o) => ({ id: o.id, name: o.user.name }))} />
+        </div>
         <div className="mt-5">
           <TargetsEditor
             clientId={client.id}
@@ -40,6 +51,20 @@ export default async function ClientNutrition({ params }: PageProps<"/coach/clie
             profile={{ sex: client.sex, birthDate: client.birthDate, heightCm: client.heightCm, primaryGoal: client.primaryGoal }}
             current={current}
           />
+        </div>
+      </section>
+
+      <section aria-labelledby="plan-title">
+        <h2 id="plan-title" className="text-lg font-semibold">
+          {t("Plan.title")}
+        </h2>
+        <p className="mt-1 text-sm text-muted-foreground">{t("Plan.lead")}</p>
+        <div className="mt-5 grid items-start gap-6 xl:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+          <MealsEditor clientId={client.id} mode={mode} meals={meals} />
+          <div className="flex flex-col gap-6">
+            <RecommendationsEditor clientId={client.id} recommendations={recommendations} />
+            <SpecificsForm clientId={client.id} specifics={client.planSpecifics} />
+          </div>
         </div>
       </section>
 

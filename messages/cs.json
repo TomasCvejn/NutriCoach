@@ -212,7 +212,8 @@
       "NOTE": "Poznámka",
       "DECISION": "Rozhodnutí",
       "TRACKING_MODE": "Změna sledování",
-      "TARGETS": "Změna cílů"
+      "TARGETS": "Změna cílů",
+      "PLAN": "Změna plánu"
     },
     "invalid": {
       "date": "Zadejte platné datum.",
@@ -227,14 +228,21 @@
       "NOTE": "Poznámky",
       "DECISION": "Rozhodnutí",
       "TRACKING_MODE": "Změny sledování",
-      "TARGETS": "Změny cílů"
+      "TARGETS": "Změny cílů",
+      "PLAN": "Změny plánu"
     },
     "pinned": "Připnuté",
     "history": "Historie",
     "trackingMode": "Sledování změněno z {from} na {to}.",
     "empty": "Zatím žádné poznámky. Objeví se tu vaše poznámky a rozhodnutí i změny režimu sledování. Klient je nikdy neuvidí.",
     "emptyFiltered": "Tohoto typu tu zatím nic není.",
-    "targets": "Cíle upraveny, platí od {date}: {dayTypes}."
+    "targets": "Cíle upraveny, platí od {date}: {dayTypes}.",
+    "plan": {
+      "MEALS": "Upravena jídla: {dayType}.",
+      "RECOMMENDATIONS": "Upravena doporučení.",
+      "SPECIFICS": "Upravena specifika klienta.",
+      "COPY": "Plán zkopírován od klienta {source}."
+    }
   },
   "Targets": {
     "title": "Denní cíle",
@@ -294,6 +302,50 @@
       "fists": "pěsti {value}",
       "thumbs": "palce {value}",
       "fluidMl": "{value} ml"
+    }
+  },
+  "Plan": {
+    "title": "Plán",
+    "lead": "Jídla pro každý typ dne, vaše doporučení a co je u klienta specifické.",
+    "meals": "Jídla",
+    "addMeal": "Přidat jídlo",
+    "mealAddTitle": "Nové jídlo",
+    "mealEditTitle": "Upravit jídlo",
+    "editMeal": "Upravit {name}",
+    "noMeals": "Pro tento typ dne nejsou žádná jídla. Klientův den pak má Snídani, Oběd, Večeři a Svačiny.",
+    "dayType": "Typ dne",
+    "recommendations": "Doporučení",
+    "addRecommendation": "Přidat doporučení",
+    "recommendationAddTitle": "Nové doporučení",
+    "recommendationEditTitle": "Upravit doporučení",
+    "editRecommendation": "Upravit {title}",
+    "noRecommendations": "Zatím žádná doporučení.",
+    "specifics": "Specifika klienta",
+    "specificsText": "Co má plán u tohoto klienta zohlednit; klient to uvidí u plánu.",
+    "fields": {
+      "name": "Název",
+      "timeHint": "Čas",
+      "guidance": "Doporučení k jídlu",
+      "note": "Poznámka",
+      "title": "Nadpis",
+      "text": "Text"
+    },
+    "edit": "Upravit",
+    "delete": "Smazat",
+    "cancel": "Zrušit",
+    "save": "Uložit",
+    "saved": "Uloženo",
+    "saveOrder": "Uložit pořadí",
+    "invalid": "Zkontrolujte tuto hodnotu.",
+    "up": "Posunout {name} nahoru",
+    "down": "Posunout {name} dolů",
+    "copy": {
+      "open": "Kopírovat plán od klienta",
+      "title": "Kopírovat plán pro {name}",
+      "text": "Aktuální cíle vybraného klienta budou platit od dneška a jeho jídla a doporučení nahradí tato. Specifika zůstanou. Starší cíle zůstanou v historii.",
+      "source": "Kopírovat od",
+      "cancel": "Zrušit",
+      "confirm": "Kopírovat a nahradit"
     }
   },
   "Invite": {
