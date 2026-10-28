@@ -46,9 +46,10 @@ test("invalid values are rejected and nothing is written", async () => {
   const { anna } = await setup();
   request.cookie = await signIn(anna.email);
   const bad = { ...personal, clientId: anna.clientId, name: " ", sex: "X", birthDate: "2999-01-01", heightCm: "400", weightKg: "abc", phone: "call me" };
-  expect(await saveProfile(null, form(bad))).toEqual({ invalid: ["name", "sex", "birthDate", "heightCm", "weightKg", "phone"] });
-  expect(await saveProfile(null, form({ ...dietary, clientId: anna.clientId, allergens: ["PIZZA"] }))).toEqual({ invalid: ["allergens"] });
-  expect(await saveProfile(null, form({ section: "goals", clientId: anna.clientId, primaryGoal: "", targetWeightKg: "", targetDate: "2026-02-30", successText: "" }))).toEqual({
+  // What was sent comes back, so the form shows it again instead of resetting to the saved values.
+  expect(await saveProfile(null, form(bad))).toEqual({ invalid: ["name", "sex", "birthDate", "heightCm", "weightKg", "phone"], values: expect.objectContaining({ heightCm: "400", phone: "call me" }) });
+  expect(await saveProfile(null, form({ ...dietary, clientId: anna.clientId, allergens: ["PIZZA"] }))).toMatchObject({ invalid: ["allergens"], values: { allergens: ["PIZZA"] } });
+  expect(await saveProfile(null, form({ section: "goals", clientId: anna.clientId, primaryGoal: "", targetWeightKg: "", targetDate: "2026-02-30", successText: "" }))).toMatchObject({
     invalid: ["targetDate"],
   });
   await expect(saveProfile(null, form({ ...personal, clientId: anna.clientId, section: "secrets" }))).rejects.toThrow();

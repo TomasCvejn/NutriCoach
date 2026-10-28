@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { logIn } from "./dev-login";
 
-test("coach invites a client, who accepts in another browser and lands in the app", async ({ page, browser }) => {
+test("coach invites a client, who accepts in another browser and starts onboarding",async ({ page, browser }) => {
   await logIn(page, "coach@demo.cz");
   await page.getByRole("link", { name: "Klienti", exact: true }).click();
   await expect(page.getByRole("heading", { name: "Klienti", level: 1 })).toBeVisible();
@@ -31,8 +31,9 @@ test("coach invites a client, who accepts in another browser and lands in the ap
 
   await client.getByLabel("E-mail").fill("klara@test.cz");
   await client.getByRole("button", { name: "Přijmout jako tento e-mail" }).click();
-  await expect(client).toHaveURL("/app");
-  await expect(client.getByText("Klára Dvořáková")).toBeVisible();
+  // A new client starts with onboarding (e2e/onboarding.spec.ts).
+  await expect(client).toHaveURL("/onboarding");
+  await expect(client.getByRole("heading", { name: "Jana Horáková vás vítá", level: 1 })).toBeVisible();
 
   await client.goto(link);
   await expect(client.getByRole("heading", { name: "Pozvánka už byla použita" })).toBeVisible();

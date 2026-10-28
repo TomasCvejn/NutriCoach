@@ -37,9 +37,13 @@ export const ALLERGENS = [
   "MOLLUSCS",
 ] as const;
 export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as const;
+// Onboarding steps in order; Client.onboardingStep is the index.
+export const ONBOARDING_STEPS = ["welcome", "about", "goal", "done"] as const;
 
 export type Role = (typeof ROLES)[number];
 export type TrackingMode = (typeof TRACKING_MODES)[number];
 export type DayType = (typeof DAY_TYPES)[number];
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 export type Allergen = (typeof ALLERGENS)[number];
+export type Goal = (typeof GOALS)[number];
+export type DietType = (typeof DIET_TYPES)[number];

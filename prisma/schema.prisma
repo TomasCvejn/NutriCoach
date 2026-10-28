@@ -18,6 +18,7 @@ model User {
   active        Boolean   @default(true)
   timezone      String    @default("Europe/Prague")
   locale        String    @default("cs")
+  welcomeText   String? // coach only: the first onboarding screen; null → the i18n default
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   sessions      Session[]
@@ -86,6 +87,11 @@ model Client {
   trackingMode String   @default("CALORIES") // TRACKING_MODES
   createdAt    DateTime @default(now())
   invite       Invite?
+
+  // Onboarding (/onboarding): the current step, an index into ONBOARDING_STEPS, so a reload resumes; /app redirects until completed.
+  onboardingStep        Int       @default(0)
+  onboardingCompletedAt DateTime?
+  preferredTrackingMode String? // TRACKING_MODES; the client's wish for the coach, and the mode itself when the invite set none
 
   // Profile (onboarding-profile.md), every field optional. Validated by PROFILE_SECTIONS (src/lib/profile.ts).
   sex              String? // SEXES

@@ -196,6 +196,12 @@
       "text": "Jazyk aplikace a pásmo, podle kterého počítá vaše dny. Obsah, který lidé píší (plány, recepty, poznámky), zůstává v jazyce, ve kterém vznikl.",
       "timezone": "Časové pásmo",
       "now": "Řídí se jím dny a časy v aplikaci. Teď je u vás {time}."
+    },
+    "welcome": {
+      "title": "Uvítání v onboardingu",
+      "text": "Text, který klienti čtou na první obrazovce po přijetí pozvánky, podepsaný vaším jménem.",
+      "label": "Uvítací text",
+      "hint": "Prázdné pole = klienti uvidí výchozí text ukázaný v poli, ve svém jazyce."
     }
   },
   "Profile": {
@@ -257,6 +263,56 @@
       "healthConditions": "Zdravotní stav",
       "medications": "Léky",
       "otherInfo": "Cokoli dalšího"
+    },
+    "preferredMode": "Preferované sledování: {mode}"
+  },
+  "Onboarding": {
+    "progress": "Průběh nastavení",
+    "steps": {
+      "welcome": "Vítejte",
+      "about": "O vás",
+      "goal": "Cíl",
+      "done": "Hotovo"
+    },
+    "back": "Zpět",
+    "next": "Pokračovat",
+    "finish": "Přejít do aplikace",
+    "welcome": {
+      "title": "{coach} vás vítá",
+      "lead": "Před začátkem vás čekají tři krátké kroky. Odpovědi se ukládají průběžně.",
+      "defaultText": "Vítejte! Než vám připravím plán, potřebuji vás trochu poznat: jak jíte, jak trénujete a čeho chcete dosáhnout. Zabere to asi deset minut a všechno můžete později změnit v profilu.",
+      "nextTitle": "Co vás čeká",
+      "next": {
+        "about": "Osobní údaje, strava a alergie, trénink, preference a jak chcete sledovat jídlo.",
+        "goal": "Čeho chcete dosáhnout, případně do kdy.",
+        "done": "{coach} dostane vaše odpovědi a podle nich vám sestaví plán."
+      }
+    },
+    "about": {
+      "title": "O vás",
+      "lead": "Vyplňte, co víte. Povinné je jen jméno, zbytek můžete doplnit později v profilu."
+    },
+    "tracking": {
+      "title": "Jak chcete sledovat jídlo",
+      "text": "Vyberte, co vám bude vyhovovat. Konečné rozhodnutí je na trenérovi.",
+      "set": "Trenér už vybral sledování „{mode}“. Vaše přání mu i tak předáme.",
+      "modes": {
+        "CALORIES": "Zapisujete jídla a vidíte kalorie, bílkoviny, sacharidy a tuky proti cílům. Nejpřesnější, ale zabere nejvíc času.",
+        "PORTIONS": "Počítáte porce rukou: dlaň bílkovin, hrst sacharidů, pěst zeleniny, palec tuků. Bez vážení.",
+        "GUIDANCE": "Žádná čísla: u každého jídla z plánu jen označíte, jestli jste ho dodrželi."
+      }
+    },
+    "goal": {
+      "title": "Váš cíl",
+      "lead": "Hlavní cíl určuje, jak bude plán postavený.",
+      "targetTitle": "Cílová váha a termín",
+      "targetText": "Nepovinné, pokud máte na mysli konkrétní číslo nebo datum."
+    },
+    "done": {
+      "title": "Hotovo",
+      "lead": "{coach} dostane upozornění a podle vašich odpovědí vám připraví plán. Odpovědi můžete kdykoli změnit v profilu.",
+      "summary": "Shrnutí",
+      "tracking": "Preferované sledování"
     }
   }
 }

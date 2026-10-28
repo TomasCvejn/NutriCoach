@@ -196,6 +196,12 @@
       "text": "The language of the app and the zone your days are counted in. Content people write (plans, recipes, notes) stays in the language it was written in.",
       "timezone": "Time zone",
       "now": "Days and times in the app follow it. Your time now: {time}."
+    },
+    "welcome": {
+      "title": "Onboarding welcome",
+      "text": "What clients read on the first screen after accepting your invite, signed with your name.",
+      "label": "Welcome text",
+      "hint": "Left empty, clients see the default text shown in the field, in their own language."
     }
   },
   "Profile": {
@@ -257,6 +263,56 @@
       "healthConditions": "Health conditions",
       "medications": "Medications",
       "otherInfo": "Anything else"
+    },
+    "preferredMode": "Preferred tracking: {mode}"
+  },
+  "Onboarding": {
+    "progress": "Setup progress",
+    "steps": {
+      "welcome": "Welcome",
+      "about": "About you",
+      "goal": "Goal",
+      "done": "Done"
+    },
+    "back": "Back",
+    "next": "Continue",
+    "finish": "Go to the app",
+    "welcome": {
+      "title": "{coach} welcomes you",
+      "lead": "Three short steps before you start. Your answers are saved as you go.",
+      "defaultText": "Welcome! Before I put your plan together, I need to get to know you: how you eat, how you train and what you want to achieve. It takes about ten minutes, and you can change everything later in your profile.",
+      "nextTitle": "What comes next",
+      "next": {
+        "about": "Personal details, diet and allergies, training, preferences and how you would like to track your food.",
+        "goal": "What you want to achieve, and by when if you know.",
+        "done": "{coach} gets your answers and builds your plan from them."
+      }
+    },
+    "about": {
+      "title": "About you",
+      "lead": "Fill in what you know. Only your name is required; you can add the rest later in your profile."
+    },
+    "tracking": {
+      "title": "How you would like to track food",
+      "text": "Pick what would suit you. Your coach makes the final call.",
+      "set": "Your coach has already chosen “{mode}”. Your preference still goes to them.",
+      "modes": {
+        "CALORIES": "Log what you eat and see calories, protein, carbs and fat against your targets. The most precise, and the most time.",
+        "PORTIONS": "Count portions with your hand: a palm of protein, a cupped hand of carbs, a fist of vegetables, a thumb of fats. No weighing.",
+        "GUIDANCE": "No numbers: for each meal in your plan you just mark whether you followed it."
+      }
+    },
+    "goal": {
+      "title": "Your goal",
+      "lead": "Your main goal shapes how the plan is built.",
+      "targetTitle": "Target weight and date",
+      "targetText": "Optional, if you have a number or a date in mind."
+    },
+    "done": {
+      "title": "All set",
+      "lead": "{coach} gets a notification and builds your plan from your answers. You can change them any time in your profile.",
+      "summary": "Summary",
+      "tracking": "Preferred tracking"
     }
   }
 }

@@ -4,6 +4,7 @@ import type { Prisma } from "../src/generated/prisma/client";
 import { createUser } from "../src/lib/auth";
 import { addDays, todayIn } from "../src/lib/dates";
 import { db, dbUrl } from "../src/lib/db";
+import { ONBOARDING_STEPS } from "../src/lib/enums";
 import type { NotificationPayloads } from "../src/lib/notifications";
 
 // Full reset of the local SQLite DB: delete the file and re-apply every migration.
@@ -14,8 +15,11 @@ rmSync(`${file}-journal`, { force: true });
 execSync("npx prisma migrate deploy", { stdio: "inherit" });
 
 async function seed() {
-  const coach = await createUser({ email: "coach@demo.cz", name: "Jana Horáková", role: "COACH" });
+  const welcomeText =
+    "Dobrý den a vítejte!\n\nJsem Jana a pomáhám hlavně vytrvalcům a lidem, kteří chtějí zhubnout bez hladovění. Odpovězte mi prosím na pár otázek o sobě – podle nich vám do dvou dnů připravím plán na míru.";
+  const coach = await createUser({ email: "coach@demo.cz", name: "Jana Horáková", role: "COACH", welcomeText });
   const today = todayIn("Europe/Prague");
+  const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000);
   // Per-client content uses the client's locale: general@ cs, sports@ en, race@ cs. inactive@ is a deactivated client.
   // A sport on the profile turns on Training: general@ has none.
   const clients: { email: string; name: string; locale: string; active?: boolean; profile: Omit<Prisma.ClientUncheckedCreateWithoutUserInput, "coachId"> }[] = [
@@ -25,6 +29,7 @@ async function seed() {
       locale: "cs",
       profile: {
         trackingMode: "PORTIONS",
+        preferredTrackingMode: "PORTIONS",
         sex: "MALE",
         birthDate: "1986-04-12",
         heightCm: 182,
@@ -50,6 +55,7 @@ async function seed() {
       locale: "en",
       profile: {
         trackingMode: "CALORIES",
+        preferredTrackingMode: "CALORIES",
         sex: "FEMALE",
         birthDate: "1994-09-03",
         heightCm: 168,
@@ -75,6 +81,8 @@ async function seed() {
       locale: "cs",
       profile: {
         trackingMode: "CALORIES",
+        preferredTrackingMode: "CALORIES",
+        onboardingCompletedAt: daysAgo(13),
         sex: "FEMALE",
         birthDate: "1990-01-22",
         heightCm: 171,
@@ -98,11 +106,12 @@ async function seed() {
     },
     { email: "inactive@demo.cz", name: "Lucie Králová", locale: "cs", active: false, profile: {} },
   ];
+  // Everyone has finished onboarding, two weeks ago (race@ a day later).
+  const onboarded = { onboardingStep: ONBOARDING_STEPS.length - 1, onboardingCompletedAt: daysAgo(14) };
   for (const { profile, ...user } of clients) {
-    await createUser({ ...user, role: "CLIENT", client: { create: { ...profile, coachId: coach.id } } });
+    await createUser({ ...user, role: "CLIENT", client: { create: { ...onboarded, ...profile, coachId: coach.id } } });
   }
-  // The clients onboarded two weeks ago; the coach hasn't read race@'s notification yet (the bell shows 1).
-  const daysAgo = (days: number) => new Date(Date.now() - days * 24 * 60 * 60 * 1000);
+  // The coach hasn't read race@'s onboarding notification yet (the bell shows 1).
   for (const [email, days, read] of [["general@demo.cz", 14, true], ["sports@demo.cz", 14, true], ["race@demo.cz", 13, false]] as const) {
     const client = await db.client.findFirstOrThrow({ where: { user: { email } }, include: { user: true } });
     const payload = { client: client.user.name, clientId: client.id } satisfies NotificationPayloads["ONBOARDING_COMPLETED"];

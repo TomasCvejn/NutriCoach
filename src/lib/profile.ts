@@ -38,4 +38,8 @@ export type ProfileField = { [S in ProfileSection]: keyof z.output<(typeof PROFI
 export const PROFILE_SECTION_KEYS = Object.keys(PROFILE_SECTIONS) as [ProfileSection, ...ProfileSection[]];
 
 // FormData → the object the schemas read: allergens are repeated checkbox fields.
-export const profileInput = (form: FormData) => ({ ...Object.fromEntries(form), allergens: form.getAll("allergens") });
+export const profileInput = (form: FormData): Record<string, unknown> => ({ ...Object.fromEntries(form), allergens: form.getAll("allergens") });
+
+// A refused save names the invalid fields and returns what was sent, so the form shows it again instead of resetting.
+export type Refused = { invalid: string[]; values: Record<string, unknown> };
+export const refused = (error: z.ZodError, values: Record<string, unknown>): Refused => ({ invalid: error.issues.map((issue) => String(issue.path[0])), values });

@@ -18,3 +18,4 @@ npm-debug.log*
 !.taste-skill/**/
 !.taste-skill/**/direction.json
 !.taste-skill/snap.mjs
+!.taste-skill/onboarding-steps.mjs

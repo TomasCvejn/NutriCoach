@@ -2,15 +2,22 @@ import { getFormatter, getNow, getTranslations } from "next-intl/server";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { Textarea } from "@/components/ui/textarea";
 import { LOCALES, TIMEZONES } from "@/i18n/locales";
 import { requireUser } from "@/lib/auth";
-import { saveSettings } from "./actions";
+import { db } from "@/lib/db";
+import { saveSettings, saveWelcomeText } from "./actions";
 
 // The signed-in user's own settings. Also the coach's page (/coach/settings re-exports it); the area layout has
 // already checked the role. Each section is a row: its title and what it does beside a panel with one Save.
 export default async function SettingsPage() {
   const user = await requireUser();
-  const [t, format, now] = await Promise.all([getTranslations(), getFormatter(), getNow()]);
+  const [t, format, now, coach] = await Promise.all([
+    getTranslations(),
+    getFormatter(),
+    getNow(),
+    user.role === "COACH" ? db.user.findUniqueOrThrow({ where: { id: user.id }, select: { welcomeText: true } }) : null,
+  ]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -47,11 +54,43 @@ export default async function SettingsPage() {
               {t("Settings.region.now", { time: format.dateTime(now, { weekday: "long", day: "numeric", month: "long", hour: "numeric", minute: "2-digit" }) })}
             </p>
           </div>
-          <Button type="submit" className="h-10 self-end px-4 sm:h-8">
+          {/* A Save per panel, outlined like the profile's: the hue stays on the data. */}
+          <Button type="submit" variant="outline" className="h-10 self-end px-4 sm:h-8">
             {t("Settings.save")}
           </Button>
         </form>
       </section>
+      {coach && (
+        <section aria-labelledby="welcome" className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
+          <div className="lg:pt-6">
+            <h2 id="welcome" className="text-base font-semibold">
+              {t("Settings.welcome.title")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("Settings.welcome.text")}</p>
+          </div>
+          <form action={saveWelcomeText} className="flex flex-col gap-4 rounded-lg border bg-card p-6">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="welcomeText">{t("Settings.welcome.label")}</Label>
+              {/* The placeholder is the preview: what clients read while the field is empty. */}
+              <Textarea
+                id="welcomeText"
+                name="welcomeText"
+                defaultValue={coach.welcomeText ?? ""}
+                placeholder={t("Onboarding.welcome.defaultText")}
+                maxLength={2000}
+                rows={5}
+                aria-describedby="welcomeText-note"
+              />
+              <p id="welcomeText-note" className="text-xs text-muted-foreground">
+                {t("Settings.welcome.hint")}
+              </p>
+            </div>
+            <Button type="submit" variant="outline" className="h-10 self-end px-4 sm:h-8">
+              {t("Settings.save")}
+            </Button>
+          </form>
+        </section>
+      )}
     </div>
   );
 }
