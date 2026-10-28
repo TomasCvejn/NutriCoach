@@ -3,14 +3,16 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Pill } from "@/components/pill";
 import { requireCoachOf } from "@/lib/auth";
+import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import type { Goal, TrackingMode } from "@/lib/enums";
 import { ClientTabs, TrackingModeDialog } from "./client-header";
+import { NoteDialog } from "./notes/note-dialog";
 
 // One client for their coach: the header (who, mode, goal; actions) and the tabs over every tab's page.
 export default async function ClientLayout({ params, children }: LayoutProps<"/coach/clients/[id]">) {
   const { client } = await requireCoachOf((await params).id);
-  const [t, user] = await Promise.all([getTranslations(), db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, active: true } })]);
+  const [t, user] = await Promise.all([getTranslations(), db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, active: true, timezone: true } })]);
   const mode = client.trackingMode as TrackingMode;
 
   return (
@@ -29,7 +31,10 @@ export default async function ClientLayout({ params, children }: LayoutProps<"/c
             {t("ClientDashboard.mode", { mode: t(`TrackingModes.${mode}`) })} · {client.primaryGoal ? t(`Goals.${client.primaryGoal as Goal}`) : t("ClientDashboard.noGoal")}
           </p>
         </div>
-        <TrackingModeDialog clientId={client.id} name={user.name} mode={mode} />
+        <div className="flex gap-2">
+          <NoteDialog clientId={client.id} today={todayIn(user.timezone)} />
+          <TrackingModeDialog clientId={client.id} name={user.name} mode={mode} />
+        </div>
       </header>
       <ClientTabs clientId={client.id} />
       {children}

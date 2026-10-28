@@ -163,7 +163,8 @@
     "noGoal": "No goal set yet",
     "tabs": {
       "label": "Client sections",
-      "overview": "Overview"
+      "overview": "Overview",
+      "notes": "Notes"
     },
     "changeMode": {
       "open": "Change tracking",
@@ -191,6 +192,41 @@
     "contact": "Contact",
     "kg": "{value} kg",
     "cm": "{value} cm"
+  },
+  "Notes": {
+    "add": "Add note",
+    "addTitle": "New note",
+    "edit": "Edit",
+    "editTitle": "Edit note",
+    "editFrom": "Edit the note from {date}",
+    "date": "Date",
+    "type": "Type",
+    "text": "Text",
+    "pin": "Pin to the top",
+    "types": {
+      "NOTE": "Note",
+      "DECISION": "Decision",
+      "TRACKING_MODE": "Tracking change"
+    },
+    "invalid": {
+      "date": "Enter a valid date.",
+      "text": "Write the note (up to 5,000 characters)."
+    },
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "filter": "Show",
+    "filters": {
+      "all": "All",
+      "NOTE": "Notes",
+      "DECISION": "Decisions",
+      "TRACKING_MODE": "Tracking changes"
+    },
+    "pinned": "Pinned",
+    "history": "History",
+    "trackingMode": "Tracking changed from {from} to {to}.",
+    "empty": "No notes yet. Notes and decisions you add, and changes to the tracking mode, show up here. The client never sees them.",
+    "emptyFiltered": "Nothing of this type yet."
   },
   "Invite": {
     "title": "{coach} invited you to NutriCoach",

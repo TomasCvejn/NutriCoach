@@ -88,6 +88,7 @@ model Client {
   createdAt    DateTime @default(now())
   invite       Invite?
   history      HistoryEvent[]
+  coachNotes   CoachNote[]
 
   // Onboarding (/onboarding): the current step, an index into ONBOARDING_STEPS, so a reload resumes; /app redirects until completed.
   onboardingStep        Int       @default(0)
@@ -166,6 +167,21 @@ model HistoryEvent {
   date      String // YYYY-MM-DD in the client's timezone
   payload   Json // HistoryPayloads[type]
   createdAt DateTime @default(now())
+
+  @@index([clientId, date])
+}
+
+// The coach's private notes on a client (coach.md): never readable by the client, so nothing under /app loads them.
+model CoachNote {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date      String // YYYY-MM-DD
+  type      String // NOTE_TYPES
+  text      String
+  pinned    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([clientId, date])
 }

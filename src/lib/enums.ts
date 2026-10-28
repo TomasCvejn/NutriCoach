@@ -37,6 +37,8 @@ export const ALLERGENS = [
   "MOLLUSCS",
 ] as const;
 export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as const;
+export const NOTE_TYPES = ["NOTE", "DECISION"] as const;
+
 // Client history rows (HistoryEvent.type, coach.md); the payload of each type below. Plan and target changes add theirs.
 export const HISTORY_TYPES = ["TRACKING_MODE"] as const;
 export type HistoryPayloads = { TRACKING_MODE: { from: TrackingMode; to: TrackingMode } };
@@ -50,6 +52,8 @@ export type DayType = (typeof DAY_TYPES)[number];
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];
 export type Allergen = (typeof ALLERGENS)[number];
 export type Goal = (typeof GOALS)[number];
+export type NoteType = (typeof NOTE_TYPES)[number];
+export type HistoryType = (typeof HISTORY_TYPES)[number];
 export type DietType = (typeof DIET_TYPES)[number];
 export type Sex = (typeof SEXES)[number];
 export type SportLevel = (typeof SPORT_LEVELS)[number];

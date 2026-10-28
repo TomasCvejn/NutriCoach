@@ -163,7 +163,8 @@
     "noGoal": "Cíl zatím není zadaný",
     "tabs": {
       "label": "Sekce klienta",
-      "overview": "Přehled"
+      "overview": "Přehled",
+      "notes": "Poznámky"
     },
     "changeMode": {
       "open": "Změnit sledování",
@@ -191,6 +192,41 @@
     "contact": "Kontakt",
     "kg": "{value} kg",
     "cm": "{value} cm"
+  },
+  "Notes": {
+    "add": "Přidat poznámku",
+    "addTitle": "Nová poznámka",
+    "edit": "Upravit",
+    "editTitle": "Upravit poznámku",
+    "editFrom": "Upravit poznámku z {date}",
+    "date": "Datum",
+    "type": "Typ",
+    "text": "Text",
+    "pin": "Připnout nahoru",
+    "types": {
+      "NOTE": "Poznámka",
+      "DECISION": "Rozhodnutí",
+      "TRACKING_MODE": "Změna sledování"
+    },
+    "invalid": {
+      "date": "Zadejte platné datum.",
+      "text": "Napište poznámku (nejvýš 5 000 znaků)."
+    },
+    "delete": "Smazat",
+    "cancel": "Zrušit",
+    "save": "Uložit",
+    "filter": "Zobrazit",
+    "filters": {
+      "all": "Vše",
+      "NOTE": "Poznámky",
+      "DECISION": "Rozhodnutí",
+      "TRACKING_MODE": "Změny sledování"
+    },
+    "pinned": "Připnuté",
+    "history": "Historie",
+    "trackingMode": "Sledování změněno z {from} na {to}.",
+    "empty": "Zatím žádné poznámky. Objeví se tu vaše poznámky a rozhodnutí i změny režimu sledování. Klient je nikdy neuvidí.",
+    "emptyFiltered": "Tohoto typu tu zatím nic není."
   },
   "Invite": {
     "title": "{coach} vás zve do NutriCoach",

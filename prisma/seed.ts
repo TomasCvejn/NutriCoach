@@ -4,7 +4,7 @@ import type { Prisma } from "../src/generated/prisma/client";
 import { createUser } from "../src/lib/auth";
 import { addDays, todayIn } from "../src/lib/dates";
 import { db, dbUrl } from "../src/lib/db";
-import { ONBOARDING_STEPS } from "../src/lib/enums";
+import { type HistoryPayloads, ONBOARDING_STEPS } from "../src/lib/enums";
 import type { NotificationPayloads } from "../src/lib/notifications";
 
 // Full reset of the local SQLite DB: delete the file and re-apply every migration.
@@ -119,6 +119,29 @@ async function seed() {
       data: { userId: coach.id, type: "ONBOARDING_COMPLETED", payload, createdAt: daysAgo(days), readAt: read ? daysAgo(days) : null },
     });
   }
+  // Coach notes and history (coach-only), in the client's language. general@ moved from CALORIES to PORTIONS a week ago.
+  const [general, sports, race] = await Promise.all(
+    ["general@demo.cz", "sports@demo.cz", "race@demo.cz"].map(async (email) => (await db.client.findFirstOrThrow({ where: { user: { email } } })).id),
+  );
+  const modeChange = { from: "CALORIES", to: "PORTIONS" } satisfies HistoryPayloads["TRACKING_MODE"];
+  await db.historyEvent.create({ data: { clientId: general, type: "TRACKING_MODE", date: addDays(today, -7), payload: modeChange, createdAt: daysAgo(7) } });
+  await db.coachNote.createMany({
+    data: [
+      { clientId: general, date: addDays(today, -12), type: "NOTE", text: "Úvodní hovor: pracuje na směny, snídá až kolem desáté. Večer chuť na sladké." },
+      {
+        clientId: general,
+        date: addDays(today, -7),
+        type: "DECISION",
+        text: "Přechod z kalorií na porce rukou: vážení ho stresovalo a přestal zapisovat. Za dva týdny zhodnotit.",
+        pinned: true,
+      },
+      { clientId: sports, date: addDays(today, -10), type: "NOTE", text: "Prefers simple meals on training days; batch-cooks on Sundays." },
+      { clientId: sports, date: addDays(today, -3), type: "DECISION", text: "Carbs up to 7 g/kg on long-ride days; rest days stay at 4 g/kg." },
+      { clientId: race, date: addDays(today, -9), type: "DECISION", text: "Sacharidové nasycení 3 dny před závodem, 8–10 g/kg. Vyzkoušet na dlouhém tréninkovém běhu.", pinned: true },
+      { clientId: race, date: addDays(today, -5), type: "NOTE", text: "Gel snesla na 30 km bez potíží, kofeinový raději vynechat." },
+    ],
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

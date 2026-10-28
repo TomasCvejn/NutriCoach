@@ -11,7 +11,10 @@ import { changeTrackingMode } from "./actions";
 
 // The client's tabs: each one lands with its feature, and the coach sees all of them for every client.
 // The segment is the tab's route under /coach/clients/[id] (null = Overview).
-const TABS = [{ key: "overview", segment: null }] as const;
+const TABS = [
+  { key: "overview", segment: null },
+  { key: "notes", segment: "notes" },
+] as const;
 
 export function ClientTabs({ clientId }: { clientId: string }) {
   const t = useTranslations("ClientDashboard.tabs");
