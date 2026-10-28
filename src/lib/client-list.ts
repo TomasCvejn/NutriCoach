@@ -2,6 +2,7 @@ import { z } from "zod";
 import { requireCoach } from "./auth";
 import { db } from "./db";
 import { TRACKING_MODES } from "./enums";
+import { fold } from "./text";
 
 // The coach's client list (/coach/clients): one query for the coach's clients, then search, filters and sorting in memory.
 // ponytail: in memory because a coach has tens of clients and later columns (adherence, check-in status) are computed per row anyway.
@@ -36,9 +37,6 @@ export async function coachClients(): Promise<ClientRow[]> {
     status: !user.active ? "INACTIVE" : onboardingCompletedAt ? "ACTIVE" : "ONBOARDING",
   }));
 }
-
-// Case- and diacritics-insensitive: "sarka" finds "Šárka".
-const fold = (s: string) => s.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
 
 const inStatus = (row: ClientRow, status: ListParams["status"]) => status === "all" || (status === "inactive") === (row.status === "INACTIVE");
 

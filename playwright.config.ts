@@ -13,8 +13,9 @@ export default defineConfig({
     command: `npm run db:seed && npx next dev -p ${port}`,
     url: `http://localhost:${port}`,
     // Beats a developer's .env (Next never overrides set variables).
-    // Own build dir, so a developer's `npm run dev` can keep running.
-    env: { DATABASE_URL: "file:./e2e.db", BETTER_AUTH_URL: `http://localhost:${port}`, NEXT_DIST_DIR: ".next-e2e" },
+    // Own build dir, so a developer's `npm run dev` can keep running. Open Food Facts points at a closed port: it fails
+    // fast and the tests check the "unavailable" notice, so no test touches the network.
+    env: { DATABASE_URL: "file:./e2e.db", BETTER_AUTH_URL: `http://localhost:${port}`, NEXT_DIST_DIR: ".next-e2e", OFF_BASE_URL: "http://127.0.0.1:9" },
     timeout: 300_000,
   },
 });
