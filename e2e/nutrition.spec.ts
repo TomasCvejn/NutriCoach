@@ -59,6 +59,36 @@ test("sports@ sets today to a training day: the badge and the targets follow, an
   await expect(day).toContainText("2,200 kcal");
 });
 
+test("sports@ logs 150 g of a seeded own food: OFF unavailable notice, totals and bars update; then deletes it", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await logIn(page, "sports@demo.cz");
+  await expect(page).toHaveURL("/app");
+  await page.goto("/app/nutrition");
+  const breakfast = page.getByRole("region", { name: "Breakfast" });
+  await expect(breakfast).toContainText("Nothing logged yet.");
+
+  await breakfast.getByRole("button", { name: "Add to Breakfast" }).click();
+  const dialog = page.getByRole("dialog", { name: "Add to Breakfast" });
+  await dialog.getByRole("searchbox", { name: "Search foods" }).fill("skyr");
+  await expect(dialog.getByRole("status")).toHaveText(/Open Food Facts couldn't be reached/); // e2e points OFF at a closed port
+  await dialog.getByRole("button", { name: /Lactose-free skyr/ }).click();
+  await dialog.getByRole("button", { name: "Grams" }).click();
+  await dialog.getByLabel("Amount (g)").fill("150");
+  await expect(dialog.getByText("95 kcal · P 16.5 g · C 6 g · F 0.3 g")).toBeVisible();
+  await dialog.getByRole("button", { name: "Add", exact: true }).click();
+  await expect(dialog).toBeHidden();
+
+  await expect(breakfast.getByRole("listitem")).toContainText("Lactose-free skyr · 150 g");
+  await expect(breakfast.getByRole("listitem")).toContainText("95 kcal");
+  const day = page.getByRole("region", { name: "Day type" });
+  await expect(day.getByRole("meter", { name: "Energy" })).toHaveAttribute("aria-valuetext", "95 / 2,200 kcal");
+  await expect(day.getByRole("meter", { name: "Protein" })).toHaveAttribute("aria-valuetext", "16.5 / 120 g");
+
+  await breakfast.getByRole("button", { name: "Edit Lactose-free skyr" }).click();
+  await page.getByRole("dialog", { name: "Edit entry" }).getByRole("button", { name: "Delete" }).click();
+  await expect(breakfast).toContainText("Nothing logged yet.");
+});
+
 test("coach suggests sports@'s rest-day targets, saves, and the client's bell shows the plan update", async ({ page, browser }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
   await logIn(page, "coach@demo.cz");

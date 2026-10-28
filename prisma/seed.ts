@@ -5,6 +5,7 @@ import { createUser } from "../src/lib/auth";
 import { addDays, todayIn } from "../src/lib/dates";
 import { db, dbUrl } from "../src/lib/db";
 import { type HistoryPayloads, ONBOARDING_STEPS } from "../src/lib/enums";
+import { nutrientsOf } from "../src/lib/food-log";
 import type { NotificationPayloads } from "../src/lib/notifications";
 
 // Full reset of the local SQLite DB: delete the file and re-apply every migration.
@@ -258,6 +259,51 @@ async function seed() {
         ...{ kcal: 63, protein: 11, carbs: 4, fat: 0.2, calcium: 110, servings: [{ label: "1 pot", grams: 150 }] },
       },
     ],
+  });
+
+  // CALORIES food logs for sports@ and race@: the 13 days before today (today is left to log). Lunch and dinner scale by
+  // the day's factor, so a few days miss the ±10 % kcal window; null = nothing logged that day.
+  const byName = async (name: string) => db.food.findFirstOrThrow({ where: { name } });
+  const [oats, granola, spread, skyr] = await Promise.all(["Overnight oats", "Domácí granola", "Tvarohová pomazánka s pažitkou", "Lactose-free skyr"].map(byName));
+  type Item = [slot: string, food: Awaited<ReturnType<typeof byName>> | [name: string, kcal: number, protein: number, carbs: number, fat: number], grams?: number, scales?: boolean];
+  const logs: { clientId: string; factors: (number | null)[]; items: Item[] }[] = [
+    {
+      clientId: sports,
+      factors: [1, 0.96, 1.04, 1, 0.75, 1.02, 1, null, 0.98, 1.2, 1, 1.03, 0.97],
+      items: [
+        ["Breakfast", oats, 350],
+        ["Snack", skyr, 150],
+        ["Snack", granola, 40],
+        ["Lunch", ["Rice, salmon and vegetables", 700, 40, 80, 22], undefined, true],
+        ["Dinner", ["Pasta with tuna", 650, 38, 85, 15], undefined, true],
+      ],
+    },
+    {
+      clientId: race,
+      factors: [1.02, 1, 0.97, 1.05, 1, null, 0.8, 1, 1.03, 0.99, 1.15, 1, 0.98],
+      items: [
+        ["Snídaně", oats, 300],
+        ["Svačina", spread, 60],
+        ["Svačina", ["Rýžové chlebíčky", 150, 3, 32, 1]],
+        ["Oběd", ["Těstoviny s vejci a zeleninou", 650, 35, 85, 15], undefined, true],
+        ["Večeře", ["Rýže s tofu a zeleninou", 600, 35, 70, 18], undefined, true],
+        ["Večerní svačina", ["Tvaroh", 150, 18, 6, 5]],
+      ],
+    },
+  ];
+  await db.foodEntry.createMany({
+    data: logs.flatMap(({ clientId, factors, items }) =>
+      factors.flatMap((factor, i) => {
+        if (factor == null) return [];
+        const date = addDays(today, -(i + 1));
+        return items.map(([slot, food, grams, scales]) => {
+          if (!Array.isArray(food)) return { clientId, date, slot, foodId: food.id, name: food.name, brand: food.brand, grams, ...nutrientsOf(food, grams!) };
+          const [name, kcal, protein, carbs, fat] = food;
+          const f = scales ? factor : 1;
+          return { clientId, date, slot, name, kcal: Math.round(kcal * f), protein: Math.round(protein * f), carbs: Math.round(carbs * f), fat: Math.round(fat * f) };
+        });
+      }),
+    ),
   });
 
   // One pending invite (accept it at /invite/demo-invite with dev accept).

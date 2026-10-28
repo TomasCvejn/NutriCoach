@@ -7,22 +7,24 @@ import { db } from "@/lib/db";
 import type { DayType, TrackingMode } from "@/lib/enums";
 import { dayType, mealSlots, targetFor } from "@/lib/nutrition";
 import { targetSummary } from "@/lib/target-summary";
-import { Button } from "@/components/ui/button";
+import { TargetBar } from "@/components/target-bar";
+import { MACRO_FIELDS, totals } from "@/lib/food-log";
+import { AddFoodDialog, EditEntryDialog } from "./calories";
 import { DayNoteForm, DayTypeSelect } from "./day-controls";
-import { FoodDialog } from "./food-dialog";
 
 const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as const;
 
 // One day of a client's nutrition, the same for the client (/app/nutrition) and their coach (the Nutrition tab's daily
 // log, read-only except the day type). The caller has authorized the viewer for this client; this only reads its rows.
 export async function DailyLog({ clientId, date, viewer, href }: { clientId: string; date: string; viewer: "CLIENT" | "COACH"; href: (date: string) => string }) {
-  const [t, format, client, day, targets, planMeals] = await Promise.all([
+  const [t, format, client, day, targets, planMeals, entries] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.client.findUniqueOrThrow({ where: { id: clientId }, select: { trackingMode: true, user: { select: { timezone: true } } } }),
     db.nutritionDay.findUnique({ where: { clientId_date: { clientId, date } } }),
     db.nutritionTarget.findMany({ where: { clientId } }),
     db.planMeal.findMany({ where: { clientId }, orderBy: { position: "asc" }, select: { dayType: true, name: true } }),
+    db.foodEntry.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const today = todayIn(client.user.timezone);
@@ -32,12 +34,21 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
   const type = dayType({ override });
   const target = targetFor(targets, date, type);
   const summary = target && targetSummary(target, mode, t, (v) => format.number(v, { maximumFractionDigits: 1 }));
-  // ponytail: no entries exist yet; the logging items add the slots found in the day's entries.
+  // The food log shows in CALORIES mode; another mode's logs stay stored and show again when the mode comes back.
+  const logged = mode === "CALORIES" ? entries : [];
   const slots = mealSlots(
     planMeals.filter((m) => m.dayType === type).map((m) => m.name),
-    [],
+    logged.map((e) => e.slot),
     FALLBACK_SLOTS.map((s) => t(`DailyNutrition.slots.${s}`)),
   );
+  const dayTotals = totals(logged);
+  const n = (value: number) => format.number(value, { maximumFractionDigits: 1 });
+  const amount = (e: (typeof entries)[number]) =>
+    e.servingCount != null
+      ? t("Calories.servingAmount", { count: n(e.servingCount), serving: e.servingLabel ?? "", grams: n(e.grams ?? 0) })
+      : e.grams != null
+        ? t("Calories.gramsAmount", { grams: n(e.grams) })
+        : null;
   const offset = diffDays(today, date);
   const relative = offset === 0 ? "today" : offset === -1 ? "yesterday" : offset === 1 ? "tomorrow" : null;
   // A calendar day: formatted at UTC midnight so no timezone can move it.
@@ -76,25 +87,75 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
             </div>
             <DayTypeSelect key={date} clientId={clientId} date={date} override={override} derived={derived} />
           </div>
-          <p className="mt-3 text-sm tabular-nums">
-            <span className="text-muted-foreground">{t("DailyNutrition.targets")}: </span>
-            {summary ?? <span className="text-muted-foreground">{t("DailyNutrition.noTargets")}</span>}
-          </p>
+          {mode === "CALORIES" ? (
+            // The day's totals against its targets; a macro without a target shows its total only.
+            <div className="mt-4 flex flex-col gap-3">
+              {MACRO_FIELDS.map((f) => {
+                const unit = f === "kcal" ? "kcal" : "g";
+                const goal = target?.[f];
+                return goal ? (
+                  <TargetBar
+                    key={f}
+                    label={t(`Calories.bars.${f}`)}
+                    value={dayTotals[f]}
+                    target={goal}
+                    text={t("Calories.ofTarget", { value: n(dayTotals[f]), target: n(goal), unit })}
+                    // Only kcal past the adherence window is a problem; going over a macro is just shown as over.
+                    alarm={f === "kcal" && dayTotals.kcal > goal * 1.1 ? t("Calories.over", { value: n(dayTotals.kcal - goal), unit }) : undefined}
+                  />
+                ) : (
+                  <p key={f} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{t(`Calories.bars.${f}`)}</span>
+                    <span className="tabular-nums">{t("Calories.total", { value: n(dayTotals[f]), unit })}</span>
+                  </p>
+                );
+              })}
+              {!target && <p className="text-xs text-muted-foreground">{t("DailyNutrition.targets")}: {t("DailyNutrition.noTargets")}</p>}
+            </div>
+          ) : (
+            <p className="mt-3 text-sm tabular-nums">
+              <span className="text-muted-foreground">{t("DailyNutrition.targets")}: </span>
+              {summary ?? <span className="text-muted-foreground">{t("DailyNutrition.noTargets")}</span>}
+            </p>
+          )}
         </section>
 
         <div className="flex flex-col gap-3 lg:col-start-1 lg:row-span-2 lg:row-start-1">
-          {/* ponytail: on its own until the CALORIES add flow, which offers it when a search finds nothing. */}
-          {viewer === "CLIENT" && mode === "CALORIES" && (
-            <FoodDialog trigger={<Button variant="outline" className="h-10 self-start px-3 sm:h-8">{t("Foods.create")}</Button>} />
-          )}
-          {slots.map((slot, i) => (
-            <section key={slot} aria-labelledby={`slot-${i}`} className="rounded-lg border bg-card p-5">
-              <h2 id={`slot-${i}`} className="text-base font-semibold">
-                {slot}
-              </h2>
-              <p className="mt-1 text-sm text-muted-foreground">{t("DailyNutrition.nothingLogged")}</p>
-            </section>
-          ))}
+          {slots.map((slot, i) => {
+            const inSlot = logged.filter((e) => e.slot === slot);
+            return (
+              <section key={slot} aria-labelledby={`slot-${i}`} className="rounded-lg border bg-card p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <h2 id={`slot-${i}`} className="text-base font-semibold">
+                    {slot}
+                  </h2>
+                  <div className="flex items-center gap-3">
+                    {inSlot.length > 0 && <span className="text-sm text-muted-foreground tabular-nums">{t("Calories.total", { value: n(totals(inSlot).kcal), unit: "kcal" })}</span>}
+                    {viewer === "CLIENT" && mode === "CALORIES" && <AddFoodDialog date={date} slot={slot} slots={slots} />}
+                  </div>
+                </div>
+                {inSlot.length === 0 ? (
+                  <p className="mt-1 text-sm text-muted-foreground">{t("DailyNutrition.nothingLogged")}</p>
+                ) : (
+                  <ul className="mt-2">
+                    {inSlot.map((e) => (
+                      <li key={e.id} className="flex items-start gap-3 border-t border-rule py-2.5 first:border-t-0">
+                        <div className="min-w-0 flex-1 text-sm">
+                          <p>
+                            <span className="font-medium">{e.name ?? t("Calories.quickAdd")}</span>
+                            {amount(e) && <span className="text-muted-foreground"> · {amount(e)}</span>}
+                          </p>
+                          <p className="text-xs text-muted-foreground tabular-nums">{t("Calories.macros", { protein: n(e.protein), carbs: n(e.carbs), fat: n(e.fat) })}</p>
+                        </div>
+                        <span className="flex-none pt-px text-sm tabular-nums">{t("Calories.total", { value: n(Math.round(e.kcal)), unit: "kcal" })}</span>
+                        {viewer === "CLIENT" && <EditEntryDialog entry={e} label={t("Calories.editEntry", { name: e.name ?? t("Calories.quickAdd") })} slots={slots} />}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </section>
+            );
+          })}
         </div>
 
         <section aria-labelledby="day-note" className="rounded-lg border bg-card p-5 lg:col-start-2 lg:row-start-2">

@@ -125,6 +125,7 @@ model Client {
   medications      String?
   otherInfo        String?
   nutritionDays    NutritionDay[]
+  foodEntries      FoodEntry[]
 
   @@index([coachId])
 }
@@ -276,11 +277,11 @@ model NutritionDay {
 // clients see it) or a client's own (the client and their coach see it). Nutrients per 100 g; logged entries keep a
 // snapshot, so editing or deleting a food never changes past logs.
 model Food {
-  id           String   @id @default(cuid())
+  id           String      @id @default(cuid())
   source       String // FOOD_SOURCES
   ownerId      String? // COACH / CLIENT: the user who made it; OFF: null
-  owner        User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
-  offCode      String?  @unique // OFF: the product code, so upserts are idempotent
+  owner        User?       @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  offCode      String?     @unique // OFF: the product code, so upserts are idempotent
   name         String
   brand        String?
   barcode      String? // EAN, for the barcode lookup
@@ -300,10 +301,48 @@ model Food {
   vitaminC     Float? // mg
   vitaminD     Float? // µg
   vitaminB12   Float? // µg
-  servings     Json     @default("[]") // [{ label: "1 piece", grams: 60 }]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  servings     Json        @default("[]") // [{ label: "1 piece", grams: 60 }]
+  entries      FoodEntry[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
 
   @@index([ownerId])
   @@index([barcode])
+}
+
+// One logged item of a CALORIES day: a snapshot of the name and the nutrients of the amount eaten, so editing or deleting
+// the food (or the plan's meals) never changes it. Quick adds have no food and no grams. `slot` is the meal's name.
+model FoodEntry {
+  id           String   @id @default(cuid())
+  clientId     String
+  client       Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date         String // YYYY-MM-DD in the client's timezone
+  slot         String
+  foodId       String? // for "recent foods" only
+  food         Food?    @relation(fields: [foodId], references: [id], onDelete: SetNull)
+  name         String? // null = quick add
+  brand        String?
+  grams        Float?
+  servingLabel String? // logged by serving: its label, and servingCount of them
+  servingCount Float?
+  // of the amount
+  kcal         Float
+  protein      Float
+  carbs        Float
+  fat          Float
+  fiber        Float?
+  sugar        Float?
+  saturatedFat Float?
+  sodium       Float?
+  potassium    Float?
+  calcium      Float?
+  iron         Float?
+  magnesium    Float?
+  vitaminC     Float?
+  vitaminD     Float?
+  vitaminB12   Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([clientId, date])
 }
