@@ -4,7 +4,7 @@ import { randomBytes } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import { pendingInvite, requireCoach } from "@/lib/auth";
+import { pendingInvite, requireCoach, requireCoachOf } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { TRACKING_MODES } from "@/lib/enums";
 import { optional } from "@/lib/forms";
@@ -41,5 +41,16 @@ export async function revokeInvite(form: FormData) {
   const id = z.string().parse(form.get("id"));
   const { count } = await db.invite.updateMany({ where: { id, coachId: coach.id, ...pendingInvite() }, data: { revokedAt: new Date() } });
   if (count === 0) notFound();
+  revalidatePath("/coach/clients");
+}
+
+// Deactivate (sign-in refused, signed out everywhere now, data kept) or reactivate one of the coach's clients.
+export async function setClientActive(form: FormData) {
+  const { clientId, active } = z.object({ clientId: z.string(), active: z.stringbool() }).parse(Object.fromEntries(form));
+  const { client } = await requireCoachOf(clientId);
+  await db.$transaction([
+    db.user.update({ where: { id: client.userId }, data: { active } }),
+    ...(active ? [] : [db.session.deleteMany({ where: { userId: client.userId } })]),
+  ]);
   revalidatePath("/coach/clients");
 }

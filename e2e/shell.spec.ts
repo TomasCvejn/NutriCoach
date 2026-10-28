@@ -33,14 +33,15 @@ test("coach on a desktop: sidebar with the pages so far, active clients tile", a
   await expect(nav.getByRole("link", { name: "Přehled" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByRole("button", { name: "Více" })).toBeHidden();
 
-  // Every listed client except the deactivated inactive@ (the invite test may have added one in the meantime).
+  // The list opens on the active clients: the tile's count (the invite test may add one in the meantime).
   const tile = page.getByRole("link", { name: /^Aktivní klienti \d+$/ });
   const active = Number((await tile.textContent())!.replace(/\D/g, ""));
   await tile.click();
   await expect(page).toHaveURL("/coach/clients");
-  const rows = page.getByRole("region", { name: "Všichni klienti" }).getByRole("row");
-  await expect(rows.filter({ hasText: "Lucie Králová" })).toHaveCount(1);
-  expect((await rows.count()) - 1).toBe(active + 1); // minus the header row
+  const rows = page.getByRole("region", { name: "Seznam klientů" }).getByRole("row");
+  await expect(rows.filter({ hasText: "Petr Novák" })).toHaveCount(1);
+  await expect(rows.filter({ hasText: "Lucie Králová" })).toHaveCount(0);
+  expect((await rows.count()) - 1).toBe(active); // minus the header row
   await expect(nav.getByRole("link", { name: "Klienti" })).toHaveAttribute("aria-current", "page");
   await expect(nav.getByRole("link", { name: "Přehled" })).not.toHaveAttribute("aria-current");
 });

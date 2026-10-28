@@ -89,7 +89,7 @@
   },
   "Clients": {
     "title": "Klienti",
-    "summary": "{clients, plural, one {# klient} few {# klienti} other {# klientů}} · {invites, plural, =0 {žádná čekající pozvánka} one {# čekající pozvánka} few {# čekající pozvánky} other {# čekajících pozvánek}}",
+    "summary": "{clients, plural, one {# aktivní klient} few {# aktivní klienti} other {# aktivních klientů}} · {invites, plural, =0 {žádná čekající pozvánka} one {# čekající pozvánka} few {# čekající pozvánky} other {# čekajících pozvánek}}",
     "invites": "Čekající pozvánky",
     "noInvites": "Žádné čekající pozvánky. Vytvořený odkaz tu zůstane, dokud ho klient nepřijme.",
     "anyEmail": "Jakýkoli účet Google",
@@ -100,11 +100,44 @@
     "copied": "Zkopírováno",
     "revoke": "Zrušit",
     "revokeFor": "Zrušit pozvánku pro {name}",
-    "list": "Všichni klienti",
+    "list": "Seznam klientů",
     "noClients": "Zatím žádní klienti. Pozvěte prvního.",
+    "statusFilter": "Stav",
+    "tabs": {
+      "active": "Aktivní",
+      "inactive": "Neaktivní",
+      "all": "Všichni"
+    },
+    "search": "Hledat podle jména",
+    "searchPlaceholder": "Hledat jméno",
+    "modeFilter": "Sledování",
+    "allModes": "Všechny režimy",
+    "noMatch": "Hledání ani filtru neodpovídá žádný klient.",
+    "clearFilters": "Zrušit filtry",
+    "empty": {
+      "active": "Žádní aktivní klienti.",
+      "inactive": "Žádní deaktivovaní klienti. Deaktivovaný klient se objeví tady a půjde znovu aktivovat."
+    },
+    "statuses": {
+      "ONBOARDING": "Vyplňuje dotazník",
+      "ACTIVE": "Aktivní",
+      "INACTIVE": "Neaktivní"
+    },
+    "reactivate": "Aktivovat",
+    "reactivateFor": "Znovu aktivovat {name}",
+    "deactivate": {
+      "open": "Deaktivovat",
+      "for": "Deaktivovat {name}",
+      "title": "Deaktivovat {name}?",
+      "text": "Přihlášení bude zablokované, dokud účet znovu neaktivujete, a otevřená přihlášení se hned ukončí. Všechna data zůstanou.",
+      "cancel": "Zrušit",
+      "confirm": "Deaktivovat"
+    },
     "columns": {
       "name": "Jméno",
-      "mode": "Sledování"
+      "mode": "Sledování",
+      "status": "Stav",
+      "actions": "Akce"
     },
     "invite": {
       "open": "Pozvat klienta",

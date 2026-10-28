@@ -89,7 +89,7 @@
   },
   "Clients": {
     "title": "Clients",
-    "summary": "{clients, plural, one {# client} other {# clients}} · {invites, plural, =0 {no pending invites} one {# pending invite} other {# pending invites}}",
+    "summary": "{clients, plural, one {# active client} other {# active clients}} · {invites, plural, =0 {no pending invites} one {# pending invite} other {# pending invites}}",
     "invites": "Pending invites",
     "noInvites": "No pending invites. A link you create appears here until the client accepts it.",
     "anyEmail": "Any Google account",
@@ -100,11 +100,44 @@
     "copied": "Copied",
     "revoke": "Revoke",
     "revokeFor": "Revoke the invite for {name}",
-    "list": "All clients",
+    "list": "Client list",
     "noClients": "No clients yet. Invite your first one.",
+    "statusFilter": "Status",
+    "tabs": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "all": "All"
+    },
+    "search": "Search by name",
+    "searchPlaceholder": "Search name",
+    "modeFilter": "Tracking",
+    "allModes": "All modes",
+    "noMatch": "No client matches the search or filter.",
+    "clearFilters": "Clear filters",
+    "empty": {
+      "active": "No active clients.",
+      "inactive": "No deactivated clients. A client you deactivate appears here and can be reactivated."
+    },
+    "statuses": {
+      "ONBOARDING": "Onboarding",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive"
+    },
+    "reactivate": "Reactivate",
+    "reactivateFor": "Reactivate {name}",
+    "deactivate": {
+      "open": "Deactivate",
+      "for": "Deactivate {name}",
+      "title": "Deactivate {name}?",
+      "text": "Signing in is blocked until you reactivate the account, and any open session ends now. All data stays.",
+      "cancel": "Cancel",
+      "confirm": "Deactivate"
+    },
     "columns": {
       "name": "Name",
-      "mode": "Tracking"
+      "mode": "Tracking",
+      "status": "Status",
+      "actions": "Actions"
     },
     "invite": {
       "open": "Invite client",
