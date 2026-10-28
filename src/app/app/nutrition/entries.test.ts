@@ -3,7 +3,7 @@ import { createUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { recentFoods } from "@/lib/food-search";
 import { notFound, redirectsTo, signIn, uniqueEmail } from "@/test/auth";
-import { addFoodEntry, addQuickEntry, deleteEntry, updateEntry } from "./entry-actions";
+import { addFoodEntry, addQuickEntry, copyEntries, deleteEntry, updateEntry } from "./entry-actions";
 
 const request = vi.hoisted(() => ({ cookie: "" }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers({ cookie: request.cookie }) }));
@@ -38,7 +38,7 @@ test("logging by grams or by serving stores a snapshot; editing the food later n
   expect(await addFoodEntry(form({ ...day, slot: "Svačina", foodId: granola.id, by: "serving", serving: "0", count: "2" }))).toBeNull();
   await db.food.update({ where: { id: granola.id }, data: { name: "Granola nová", kcal: 500, protein: 20 } });
   expect(await entriesOf(a.client.id)).toMatchObject([
-    { slot: "Snídaně", name: "Granola", grams: 150, servingLabel: null, kcal: 682.5, protein: 18, carbs: 87, fat: 28.5, fiber: 12, iron: null },
+    { slot: "Snídaně", name: "Granola", grams: 150, servingLabel: null, kcal: 682.5, protein: 18, carbs: 87, fat: 28.5, fiber: 12, sodium: null },
     { slot: "Svačina", name: "Granola", grams: 80, servingLabel: "1 hrst", servingCount: 2, kcal: 364, protein: 9.6 },
   ]);
   expect((await recentFoods(a.client.id)).map((f) => f.id)).toEqual([granola.id]);
@@ -113,4 +113,28 @@ test("a client can't log another coach's food or touch another client's log; a c
   await expect(deleteEntry(form({ id: bEntry.id }))).rejects.toMatchObject(redirectsTo("/coach"));
   expect(await entriesOf(b.client.id)).toMatchObject([{ kcal: 300 }]);
   expect(await entriesOf(a.client.id)).toEqual([]);
+});
+
+test("copying a meal or a whole day makes independent entries; only the client's own entries are copied", async () => {
+  const { a, b, granola } = await setup();
+  const yesterday = { date: "2026-10-19" };
+  await addFoodEntry(form({ ...yesterday, slot: "Snídaně", foodId: granola.id, by: "grams", grams: "60" }));
+  await addQuickEntry(form({ ...yesterday, slot: "Oběd", name: "Oběd", kcal: "700", protein: "40", carbs: "", fat: "" }));
+  request.cookie = await signIn(b.user.email);
+  await addQuickEntry(form({ ...yesterday, slot: "Snídaně", name: "Bářina snídaně", kcal: "400", protein: "", carbs: "", fat: "" }));
+  request.cookie = await signIn(a.user.email);
+
+  expect(await copyEntries(form({ date: "2026-10-20", from: "2026-10-19", slot: "Snídaně" }))).toEqual({ copied: 1 });
+  expect(await copyEntries(form({ date: "2026-10-21", from: "2026-10-19", slot: "" }))).toEqual({ copied: 2 });
+  expect(await copyEntries(form({ date: "2026-10-20", from: "2026-10-18", slot: "" }))).toEqual({ copied: 0 });
+  expect(await copyEntries(form({ date: "2026-10-20", from: "2026-10-20", slot: "" }))).toEqual({ invalid: ["from"] });
+
+  const copies = await db.foodEntry.findMany({ where: { clientId: a.client.id, date: { in: ["2026-10-20", "2026-10-21"] } }, orderBy: [{ date: "asc" }, { createdAt: "asc" }] });
+  expect(copies.map((e) => [e.date, e.slot, e.name, e.kcal])).toEqual([
+    ["2026-10-20", "Snídaně", "Granola", 273],
+    ["2026-10-21", "Snídaně", "Granola", 273],
+    ["2026-10-21", "Oběd", "Oběd", 700],
+  ]);
+  await updateEntry(form({ id: copies[0].id, slot: "Snídaně", grams: "120" }));
+  expect(await db.foodEntry.findFirstOrThrow({ where: { clientId: a.client.id, date: "2026-10-19", slot: "Snídaně" } })).toMatchObject({ grams: 60, kcal: 273 });
 });

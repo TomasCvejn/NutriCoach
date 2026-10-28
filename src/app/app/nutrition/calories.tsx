@@ -12,7 +12,8 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import type { FoodEntry } from "@/generated/prisma/client";
 import type { FoodResult } from "@/lib/food-search";
 import { nutrientsOf } from "@/lib/food-log";
-import { addFoodEntry, addQuickEntry, deleteEntry, type EntryState, updateEntry } from "./entry-actions";
+import { addDays } from "@/lib/dates";
+import { addFoodEntry, addQuickEntry, copyEntries, deleteEntry, type EntryState, updateEntry } from "./entry-actions";
 import { FoodDialog } from "./food-dialog";
 
 type Search = { results: FoodResult[]; offUnavailable: boolean };
@@ -318,5 +319,62 @@ export function EditEntryDialog({ entry, label, slots }: { entry: FoodEntry; lab
         </>
       )}
     </FormDialog>
+  );
+}
+
+// "Copy" a meal (slot) or the whole day from another date, yesterday by default.
+export function CopyDialog({ date, slot }: { date: string; slot?: string }) {
+  const t = useTranslations("Calories");
+  const id = useId();
+  const [open, setOpen] = useState(false);
+  const [nothing, setNothing] = useState(false);
+  return (
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        setOpen(next);
+        setNothing(false);
+      }}
+    >
+      <DialogTrigger
+        render={
+          slot ? (
+            <Button variant="ghost" className="h-10 px-2.5 text-primary-ink sm:h-8" aria-label={t("copyTo", { slot })} />
+          ) : (
+            <Button variant="outline" className="h-10 self-start px-3 sm:h-8" />
+          )
+        }
+      >
+        {slot ? t("copy") : t("copyDay")}
+      </DialogTrigger>
+      <DialogContent showCloseButton={false} className="gap-5 p-6 sm:max-w-sm">
+        <form
+          action={async (form) => {
+            const result = await copyEntries(form);
+            if ("copied" in result && result.copied > 0) setOpen(false);
+            else setNothing(true);
+          }}
+          className="flex flex-col gap-5"
+        >
+          <DialogHeader>
+            <DialogTitle className="text-lg font-semibold">{slot ? t("copyTitle", { slot }) : t("copyDayTitle")}</DialogTitle>
+            <DialogDescription>{slot ? t("copyText") : t("copyDayText")}</DialogDescription>
+          </DialogHeader>
+          <input type="hidden" name="date" value={date} />
+          {slot && <input type="hidden" name="slot" value={slot} />}
+          <Field id={`${id}-from`} label={t("copyFrom")} error={nothing ? t(slot ? "copyNothing" : "copyDayNothing") : undefined}>
+            <Input id={`${id}-from`} type="date" name="from" required defaultValue={addDays(date, -1)} max={addDays(date, -1)} aria-describedby={`${id}-from-note`} className="h-10" />
+          </Field>
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="ghost" onClick={() => setOpen(false)} className="h-10">
+              {t("cancel")}
+            </Button>
+            <Button type="submit" className="h-10 px-4">
+              {t("copyButton")}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

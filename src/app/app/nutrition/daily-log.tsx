@@ -4,12 +4,12 @@ import Link from "next/link";
 import { Pill } from "@/components/pill";
 import { addDays, diffDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
-import type { DayType, TrackingMode } from "@/lib/enums";
+import { type DayType, MICRONUTRIENTS, type TrackingMode } from "@/lib/enums";
 import { dayType, mealSlots, targetFor } from "@/lib/nutrition";
 import { targetSummary } from "@/lib/target-summary";
 import { TargetBar } from "@/components/target-bar";
-import { MACRO_FIELDS, totals } from "@/lib/food-log";
-import { AddFoodDialog, EditEntryDialog } from "./calories";
+import { MACRO_FIELDS, micronutrientTotals, totals } from "@/lib/food-log";
+import { AddFoodDialog, CopyDialog, EditEntryDialog } from "./calories";
 import { DayNoteForm, DayTypeSelect } from "./day-controls";
 
 const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as const;
@@ -42,6 +42,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
     FALLBACK_SLOTS.map((s) => t(`DailyNutrition.slots.${s}`)),
   );
   const dayTotals = totals(logged);
+  const micro = micronutrientTotals(logged);
   const n = (value: number) => format.number(value, { maximumFractionDigits: 1 });
   const amount = (e: (typeof entries)[number]) =>
     e.servingCount != null
@@ -111,6 +112,21 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
                 );
               })}
               {!target && <p className="text-xs text-muted-foreground">{t("DailyNutrition.targets")}: {t("DailyNutrition.noTargets")}</p>}
+            {/* Fiber and sodium, the only micronutrients tracked: against their targets when set; "incomplete" when some entries lack them. */}
+            {(Object.keys(MICRONUTRIENTS) as (keyof typeof MICRONUTRIENTS)[]).map((f) => {
+              const goal = target?.[f];
+              const unit = MICRONUTRIENTS[f];
+              const total = micro[f].total;
+              return goal ? (
+                <TargetBar key={f} label={t(`Calories.bars.${f}`)} value={total} target={goal} text={t("Calories.ofTarget", { value: n(total), target: n(goal), unit })} />
+              ) : (
+                <p key={f} className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">{t(`Calories.bars.${f}`)}</span>
+                  <span className="tabular-nums">{t("Calories.total", { value: n(total), unit })}</span>
+                </p>
+              );
+            })}
+            {Object.values(micro).some((m) => m.missing > 0) && <p className="text-xs text-muted-foreground">{t("Calories.incomplete")}</p>}
             </div>
           ) : (
             <p className="mt-3 text-sm tabular-nums">
@@ -121,6 +137,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
         </section>
 
         <div className="flex flex-col gap-3 lg:col-start-1 lg:row-span-2 lg:row-start-1">
+          {viewer === "CLIENT" && mode === "CALORIES" && <CopyDialog date={date} />}
           {slots.map((slot, i) => {
             const inSlot = logged.filter((e) => e.slot === slot);
             return (
@@ -131,7 +148,12 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
                   </h2>
                   <div className="flex items-center gap-3">
                     {inSlot.length > 0 && <span className="text-sm text-muted-foreground tabular-nums">{t("Calories.total", { value: n(totals(inSlot).kcal), unit: "kcal" })}</span>}
-                    {viewer === "CLIENT" && mode === "CALORIES" && <AddFoodDialog date={date} slot={slot} slots={slots} />}
+                    {viewer === "CLIENT" && mode === "CALORIES" && (
+                      <span className="-mr-2.5 flex">
+                        <CopyDialog date={date} slot={slot} />
+                        <AddFoodDialog date={date} slot={slot} slots={slots} />
+                      </span>
+                    )}
                   </div>
                 </div>
                 {inSlot.length === 0 ? (

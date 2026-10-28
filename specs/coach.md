@@ -12,7 +12,7 @@
 
 ## Individual client dashboard `/coach/clients/[id]`
 - Header: name, mode, goal, next competition countdown; actions: message, schedule call, add note, change tracking mode.
-- Tabs: Overview (goals, profile summary incl. allergies, current targets, last check-in, key trends) · Nutrition (plan editor + daily log viewer) · Training · Competition (plan editor) · Progress (incl. body composition, bloodwork) · Check-ins · Supplements · Messages · Notes.
+- Tabs: Overview (goals, profile summary incl. allergies, current targets, last check-in, key trends) · Nutrition (plan editor + daily log viewer) · Training · Competition (plan editor) · Progress (incl. body composition) · Check-ins · Supplements · Messages · Notes.
 
 ## Coach notes
 - Private, never visible to the client: date, type `NOTE` / `DECISION`, text, pin.

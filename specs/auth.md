@@ -21,4 +21,4 @@
 - CLIENT reads/writes only their own data.
 - COACH reads/writes only data of clients with `client.coachId === coach.id`, plus their own library.
 - Coach notes are never readable by clients.
-- Integration tests prove: a coach can't read or modify another coach's client; a client can't read another client's food log, photos, bloodwork or messages; a client can't read coach notes; an inactive client can't do anything.
+- Integration tests prove: a coach can't read or modify another coach's client; a client can't read another client's food log, photos or messages; a client can't read coach notes; an inactive client can't do anything.

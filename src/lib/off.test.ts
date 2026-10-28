@@ -25,11 +25,10 @@ const skyr = {
   nutriments: { "energy-kcal_100g": 63, proteins_100g: 11, carbohydrates_100g: 4, fat_100g: 0.2, sodium_100g: 0.04, calcium_100g: 0.11, "vitamin-d_100g": 0.0000012, "vitamin-b12_100g": "" },
 };
 
-test("an OFF product maps to our food: per 100 g, minerals in mg, vitamin D in µg, missing values null", () => {
+test("an OFF product maps to our food: per 100 g, sodium in mg, a missing fiber null, other nutrients ignored", () => {
   expect(mapOffProduct(skyr, "cs")).toEqual({
     ...{ offCode: "8594001231234", name: "Skyr bílý", brand: "Mlékárna Kunín", czech: true, servings: [{ label: "1 kelímek (140 g)", grams: 140 }] },
-    ...{ kcal: 63, protein: 11, carbs: 4, fat: 0.2, fiber: null, sugar: null, saturatedFat: null, sodium: 40, potassium: null, calcium: 110 },
-    ...{ iron: null, magnesium: null, vitaminC: null, vitaminD: 1.2, vitaminB12: null },
+    ...{ kcal: 63, protein: 11, carbs: 4, fat: 0.2, fiber: null, sodium: 40 },
   });
 });
 
@@ -51,7 +50,7 @@ test("search asks OFF with our User-Agent and a timeout, and lists Czech product
   expect(String(url)).toMatch(/^https:\/\/world\.openfoodfacts\.org\/cgi\/search\.pl\?search_terms=skyr&/);
   expect(init).toMatchObject({ headers: { "User-Agent": "NutriCoach/0.1" }, signal: expect.any(AbortSignal) });
 
-  answer({ status: 0, status_verbose: "product not found" });
+  answer({ status: 0, status_verbose: "product not found" }); // looking a search result's code up when it's logged
   expect(await offProduct("8590000000000", "cs")).toBeNull();
   answer({}, 503);
   await expect(searchOff("skyr", "cs")).rejects.toThrow();
@@ -62,7 +61,7 @@ test("storing an OFF product is idempotent: one row per product code, refreshed 
   const first = await upsertOffFood(food);
   const again = await upsertOffFood({ ...food, kcal: 65 });
   expect(again.id).toBe(first.id);
-  expect(await db.food.findMany({ where: { offCode: "8594009990001" } })).toMatchObject([{ source: "OFF", ownerId: null, barcode: "8594009990001", kcal: 65 }]);
+  expect(await db.food.findMany({ where: { offCode: "8594009990001" } })).toMatchObject([{ source: "OFF", ownerId: null, kcal: 65 }]);
 });
 
 test("merged search: own foods, then stored OFF ones, then new OFF results; when OFF fails or times out, the local results and a notice", async () => {
@@ -91,11 +90,13 @@ test("the search route answers only signed-in users and checks its parameters", 
   expect((await GET(url("q=skyr"))).status).toBe(401);
   request.cookie = await signIn("sports@demo.cz");
   expect((await GET(url("q=s"))).status).toBe(400);
-  expect((await GET(url("ean=12ab"))).status).toBe(400);
-  answer({ status: 1, product: skyr });
-  const res = await GET(url("ean=8594001231234"));
-  expect(await res.json()).toMatchObject({ results: [{ id: null, offCode: "8594001231234", name: "Plain skyr" }], offUnavailable: false }); // sports@ reads English
-  // A seeded custom food with this barcode would win; the client's own food matches by name.
-  answer({ products: [] });
+  expect((await GET(url("ean=8594001231234"))).status).toBe(400); // no barcode lookup (out of scope)
+  // Without a query: the client's recently logged foods (sports@'s seeded log), no OFF call.
+  const fetch = answer({ products: [] });
+  expect(await (await GET(url(""))).json()).toMatchObject({ results: expect.arrayContaining([expect.objectContaining({ name: "Overnight oats" })]), offUnavailable: false });
+  expect(fetch).not.toHaveBeenCalled();
+  answer({ products: [skyr] });
+  expect(await (await GET(url("q=skyr"))).json()).toMatchObject({ results: expect.arrayContaining([expect.objectContaining({ offCode: "8594001231234", name: "Plain skyr" })]) }); // sports@ reads English
+  answer({ products: [] }); // a Response body reads once: a fresh one per request
   expect(await (await GET(url("q=lactose"))).json()).toMatchObject({ results: [{ name: "Lactose-free skyr", source: "CLIENT" }], offUnavailable: false });
 });

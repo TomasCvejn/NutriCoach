@@ -109,3 +109,23 @@ export async function deleteEntry(form: FormData) {
   if (count === 0) notFound();
   refresh(client.id);
 }
+
+// Copy a meal (one slot) or the whole day from another date into this one. The copies are new entries with the same
+// snapshot, so editing either day later leaves the other alone. Returns how many were copied (0 = nothing there).
+export async function copyEntries(form: FormData): Promise<{ copied: number } | { invalid: string[] }> {
+  const { client } = await requireClient();
+  const parsed = z
+    .object({ date: z.iso.date(), from: z.iso.date(), slot: optional(z.string().trim().min(1).max(100)) })
+    .refine((v) => v.from !== v.date, { path: ["from"] })
+    .safeParse(Object.fromEntries(form));
+  if (!parsed.success) return invalid(parsed.error);
+  const { date, from, slot } = parsed.data;
+  const source = await db.foodEntry.findMany({
+    where: { clientId: client.id, date: from, ...(slot && { slot }) },
+    orderBy: { createdAt: "asc" },
+    omit: { id: true, createdAt: true, updatedAt: true },
+  });
+  await db.foodEntry.createMany({ data: source.map((entry) => ({ ...entry, date })) });
+  refresh(client.id);
+  return { copied: source.length };
+}

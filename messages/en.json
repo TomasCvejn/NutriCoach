@@ -469,7 +469,9 @@
       "kcal": "Energy",
       "protein": "Protein",
       "carbs": "Carbs",
-      "fat": "Fat"
+      "fat": "Fat",
+      "fiber": "Fiber",
+      "sodium": "Sodium"
     },
     "edit": "Edit",
     "editTitle": "Edit entry",
@@ -481,7 +483,19 @@
     "total": "{value} {unit}",
     "ofTarget": "{value} / {target} {unit}",
     "over": "{value} {unit} over the target",
-    "invalid": "Check this value."
+    "invalid": "Check this value.",
+    "copy": "Copy",
+    "copyTo": "Copy into {slot}",
+    "copyDay": "Copy a day",
+    "copyTitle": "Copy: {slot}",
+    "copyDayTitle": "Copy a whole day",
+    "copyText": "This meal's entries from the chosen day are added here.",
+    "copyDayText": "All entries of the chosen day are added here, each into its meal.",
+    "copyFrom": "From",
+    "copyButton": "Copy",
+    "copyNothing": "Nothing was logged in this meal that day.",
+    "copyDayNothing": "Nothing was logged that day.",
+    "incomplete": "Some foods lack fiber or sodium, so those totals are lower."
   },
   "Foods": {
     "title": "Foods",
@@ -511,25 +525,14 @@
     "fields": {
       "name": "Name",
       "brand": "Brand",
-      "barcode": "EAN barcode",
       "kcal": "Energy (kcal)",
       "protein": "Protein (g)",
       "carbs": "Carbs (g)",
       "fat": "Fat (g)",
       "fiber": "Fiber (g)",
-      "sugar": "Sugar (g)",
-      "saturatedFat": "Saturated fat (g)",
-      "sodium": "Sodium (mg)",
-      "potassium": "Potassium (mg)",
-      "calcium": "Calcium (mg)",
-      "iron": "Iron (mg)",
-      "magnesium": "Magnesium (mg)",
-      "vitaminC": "Vitamin C (mg)",
-      "vitaminD": "Vitamin D (µg)",
-      "vitaminB12": "Vitamin B12 (µg)"
+      "sodium": "Sodium (mg)"
     },
     "per100": "Per 100 g",
-    "micronutrients": "Micronutrients (optional)",
     "servings": "Servings",
     "servingsHint": "Optional, e.g. 1 piece = 60 g, so the food can be logged by the piece.",
     "servingLabel": "Serving",

@@ -14,8 +14,8 @@ import { deleteFood, saveFood } from "./food-actions";
 
 const MACROS = ["kcal", "protein", "carbs", "fat"] as const;
 
-// Add or edit a food (a coach's library food, a client's own): name, brand, EAN, nutrients per 100 g, the optional
-// micronutrients folded away, and servings ("1 piece = 60 g").
+// Add or edit a food (a coach's library food, a client's own): name, brand, nutrients per 100 g (fiber and sodium
+// optional), and servings ("1 piece = 60 g").
 export function FoodDialog({ food, trigger }: { food?: Food; trigger: ReactElement<Record<string, unknown>> }) {
   const t = useTranslations("Foods");
   return (
@@ -52,19 +52,15 @@ function FoodFields({ food, invalid }: { food?: Food; invalid: (field: string) =
       {food && <input type="hidden" name="id" value={food.id} />}
       <div className="grid gap-4 sm:grid-cols-2">
         {field("name", { required: true, maxLength: 150 }, "sm:col-span-2")}
-        {field("brand", { maxLength: 100 })}
-        {field("barcode", { inputMode: "numeric", pattern: "\\d{8,14}" })}
+        {field("brand", { maxLength: 100 }, "sm:col-span-2")}
       </div>
       <fieldset>
         <legend className="mb-2 text-sm font-medium">{t("per100")}</legend>
-        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">{MACROS.map((m) => field(m, { ...number, required: true, className: "h-10 tabular-nums" }))}</div>
-      </fieldset>
-      <details className="group" open={Object.keys(MICRONUTRIENTS).some((m) => invalid(m))}>
-        <summary className="cursor-pointer text-sm font-medium text-primary-ink">{t("micronutrients")}</summary>
-        <div className="mt-3 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {MACROS.map((m) => field(m, { ...number, required: true, className: "h-10 tabular-nums" }))}
           {Object.keys(MICRONUTRIENTS).map((m) => field(m, { ...number, className: "h-10 tabular-nums" }))}
         </div>
-      </details>
+      </fieldset>
       <fieldset>
         <legend className="mb-2 text-sm font-medium">{t("servings")}</legend>
         <p className="mb-3 text-xs text-muted-foreground">{t("servingsHint")}</p>

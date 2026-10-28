@@ -9,14 +9,14 @@ Each client has exactly one **tracking mode**. The coach sets it (pre-filled fro
 
 | Tracking mode | Daily nutrition screen |
 |---|---|
-| `CALORIES` | food logging with kcal / macro / micronutrient totals vs. targets |
+| `CALORIES` | food logging with kcal / macro totals (plus fiber and sodium) vs. targets |
 | `PORTIONS` | hand-portion counting (protein palms, carb cupped hands, veg fists, fat thumbs) vs. portion targets |
 | `GUIDANCE` | no numbers: per planned meal "followed? yes / partly / no", optional meal photo |
 
 **What the client sees is driven by their data, not a label** (pure function, unit-tested):
 - Training (sessions, fueling, electrolytes, performance) — shown when the client's profile has a sport or they have at least one training session.
 - Competition (dashboard, timeline, race-day schedule) — shown when the client has an upcoming competition (or one in the last 7 days).
-- Everything else (nutrition plan, recipes, hydration, check-ins, progress, body composition, bloodwork, supplements, messages, calendar) — always.
+- Everything else (nutrition plan, recipes, hydration, check-ins, progress, body composition, supplements, messages, calendar) — always.
 - The coach always sees every tab for every client (so they can add the first session or competition).
 
 **Day type** per date: `REST`, `TRAINING`, `COMPETITION`. Derived: competition that day → COMPETITION; any training session → TRAINING; else REST. Client or coach can override it for a date. A missing TRAINING / COMPETITION target falls back to the REST target. Pure function with unit tests.
@@ -37,7 +37,7 @@ No other services besides Google OAuth: no Redis, no S3, no email sending. The a
 - Metric units only (g, kg, cm, ml). Energy in kcal, sodium in mg.
 - Calendar days are `YYYY-MM-DD` strings in the client's timezone (stored on the user). Never derive "today" from server UTC.
 - Uploads (photos, PDFs) go to local `uploads/` (gitignored), jpg/png/webp/pdf, max 10 MB, served only through an authenticated route handler.
-- Health data (body composition, bloodwork, photos, check-ins) is visible only to the client and their coach.
+- Health data (body composition, photos, check-ins) is visible only to the client and their coach.
 - "Realtime" = polling. No websockets.
 - In-app notifications go through one `notify()` helper (see `home-and-basics.md`).
 
@@ -72,10 +72,10 @@ Plus a GUIDANCE client can be created by switching any of them.
 14. Supplements — `supplements.md`
 15. Messaging — `messaging.md`
 16. Calls, calendar, coach home — `coach.md`, `home-and-basics.md`
-17. Bloodwork — `progress.md`
-18. Settings, package, help/FAQ, privacy & account — `home-and-basics.md`
+17. Settings, package, help/FAQ, privacy & account — `home-and-basics.md`
 Client home and coach home grow with every feature: when a feature lands, add its widget.
 
 ## Out of scope
+- No barcode scanning or EAN lookup, no bloodwork, no micronutrients beyond fiber and sodium (user decision 2026-10-28: not a full calorie-table app).
 - Phase 2: education hub / lessons, community feed, community events & Q&A, coach profile page, chat availability indicator.
 - Payment processing, workout programming (sessions are logged, not programmed), native apps, email/push notifications, AI features, wearable integrations, imperial units.

@@ -22,23 +22,14 @@ export type OffFood = Nutrients & {
   servings: Serving[];
 };
 
-// Our field ← OFF's per-100 g nutriment and the factor to our unit (OFF gives minerals and vitamins in grams).
+// Our field ← OFF's per-100 g nutriment and the factor to our unit (OFF gives sodium in grams).
 const NUTRIENTS = [
   ["kcal", "energy-kcal_100g", 1],
   ["protein", "proteins_100g", 1],
   ["carbs", "carbohydrates_100g", 1],
   ["fat", "fat_100g", 1],
   ["fiber", "fiber_100g", 1],
-  ["sugar", "sugars_100g", 1],
-  ["saturatedFat", "saturated-fat_100g", 1],
   ["sodium", "sodium_100g", 1000],
-  ["potassium", "potassium_100g", 1000],
-  ["calcium", "calcium_100g", 1000],
-  ["iron", "iron_100g", 1000],
-  ["magnesium", "magnesium_100g", 1000],
-  ["vitaminC", "vitamin-c_100g", 1000],
-  ["vitaminD", "vitamin-d_100g", 1_000_000],
-  ["vitaminB12", "vitamin-b12_100g", 1_000_000],
 ] as const;
 
 const product = z.object({
@@ -86,7 +77,8 @@ export async function searchOff(query: string, locale: string): Promise<OffFood[
   return [...foods.filter((f) => f.czech), ...foods.filter((f) => !f.czech)];
 }
 
-// One product by its EAN; null when OFF doesn't know it. Throws when OFF fails or times out.
+// One product by its OFF code (resolving a search result when it's logged); null when OFF doesn't know it.
+// Throws when OFF fails or times out.
 export async function offProduct(code: string, locale: string): Promise<OffFood | null> {
   const data = z.object({ status: z.number(), product: z.unknown().optional() }).parse(await get(`/api/v2/product/${encodeURIComponent(code)}?fields=${FIELDS}`));
   return data.status === 1 ? mapOffProduct(data.product, locale) : null;
@@ -95,6 +87,6 @@ export async function offProduct(code: string, locale: string): Promise<OffFood 
 // An OFF product the first time someone uses it: stored as a Food (shared by everyone), refreshed when used again.
 export async function upsertOffFood(food: OffFood) {
   const nutrients = Object.fromEntries(NUTRIENTS.map(([field]) => [field, food[field]])) as Nutrients;
-  const data = { ...nutrients, name: food.name, brand: food.brand, servings: food.servings, barcode: food.offCode, source: "OFF", ownerId: null };
+  const data = { ...nutrients, name: food.name, brand: food.brand, servings: food.servings, source: "OFF", ownerId: null };
   return db.food.upsert({ where: { offCode: food.offCode }, create: { ...data, offCode: food.offCode }, update: data });
 }

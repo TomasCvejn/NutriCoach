@@ -1,7 +1,7 @@
 import type { Food } from "@/generated/prisma/client";
 import { db } from "./db";
 import { type Serving, visibleFoods } from "./foods";
-import { type OffFood, offProduct, searchOff } from "./off";
+import { type OffFood, searchOff } from "./off";
 
 // What the food search returns: a stored food (id) or an OFF product not used yet (offCode; stored on first use).
 export type FoodResult = Pick<Food, "name" | "brand" | "kcal" | "protein" | "carbs" | "fat" | "source"> & { id: string | null; offCode: string | null; servings: Serving[] };
@@ -40,16 +40,4 @@ export async function recentFoods(clientId: string) {
     include: { food: true },
   });
   return rows.flatMap((row) => (row.food ? [row.food] : []));
-}
-
-// A scanned or typed EAN: a food the viewer has with that barcode, else the OFF product.
-export async function findByBarcode(viewer: Viewer, ean: string, locale: string) {
-  const local = await db.food.findFirst({ where: { AND: [visibleFoods(viewer), { barcode: ean }] }, orderBy: { source: "asc" } });
-  if (local) return { results: [fromFood(local)], offUnavailable: false };
-  try {
-    const off = await offProduct(ean, locale);
-    return { results: off ? [fromOff(off)] : [], offUnavailable: false };
-  } catch {
-    return { results: [], offUnavailable: true };
-  }
 }

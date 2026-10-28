@@ -21,10 +21,9 @@ export const foodInput = z.object({
   id: z.string().optional(),
   name: z.string().trim().min(1).max(150),
   brand: optional(z.string().trim().max(100)),
-  barcode: optional(z.string().trim().regex(/^\d{8,14}$/)),
   ...{ kcal: per100(900), protein: per100(100), carbs: per100(100), fat: per100(100) },
-  // The micronutrients of MICRONUTRIENTS, optional (µg values fit the mg bound).
-  ...{ fiber: g, sugar: g, saturatedFat: g, sodium: mg, potassium: mg, calcium: mg, iron: mg, magnesium: mg, vitaminC: mg, vitaminD: mg, vitaminB12: mg },
+  // MICRONUTRIENTS, optional.
+  ...{ fiber: g, sodium: mg },
   servings: z.array(z.object({ label: z.string().trim().min(1).max(50), grams: z.coerce.number().positive().max(5000) })).max(10),
 });
 

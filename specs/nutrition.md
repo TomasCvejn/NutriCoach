@@ -19,15 +19,14 @@ Common: date navigation, day type badge (overridable), day note for the coach, c
 
 ### CALORIES
 - Food database:
-  - Open Food Facts (OFF): text search and barcode (EAN) lookup, always server-side through our own route handler, `User-Agent: NutriCoach/0.1`, 5 s timeout, prefer Czech products/names. A product used for the first time is upserted into the local `Food` table (source `OFF`, barcode, nutrients per 100 g).
+  - Open Food Facts (OFF): text search, always server-side through our own route handler, `User-Agent: NutriCoach/0.1`, 5 s timeout, prefer Czech products/names. A product used for the first time is upserted into the local `Food` table (source `OFF`, its OFF code, nutrients per 100 g).
   - Custom foods: by the coach (visible to all their clients) or by a client (visible to that client and coach). Name, brand, nutrients per 100 g, optional servings ("1 piece = 60 g").
   - Search merges: client's recent foods → custom foods → OFF. Debounced, phone-friendly.
-  - Barcode: manual EAN input always; camera scan button only when `BarcodeDetector` exists.
   - OFF failure/timeout must not break search (recent + custom still shown, with a notice). Tests never hit the network — mock OFF.
 - Add entry: food → grams or a serving → meal slot. Entry stores a **snapshot** of name and nutrients; changing a Food or recipe never changes past logs.
 - Also: quick add (kcal + macros), add a recipe (portions → snapshot), edit amount, move to another meal, delete, copy a meal or whole day from another date.
 - Totals per meal and per day; progress bars kcal/P/C/F vs. target, over-target shown distinctly.
-- Micronutrients (collapsed section): fiber, sugar, saturated fat, sodium, potassium, calcium, iron, magnesium, vitamin C, vitamin D, vitamin B12 — totals of available data with a "data incomplete" hint when some entries lack a value.
+- Fiber and sodium: day totals of the available data (vs. the optional fiber / sodium targets) with a "data incomplete" hint when some entries lack a value. No other micronutrients.
 
 ### PORTIONS
 - Per meal: +/− counters for protein palms, carb cupped hands, veg fists, fat thumbs (half steps allowed); short illustrated explanation of each portion.

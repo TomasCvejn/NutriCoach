@@ -19,9 +19,9 @@ const form = (fields: Record<string, string | string[]>) => {
 // What the food form sends: every field, the folded micronutrients included.
 const food = (fields: Record<string, string | string[]> = {}) =>
   form({
-    ...{ name: "Skyr", brand: "", barcode: "", kcal: "63", protein: "11", carbs: "4", fat: "0.2" },
+    ...{ name: "Skyr", brand: "", kcal: "63", protein: "11", carbs: "4", fat: "0.2" },
     ...Object.fromEntries(Object.keys(MICRONUTRIENTS).map((m) => [m, ""])),
-    ...{ calcium: "110", servingLabel: [], servingGrams: [] },
+    ...{ sodium: "40", servingLabel: [], servingGrams: [] },
     ...fields,
   });
 
@@ -53,14 +53,14 @@ test("coach and client make their own foods with servings; invalid input writes 
   const { a, a1 } = await people();
   request.cookie = await signIn(a.email);
   expect(await saveFood(food({ name: " Granola ", servingLabel: ["1 hrst", ""], servingGrams: ["40", ""] }))).toBeNull();
-  expect(await db.food.findFirstOrThrow({ where: { ownerId: a.id } })).toMatchObject({ source: "COACH", name: "Granola", brand: null, fiber: null, calcium: 110, servings: [{ label: "1 hrst", grams: 40 }] });
+  expect(await db.food.findFirstOrThrow({ where: { ownerId: a.id } })).toMatchObject({ source: "COACH", name: "Granola", brand: null, fiber: null, sodium: 40, servings: [{ label: "1 hrst", grams: 40 }] });
 
   request.cookie = await signIn(a1.email);
   expect(await saveFood(food())).toBeNull();
   expect(await db.food.findFirstOrThrow({ where: { ownerId: a1.id } })).toMatchObject({ source: "CLIENT", name: "Skyr", kcal: 63, fat: 0.2 });
 
-  const bad = food({ name: " ", barcode: "12ab", kcal: "-1", protein: "120", sodium: "x", servingLabel: ["kus"], servingGrams: [""] });
-  expect(await saveFood(bad)).toEqual({ invalid: ["name", "barcode", "kcal", "protein", "sodium", "servings"] });
+  const bad = food({ name: " ", kcal: "-1", protein: "120", sodium: "x", servingLabel: ["kus"], servingGrams: [""] });
+  expect(await saveFood(bad)).toEqual({ invalid: ["name", "kcal", "protein", "sodium", "servings"] });
   expect(await db.food.count({ where: { ownerId: a1.id } })).toBe(1);
 });
 

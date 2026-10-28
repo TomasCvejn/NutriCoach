@@ -469,7 +469,9 @@
       "kcal": "Energie",
       "protein": "Bílkoviny",
       "carbs": "Sacharidy",
-      "fat": "Tuky"
+      "fat": "Tuky",
+      "fiber": "Vláknina",
+      "sodium": "Sodík"
     },
     "edit": "Upravit",
     "editTitle": "Upravit záznam",
@@ -481,7 +483,19 @@
     "total": "{value} {unit}",
     "ofTarget": "{value} / {target} {unit}",
     "over": "o {value} {unit} víc než cíl",
-    "invalid": "Zkontrolujte tuto hodnotu."
+    "invalid": "Zkontrolujte tuto hodnotu.",
+    "copy": "Kopírovat",
+    "copyTo": "Kopírovat do: {slot}",
+    "copyDay": "Kopírovat den",
+    "copyTitle": "Kopírovat: {slot}",
+    "copyDayTitle": "Kopírovat celý den",
+    "copyText": "Zápisy tohoto jídla z vybraného dne se přidají sem.",
+    "copyDayText": "Všechny zápisy vybraného dne se přidají sem, každý do svého jídla.",
+    "copyFrom": "Z data",
+    "copyButton": "Kopírovat",
+    "copyNothing": "V tomto jídle tehdy nic zapsáno nebylo.",
+    "copyDayNothing": "Ten den nic zapsáno nebylo.",
+    "incomplete": "U některých potravin chybí vláknina nebo sodík, součty jsou proto nižší."
   },
   "Foods": {
     "title": "Potraviny",
@@ -511,25 +525,14 @@
     "fields": {
       "name": "Název",
       "brand": "Značka",
-      "barcode": "Čárový kód EAN",
       "kcal": "Energie (kcal)",
       "protein": "Bílkoviny (g)",
       "carbs": "Sacharidy (g)",
       "fat": "Tuky (g)",
       "fiber": "Vláknina (g)",
-      "sugar": "Cukry (g)",
-      "saturatedFat": "Nasycené tuky (g)",
-      "sodium": "Sodík (mg)",
-      "potassium": "Draslík (mg)",
-      "calcium": "Vápník (mg)",
-      "iron": "Železo (mg)",
-      "magnesium": "Hořčík (mg)",
-      "vitaminC": "Vitamin C (mg)",
-      "vitaminD": "Vitamin D (µg)",
-      "vitaminB12": "Vitamin B12 (µg)"
+      "sodium": "Sodík (mg)"
     },
     "per100": "Na 100 g",
-    "micronutrients": "Mikroživiny (nepovinné)",
     "servings": "Porce",
     "servingsHint": "Nepovinné, např. 1 kus = 60 g, aby šla potravina zapsat po kusech.",
     "servingLabel": "Porce",
