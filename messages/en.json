@@ -1,4 +1,9 @@
 {
+  "Common": {
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "save": "Save"
+  },
   "Language": {
     "label": "Language",
     "cs": "Čeština",
@@ -37,7 +42,8 @@
     "profile": "Profile",
     "settings": "Settings",
     "plan": "Plan",
-    "nutrition": "Nutrition"
+    "nutrition": "Nutrition",
+    "library": "Library"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -423,6 +429,71 @@
     "noNote": "No note for this day.",
     "save": "Save",
     "saved": "Saved"
+  },
+  "Foods": {
+    "title": "Foods",
+    "lead": "Your own foods, per 100 g. Your clients find them when they log.",
+    "add": "Add food",
+    "create": "Create a food",
+    "empty": "No foods yet.",
+    "addTitle": "New food",
+    "editTitle": "Edit food",
+    "edit": "Edit",
+    "editFood": "Edit {name}",
+    "columns": {
+      "name": "Food",
+      "kcal": "kcal",
+      "protein": "Protein g",
+      "carbs": "Carbs g",
+      "fat": "Fat g",
+      "servings": "Servings",
+      "actions": "Actions"
+    },
+    "per100Line": "{kcal} kcal · P {protein} · C {carbs} · F {fat} g per 100 g",
+    "serving": "{label} = {grams} g",
+    "kcalPer100": "{kcal} kcal / 100 g",
+    "clientFoods": "Your clients' foods",
+    "clientFoodsLead": "Foods a client made for themself; only they and you see them.",
+    "clientFoodsEmpty": "No client has made a food yet.",
+    "fields": {
+      "name": "Name",
+      "brand": "Brand",
+      "barcode": "EAN barcode",
+      "kcal": "Energy (kcal)",
+      "protein": "Protein (g)",
+      "carbs": "Carbs (g)",
+      "fat": "Fat (g)",
+      "fiber": "Fiber (g)",
+      "sugar": "Sugar (g)",
+      "saturatedFat": "Saturated fat (g)",
+      "sodium": "Sodium (mg)",
+      "potassium": "Potassium (mg)",
+      "calcium": "Calcium (mg)",
+      "iron": "Iron (mg)",
+      "magnesium": "Magnesium (mg)",
+      "vitaminC": "Vitamin C (mg)",
+      "vitaminD": "Vitamin D (µg)",
+      "vitaminB12": "Vitamin B12 (µg)"
+    },
+    "per100": "Per 100 g",
+    "micronutrients": "Micronutrients (optional)",
+    "servings": "Servings",
+    "servingsHint": "Optional, e.g. 1 piece = 60 g, so the food can be logged by the piece.",
+    "servingLabel": "Serving",
+    "servingLabelExample": "1 piece",
+    "servingGrams": "Grams",
+    "removeServing": "Remove serving",
+    "addServing": "Add serving",
+    "servingsInvalid": "Each serving needs a name and its grams.",
+    "invalid": "Check this value."
+  },
+  "Library": {
+    "title": "Library",
+    "lead": "What you build once and use for every client.",
+    "tabs": {
+      "label": "Library sections",
+      "foods": "Foods"
+    }
   },
   "Invite": {
     "title": "{coach} invited you to NutriCoach",

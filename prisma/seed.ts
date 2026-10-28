@@ -243,6 +243,23 @@ async function seed() {
     await db.client.update({ where: { id: clientId }, data: { planSpecifics } });
   }
 
+  // Foods: the coach's library (cs and en) and one food sports@ made for herself.
+  const sportsUser = await db.user.findUniqueOrThrow({ where: { email: "sports@demo.cz" } });
+  await db.food.createMany({
+    data: [
+      ...[
+        { name: "Domácí granola", brand: "Jana Horáková", kcal: 455, protein: 12, carbs: 58, fat: 19, fiber: 8, sugar: 14, servings: [{ label: "1 hrst", grams: 40 }] },
+        { name: "Tvarohová pomazánka s pažitkou", kcal: 135, protein: 14, carbs: 4, fat: 7, sodium: 380, servings: [{ label: "1 lžíce", grams: 20 }] },
+        { name: "Recovery shake (coach mix)", kcal: 78, protein: 8, carbs: 11, fat: 0.5, sodium: 120, servings: [{ label: "1 shaker", grams: 500 }] },
+        { name: "Overnight oats", kcal: 165, protein: 7, carbs: 24, fat: 4.5, fiber: 3.5, servings: [{ label: "1 jar", grams: 250 }] },
+      ].map((food) => ({ ...food, source: "COACH", ownerId: coach.id })),
+      {
+        ...{ source: "CLIENT", ownerId: sportsUser.id, name: "Lactose-free skyr", brand: "Arla" },
+        ...{ kcal: 63, protein: 11, carbs: 4, fat: 0.2, calcium: 110, servings: [{ label: "1 pot", grams: 150 }] },
+      },
+    ],
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

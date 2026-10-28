@@ -1,4 +1,9 @@
 {
+  "Common": {
+    "delete": "Smazat",
+    "cancel": "Zrušit",
+    "save": "Uložit"
+  },
   "Language": {
     "label": "Jazyk",
     "cs": "Čeština",
@@ -37,7 +42,8 @@
     "profile": "Profil",
     "settings": "Nastavení",
     "plan": "Plán",
-    "nutrition": "Výživa"
+    "nutrition": "Výživa",
+    "library": "Knihovna"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -423,6 +429,71 @@
     "noNote": "K tomuto dni žádná poznámka.",
     "save": "Uložit",
     "saved": "Uloženo"
+  },
+  "Foods": {
+    "title": "Potraviny",
+    "lead": "Vaše vlastní potraviny, na 100 g. Klienti je najdou při zapisování.",
+    "add": "Přidat potravinu",
+    "create": "Vytvořit potravinu",
+    "empty": "Zatím žádné potraviny.",
+    "addTitle": "Nová potravina",
+    "editTitle": "Upravit potravinu",
+    "edit": "Upravit",
+    "editFood": "Upravit {name}",
+    "columns": {
+      "name": "Potravina",
+      "kcal": "kcal",
+      "protein": "Bílkoviny g",
+      "carbs": "Sacharidy g",
+      "fat": "Tuky g",
+      "servings": "Porce",
+      "actions": "Akce"
+    },
+    "per100Line": "{kcal} kcal · B {protein} · S {carbs} · T {fat} g na 100 g",
+    "serving": "{label} = {grams} g",
+    "kcalPer100": "{kcal} kcal / 100 g",
+    "clientFoods": "Potraviny klientů",
+    "clientFoodsLead": "Potraviny, které si klient vytvořil sám; vidí je jen on a vy.",
+    "clientFoodsEmpty": "Žádný klient si zatím potravinu nevytvořil.",
+    "fields": {
+      "name": "Název",
+      "brand": "Značka",
+      "barcode": "Čárový kód EAN",
+      "kcal": "Energie (kcal)",
+      "protein": "Bílkoviny (g)",
+      "carbs": "Sacharidy (g)",
+      "fat": "Tuky (g)",
+      "fiber": "Vláknina (g)",
+      "sugar": "Cukry (g)",
+      "saturatedFat": "Nasycené tuky (g)",
+      "sodium": "Sodík (mg)",
+      "potassium": "Draslík (mg)",
+      "calcium": "Vápník (mg)",
+      "iron": "Železo (mg)",
+      "magnesium": "Hořčík (mg)",
+      "vitaminC": "Vitamin C (mg)",
+      "vitaminD": "Vitamin D (µg)",
+      "vitaminB12": "Vitamin B12 (µg)"
+    },
+    "per100": "Na 100 g",
+    "micronutrients": "Mikroživiny (nepovinné)",
+    "servings": "Porce",
+    "servingsHint": "Nepovinné, např. 1 kus = 60 g, aby šla potravina zapsat po kusech.",
+    "servingLabel": "Porce",
+    "servingLabelExample": "1 kus",
+    "servingGrams": "Gramy",
+    "removeServing": "Odebrat porci",
+    "addServing": "Přidat porci",
+    "servingsInvalid": "Každá porce potřebuje název a gramy.",
+    "invalid": "Zkontrolujte tuto hodnotu."
+  },
+  "Library": {
+    "title": "Knihovna",
+    "lead": "Co jednou připravíte a použijete u všech klientů.",
+    "tabs": {
+      "label": "Sekce knihovny",
+      "foods": "Potraviny"
+    }
   },
   "Invite": {
     "title": "{coach} vás zve do NutriCoach",

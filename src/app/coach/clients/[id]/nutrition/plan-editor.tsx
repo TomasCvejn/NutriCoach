@@ -2,8 +2,9 @@
 
 import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
-import { type ReactElement, type ReactNode, useActionState, useId, useState } from "react";
+import { type ReactNode, useActionState, useId, useState } from "react";
 import { Field } from "@/components/field";
+import { FormDialog } from "@/components/form-dialog";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -12,78 +13,10 @@ import { Textarea } from "@/components/ui/textarea";
 import type { PlanMeal, PlanRecommendation } from "@/generated/prisma/client";
 import { DAY_TYPES, type DayType, type TrackingMode } from "@/lib/enums";
 import { TARGET_FIELDS } from "@/lib/nutrition";
-import { copyPlan, deleteMeal, deleteRecommendation, type PlanFormState, reorderPlan, saveMeal, saveRecommendation, saveSpecifics } from "./actions";
+import { copyPlan, deleteMeal, deleteRecommendation, reorderPlan, saveMeal, saveRecommendation, saveSpecifics } from "./actions";
 
 type Meal = Pick<PlanMeal, "id" | "dayType" | "name" | "timeHint" | "guidance" | "palms" | "hands" | "fists" | "thumbs" | "note">;
 type Recommendation = Pick<PlanRecommendation, "id" | "title" | "text">;
-
-// A dialog with one form to add or edit, and delete while editing. Every opening starts a fresh form.
-function FormDialog({
-  trigger,
-  title,
-  save,
-  remove,
-  children,
-}: {
-  trigger: ReactElement<Record<string, unknown>>;
-  title: string;
-  save: (form: FormData) => Promise<PlanFormState>;
-  remove?: (form: FormData) => Promise<void>;
-  children: (invalid: (field: string) => boolean) => ReactNode;
-}) {
-  const t = useTranslations("Plan");
-  const [open, setOpen] = useState(false);
-  const [opened, setOpened] = useState(0);
-  const [invalid, setInvalid] = useState<string[]>([]);
-  return (
-    <Dialog
-      open={open}
-      onOpenChange={(next) => {
-        setOpen(next);
-        if (next) {
-          setInvalid([]);
-          setOpened((n) => n + 1);
-        }
-      }}
-    >
-      <DialogTrigger render={trigger} />
-      <DialogContent showCloseButton={false} className="gap-6 p-6 sm:max-w-lg">
-        <form
-          key={opened}
-          action={async (form) => {
-            const result = await save(form);
-            setInvalid(result?.invalid ?? []);
-            if (!result) setOpen(false);
-          }}
-          className="flex flex-col gap-6"
-        >
-          <DialogHeader>
-            <DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-col gap-4">{children((field) => invalid.includes(field))}</div>
-          <DialogFooter className="-mx-6 -mb-6 px-6">
-            {remove && (
-              <Button
-                type="submit"
-                variant="destructive"
-                formNoValidate
-                formAction={async (form) => {
-                  await remove(form);
-                  setOpen(false);
-                }}
-                className="sm:mr-auto"
-              >
-                {t("delete")}
-              </Button>
-            )}
-            <DialogClose render={<Button variant="outline" />}>{t("cancel")}</DialogClose>
-            <Button type="submit">{t("save")}</Button>
-          </DialogFooter>
-        </form>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 // A list the coach reorders with up / down, saved as one change ("Save order"), so the client gets one notification.
 // Keyed by the server's order, so a saved change (or an added / deleted item) starts from the new list.

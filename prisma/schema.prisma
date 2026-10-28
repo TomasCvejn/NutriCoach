@@ -27,6 +27,7 @@ model User {
   clients       Client[]       @relation("CoachClients")
   invites       Invite[]
   notifications Notification[]
+  foods         Food[]
 
   @@map("user")
 }
@@ -269,4 +270,40 @@ model NutritionDay {
   updatedAt       DateTime @updatedAt
 
   @@unique([clientId, date])
+}
+
+// A food to log (nutrition.md): from Open Food Facts (shared by everyone, upserted on first use), a coach's own (their
+// clients see it) or a client's own (the client and their coach see it). Nutrients per 100 g; logged entries keep a
+// snapshot, so editing or deleting a food never changes past logs.
+model Food {
+  id           String   @id @default(cuid())
+  source       String // FOOD_SOURCES
+  ownerId      String? // COACH / CLIENT: the user who made it; OFF: null
+  owner        User?    @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  offCode      String?  @unique // OFF: the product code, so upserts are idempotent
+  name         String
+  brand        String?
+  barcode      String? // EAN, for the barcode lookup
+  // per 100 g
+  kcal         Float
+  protein      Float // g
+  carbs        Float // g
+  fat          Float // g
+  fiber        Float? // g
+  sugar        Float? // g
+  saturatedFat Float? // g
+  sodium       Float? // mg
+  potassium    Float? // mg
+  calcium      Float? // mg
+  iron         Float? // mg
+  magnesium    Float? // mg
+  vitaminC     Float? // mg
+  vitaminD     Float? // µg
+  vitaminB12   Float? // µg
+  servings     Json     @default("[]") // [{ label: "1 piece", grams: 60 }]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([ownerId])
+  @@index([barcode])
 }

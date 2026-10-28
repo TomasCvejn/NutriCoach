@@ -29,7 +29,7 @@ test("coach on a desktop: sidebar with the pages so far, active clients tile", a
   await expect(page).toHaveURL("/coach");
 
   const nav = page.getByRole("navigation", { name: "Hlavní navigace" });
-  await expect(nav.getByRole("link")).toHaveText(["Přehled", "Klienti", "Nastavení"]);
+  await expect(nav.getByRole("link")).toHaveText(["Přehled", "Klienti", "Knihovna", "Nastavení"]);
   await expect(nav.getByRole("link", { name: "Přehled" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByRole("button", { name: "Více" })).toBeHidden();
 

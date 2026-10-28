@@ -38,6 +38,13 @@ export const ALLERGENS = [
 ] as const;
 export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as const;
 export const NOTE_TYPES = ["NOTE", "DECISION"] as const;
+export const FOOD_SOURCES = ["OFF", "COACH", "CLIENT"] as const;
+// The 11 micronutrients tracked per 100 g (nutrition.md), with their unit.
+export const MICRONUTRIENTS = {
+  ...{ fiber: "g", sugar: "g", saturatedFat: "g" },
+  ...{ sodium: "mg", potassium: "mg", calcium: "mg", iron: "mg", magnesium: "mg", vitaminC: "mg" },
+  ...{ vitaminD: "µg", vitaminB12: "µg" },
+} as const;
 // GUIDANCE: "Followed: yes / partly / no" per planned meal.
 export const FOLLOWED = ["YES", "PARTLY", "NO"] as const;
 

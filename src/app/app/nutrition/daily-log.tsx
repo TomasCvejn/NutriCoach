@@ -7,7 +7,9 @@ import { db } from "@/lib/db";
 import type { DayType, TrackingMode } from "@/lib/enums";
 import { dayType, mealSlots, targetFor } from "@/lib/nutrition";
 import { targetSummary } from "@/lib/target-summary";
+import { Button } from "@/components/ui/button";
 import { DayNoteForm, DayTypeSelect } from "./day-controls";
+import { FoodDialog } from "./food-dialog";
 
 const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as const;
 
@@ -81,6 +83,10 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
         </section>
 
         <div className="flex flex-col gap-3 lg:col-start-1 lg:row-span-2 lg:row-start-1">
+          {/* ponytail: on its own until the CALORIES add flow, which offers it when a search finds nothing. */}
+          {viewer === "CLIENT" && mode === "CALORIES" && (
+            <FoodDialog trigger={<Button variant="outline" className="h-10 self-start px-3 sm:h-8">{t("Foods.create")}</Button>} />
+          )}
           {slots.map((slot, i) => (
             <section key={slot} aria-labelledby={`slot-${i}`} className="rounded-lg border bg-card p-5">
               <h2 id={`slot-${i}`} className="text-base font-semibold">
