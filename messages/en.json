@@ -1028,6 +1028,21 @@
       "text": "What clients read on the first screen after accepting your invite, signed with your name.",
       "label": "Welcome text",
       "hint": "Left empty, clients see the default text shown in the field, in their own language."
+    },
+    "notifications": {
+      "title": "Notifications",
+      "text": "Which notifications reach your bell. Turned-off ones aren't created at all.",
+      "types": {
+        "NEW_MESSAGE": "New message",
+        "CHECK_IN_DUE": "Time for the weekly check-in",
+        "FEEDBACK_PUBLISHED": "Feedback on a check-in",
+        "PLAN_UPDATED": "Nutrition plan changed",
+        "CALL_SCHEDULED": "Call scheduled",
+        "COMPETITION_PHASE_STARTED": "New competition preparation phase",
+        "ONBOARDING_COMPLETED": "A client finished onboarding",
+        "CHECK_IN_SUBMITTED": "A client sent a check-in",
+        "CLIENT_DELETED_ACCOUNT": "A client deleted their account"
+      }
     }
   },
   "Profile": {

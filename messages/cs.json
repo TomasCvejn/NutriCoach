@@ -1028,6 +1028,21 @@
       "text": "Text, který klienti čtou na první obrazovce po přijetí pozvánky, podepsaný vaším jménem.",
       "label": "Uvítací text",
       "hint": "Prázdné pole = klienti uvidí výchozí text ukázaný v poli, ve svém jazyce."
+    },
+    "notifications": {
+      "title": "Oznámení",
+      "text": "Která oznámení chcete dostávat do zvonku. Vypnutá se vůbec nevytvoří.",
+      "types": {
+        "NEW_MESSAGE": "Nová zpráva",
+        "CHECK_IN_DUE": "Čas na týdenní check-in",
+        "FEEDBACK_PUBLISHED": "Zpětná vazba k check-inu",
+        "PLAN_UPDATED": "Změna plánu výživy",
+        "CALL_SCHEDULED": "Naplánovaný hovor",
+        "COMPETITION_PHASE_STARTED": "Nová fáze přípravy na závod",
+        "ONBOARDING_COMPLETED": "Klient dokončil úvodní nastavení",
+        "CHECK_IN_SUBMITTED": "Klient odeslal check-in",
+        "CLIENT_DELETED_ACCOUNT": "Klient smazal účet"
+      }
     }
   },
   "Profile": {

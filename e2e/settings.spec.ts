@@ -12,7 +12,7 @@ test("client on a phone switches to English: the UI is English at once and after
   await expect(page.getByLabel("Časové pásmo", { exact: true })).toHaveValue("Europe/Prague");
 
   await page.getByLabel("Jazyk", { exact: true }).selectOption("en");
-  await page.getByRole("button", { name: "Uložit" }).click();
+  await page.getByRole("region", { name: "Jazyk a časové pásmo" }).getByRole("button", { name: "Uložit" }).click();
   await expect(page.getByRole("heading", { name: "Settings", level: 1 })).toBeVisible();
   await expect(page.getByRole("link", { name: "Today" })).toBeVisible();
 
@@ -23,7 +23,7 @@ test("client on a phone switches to English: the UI is English at once and after
   await expect(page.getByLabel("Time zone", { exact: true })).toHaveValue("Europe/Prague");
 
   await page.getByLabel("Language", { exact: true }).selectOption("cs");
-  await page.getByRole("button", { name: "Save" }).click();
+  await page.getByRole("region", { name: "Language and time zone" }).getByRole("button", { name: "Save" }).click();
   await expect(page.getByRole("heading", { name: "Nastavení", level: 1 })).toBeVisible();
 });
 

@@ -22,6 +22,9 @@ type Notification = { [T in NotificationType]: { type: T; payload: NotificationP
 // it would let anyone notify anyone). With a key, the same (user, type, key) is written once: lazy notifications call it on
 // every app load, and concurrent loads can't both insert because the unique index decides.
 export async function notify<T extends NotificationType>(userId: string, type: T, payload: NotificationPayloads[T], key?: string) {
+  // A type the user turned off in their settings isn't written at all.
+  const user = await db.user.findUnique({ where: { id: userId }, select: { mutedNotifications: true } });
+  if ((user?.mutedNotifications as string[] | undefined)?.includes(type)) return;
   try {
     await db.notification.create({ data: { userId, type, payload, key } });
   } catch (error) {

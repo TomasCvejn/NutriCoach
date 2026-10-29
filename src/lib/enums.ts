@@ -15,6 +15,12 @@ export const NOTIFICATION_TYPES = [
   "CLIENT_DELETED_ACCOUNT",
 ] as const;
 
+// Which of them each role receives (home-and-basics.md "Notifications"), the ones the settings can turn off.
+export const ROLE_NOTIFICATIONS = {
+  CLIENT: ["NEW_MESSAGE", "CHECK_IN_DUE", "FEEDBACK_PUBLISHED", "PLAN_UPDATED", "CALL_SCHEDULED", "COMPETITION_PHASE_STARTED"],
+  COACH: ["NEW_MESSAGE", "ONBOARDING_COMPLETED", "CHECK_IN_SUBMITTED", "CLIENT_DELETED_ACCOUNT"],
+} as const satisfies Record<string, readonly (typeof NOTIFICATION_TYPES)[number][]>;
+
 // Client profile (onboarding-profile.md). Allergens and diet types also drive recipe warnings (recipes.md).
 export const SEXES = ["MALE", "FEMALE"] as const;
 export const GOALS = ["LOSE_FAT", "MAINTAIN", "GAIN_MUSCLE", "PERFORMANCE", "HEALTH_ENERGY", "COMPETITION_PREP"] as const;

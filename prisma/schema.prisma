@@ -9,29 +9,30 @@ datasource db {
 
 // Better Auth core tables. role / active / timezone / locale are Better Auth additional fields (src/lib/auth.ts).
 model User {
-  id                String             @id @default(cuid())
-  name              String
-  email             String             @unique
-  emailVerified     Boolean            @default(false)
-  image             String?
-  role              String // ROLES
-  active            Boolean            @default(true)
-  timezone          String             @default("Europe/Prague")
-  locale            String             @default("cs")
-  welcomeText       String? // coach only: the first onboarding screen; null → the i18n default
-  createdAt         DateTime           @default(now())
-  updatedAt         DateTime           @updatedAt
-  sessions          Session[]
-  accounts          Account[]
-  client            Client?            @relation("ClientUser")
-  clients           Client[]           @relation("CoachClients")
-  invites           Invite[]
-  notifications     Notification[]
-  foods             Food[]
-  recipes           Recipe[]
-  fuelingTemplates  FuelingTemplate[]
-  timelineTemplates TimelineTemplate[]
-  messages          Message[]
+  id                 String             @id @default(cuid())
+  name               String
+  email              String             @unique
+  emailVerified      Boolean            @default(false)
+  image              String?
+  role               String // ROLES
+  active             Boolean            @default(true)
+  timezone           String             @default("Europe/Prague")
+  locale             String             @default("cs")
+  welcomeText        String? // coach only: the first onboarding screen; null → the i18n default
+  mutedNotifications Json               @default("[]") // NOTIFICATION_TYPES the user turned off; notify() skips them
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  sessions           Session[]
+  accounts           Account[]
+  client             Client?            @relation("ClientUser")
+  clients            Client[]           @relation("CoachClients")
+  invites            Invite[]
+  notifications      Notification[]
+  foods              Food[]
+  recipes            Recipe[]
+  fuelingTemplates   FuelingTemplate[]
+  timelineTemplates  TimelineTemplate[]
+  messages           Message[]
 
   @@map("user")
 }
