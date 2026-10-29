@@ -6,6 +6,7 @@ import { requireClient } from "@/lib/auth";
 import type { CheckInAnswers } from "@/lib/check-ins";
 import { db } from "@/lib/db";
 import { FEEDBACK_FIELDS } from "@/lib/enums";
+import { ContextComments } from "../../messages/context-comments";
 import { SentAnswers } from "../sent-answers";
 
 // One of the client's check-ins: the coach's feedback once published (opening it is what clears "new feedback" on the
@@ -53,6 +54,7 @@ export default async function CheckInResults({ params }: PageProps<"/app/check-i
         </h2>
         <SentAnswers answers={checkIn.answers as CheckInAnswers} questions={checkIn.questions} />
       </section>
+      <ContextComments clientId={client.id} type="CHECK_IN" contextKey={checkIn.id} />
     </div>
   );
 }

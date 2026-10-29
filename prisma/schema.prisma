@@ -619,14 +619,18 @@ model Supplement {
 
 // A message in the client's thread with their coach (messaging.md): one thread per client, so the client is the thread.
 model Message {
-  id        String    @id @default(cuid())
-  clientId  String
-  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  senderId  String
-  sender    User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
-  text      String
-  readAt    DateTime? // read by the other party
-  createdAt DateTime  @default(now())
+  id          String    @id @default(cuid())
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  senderId    String
+  sender      User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  text        String
+  readAt      DateTime? // read by the other party
+  // A comment on a nutrition day (key: its date) or a check-in (key: its id); shown there and in the thread.
+  contextType String?
+  contextKey  String?
+  createdAt   DateTime  @default(now())
 
   @@index([clientId, createdAt])
+  @@index([clientId, contextType, contextKey])
 }

@@ -12,6 +12,7 @@ import { DayNoteForm, DayTypeSelect } from "./day-controls";
 import { FALLBACK_SLOTS, loadDay } from "./day-data";
 import { DayProgress } from "./day-progress";
 import { HydrationCard } from "../hydration/hydration-card";
+import { ContextComments } from "../messages/context-comments";
 import { GuidanceMeal } from "./guidance";
 import { RecipeLinks } from "./recipe-links";
 import { PortionGuide } from "./portion-guide";
@@ -169,6 +170,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
             <p className={`mt-2 text-sm whitespace-pre-line ${data.note ? "" : "text-muted-foreground"}`}>{data.note ?? t("DailyNutrition.noNote")}</p>
           )}
         </section>
+        <ContextComments clientId={clientId} type="NUTRITION_DAY" contextKey={date} />
         </div>
       </div>
     </div>

@@ -1593,6 +1593,13 @@
     "threads": "Konverzace s klienty",
     "noMessages": "Zatím bez zpráv",
     "choose": "Vyberte konverzaci vlevo.",
-    "unreadOpen": "{count, plural, one {Otevřít # nepřečtenou zprávu} few {Otevřít # nepřečtené zprávy} other {Otevřít # nepřečtených zpráv}}"
+    "unreadOpen": "{count, plural, one {Otevřít # nepřečtenou zprávu} few {Otevřít # nepřečtené zprávy} other {Otevřít # nepřečtených zpráv}}",
+    "comments": "Komentáře",
+    "comment": "Komentář",
+    "commentPlaceholder": "Napište komentář…",
+    "context": {
+      "NUTRITION_DAY": "Komentář k výživě {date}",
+      "CHECK_IN": "Komentář k check-inu {date}"
+    }
   }
 }

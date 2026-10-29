@@ -1593,6 +1593,13 @@
     "threads": "Conversations with clients",
     "noMessages": "No messages yet",
     "choose": "Choose a conversation on the left.",
-    "unreadOpen": "{count, plural, one {Open # unread message} other {Open # unread messages}}"
+    "unreadOpen": "{count, plural, one {Open # unread message} other {Open # unread messages}}",
+    "comments": "Comments",
+    "comment": "Comment",
+    "commentPlaceholder": "Write a comment…",
+    "context": {
+      "NUTRITION_DAY": "Comment on nutrition {date}",
+      "CHECK_IN": "Comment on the check-in {date}"
+    }
   }
 }

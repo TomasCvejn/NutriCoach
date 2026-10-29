@@ -15,12 +15,23 @@ const refresh = (clientId: string) => {
   revalidatePath(`/coach/clients/${clientId}`, "layout");
 };
 
-// The client or their coach writes in the client's thread; the other one is notified.
+// A comment's context: a nutrition day by its date, or one of this client's check-ins.
+const contextInput = z.discriminatedUnion("contextType", [
+  z.object({ contextType: z.literal("NUTRITION_DAY"), contextKey: z.iso.date() }),
+  z.object({ contextType: z.literal("CHECK_IN"), contextKey: z.string() }),
+  z.object({ contextType: z.undefined() }),
+]);
+
+// The client or their coach writes in the client's thread, maybe as a comment on a day or a check-in; the other one is
+// notified.
 export async function sendMessage(_: SendState, form: FormData): Promise<SendState> {
   const { user, client } = await requireClientAccess(String(form.get("clientId")));
   const text = z.string().trim().min(1).max(4000).safeParse(form.get("text"));
-  if (!text.success) return { invalid: true };
-  await db.message.create({ data: { clientId: client.id, senderId: user.id, text: text.data } });
+  const context = contextInput.safeParse({ contextType: form.get("contextType") ?? undefined, contextKey: form.get("contextKey") ?? undefined });
+  if (!text.success || !context.success) return { invalid: true };
+  const { contextType, contextKey } = context.data as { contextType?: string; contextKey?: string };
+  if (contextType === "CHECK_IN" && !(await db.checkIn.findFirst({ where: { id: contextKey, clientId: client.id } }))) notFound();
+  await db.message.create({ data: { clientId: client.id, senderId: user.id, text: text.data, contextType, contextKey } });
   await notify(user.role === "COACH" ? client.userId : client.coachId, "NEW_MESSAGE", { from: user.name, clientId: client.id });
   refresh(client.id);
   return null;

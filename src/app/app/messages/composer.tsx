@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { useActionState, useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import type { MessageContext } from "@/lib/enums";
 import { sendMessage } from "./actions";
 
-// Writing in the thread; a sent message clears the box.
-export function Composer({ clientId }: { clientId: string }) {
+// Writing in the thread (`context`: as a comment on a day or a check-in); a sent message clears the box.
+export function Composer({ clientId, context }: { clientId: string; context?: { type: MessageContext; key: string } }) {
   const t = useTranslations("Messages");
   const id = useId();
   const [sent, setSent] = useState(0);
@@ -20,8 +21,14 @@ export function Composer({ clientId }: { clientId: string }) {
   return (
     <form action={send} className="flex flex-col gap-2">
       <input type="hidden" name="clientId" value={clientId} />
+      {context && (
+        <>
+          <input type="hidden" name="contextType" value={context.type} />
+          <input type="hidden" name="contextKey" value={context.key} />
+        </>
+      )}
       <label htmlFor={`${id}-text`} className="sr-only">
-        {t("message")}
+        {t(context ? "comment" : "message")}
       </label>
       <Textarea
         key={sent}
@@ -29,8 +36,8 @@ export function Composer({ clientId }: { clientId: string }) {
         name="text"
         required
         maxLength={4000}
-        rows={3}
-        placeholder={t("placeholder")}
+        rows={context ? 2 : 3}
+        placeholder={t(context ? "commentPlaceholder" : "placeholder")}
         aria-invalid={Boolean(state)}
         aria-describedby={state ? `${id}-error` : undefined}
       />

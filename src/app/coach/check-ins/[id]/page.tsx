@@ -12,6 +12,7 @@ import { addDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { CHECK_IN_SCALES, FEEDBACK_FIELDS, type TrackingMode } from "@/lib/enums";
 import { latestWeight } from "@/lib/nutrition";
+import { ContextComments } from "@/app/app/messages/context-comments";
 import { FeedbackForm } from "./feedback-form";
 
 // One check-in for the coach: the answers with each scale's trend over the last 8 check-ins, the client's questions, the
@@ -115,6 +116,7 @@ export default async function CheckInReview({ params }: PageProps<"/coach/check-
           ) : (
             <FeedbackForm checkInId={checkIn.id} />
           )}
+          <ContextComments clientId={client.id} type="CHECK_IN" contextKey={checkIn.id} />
         </div>
 
         <aside className="flex flex-col gap-6">

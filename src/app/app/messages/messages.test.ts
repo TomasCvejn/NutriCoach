@@ -67,3 +67,21 @@ test("another client or coach can't read or write a thread", async () => {
   await expect(sendMessage(null, form({ clientId: client.id, text: "Hi" }))).rejects.toMatchObject(redirectsTo("/login"));
   expect(await db.message.count({ where: { clientId: client.id } })).toBe(1);
 });
+
+test("a comment on a day or one of the client's check-ins carries its context; another client's check-in or a bad date is refused", async () => {
+  const { coach, client } = await setup();
+  const other = await setup();
+  const own = await db.checkIn.create({ data: { clientId: client.id, dueDate: "2026-10-26", answers: {} } });
+  const foreign = await db.checkIn.create({ data: { clientId: other.client.id, dueDate: "2026-10-26", answers: {} } });
+  request.cookie = await signIn(coach.email);
+  expect(await sendMessage(null, form({ clientId: client.id, text: "Pěkný den", contextType: "NUTRITION_DAY", contextKey: "2026-10-27" }))).toBeNull();
+  expect(await sendMessage(null, form({ clientId: client.id, text: "K check-inu", contextType: "CHECK_IN", contextKey: own.id }))).toBeNull();
+  expect(await db.message.findMany({ where: { clientId: client.id }, orderBy: { createdAt: "asc" } })).toMatchObject([
+    { text: "Pěkný den", contextType: "NUTRITION_DAY", contextKey: "2026-10-27" },
+    { text: "K check-inu", contextType: "CHECK_IN", contextKey: own.id },
+  ]);
+  await expect(sendMessage(null, form({ clientId: client.id, text: "Cizí", contextType: "CHECK_IN", contextKey: foreign.id }))).rejects.toMatchObject(notFound);
+  expect(await sendMessage(null, form({ clientId: client.id, text: "Kdy?", contextType: "NUTRITION_DAY", contextKey: "včera" }))).toEqual({ invalid: true });
+  expect(await sendMessage(null, form({ clientId: client.id, text: "Co?", contextType: "PLAN", contextKey: "x" }))).toEqual({ invalid: true });
+  expect(await db.message.count({ where: { clientId: client.id } })).toBe(2);
+});

@@ -9,7 +9,7 @@ export default async function ClientMessages() {
   return (
     <div className="flex max-w-3xl flex-col gap-6">
       <h1 className="text-2xl font-bold tracking-tight">{t("titleClient")}</h1>
-      <Thread clientId={client.id} viewer={user} />
+      <Thread clientId={client.id} viewer={user} contextHref={(type, key) => (type === "NUTRITION_DAY" ? `/app/nutrition?date=${key}` : `/app/check-in/${key}`)} />
     </div>
   );
 }

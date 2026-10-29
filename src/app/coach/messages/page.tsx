@@ -2,7 +2,7 @@ import { ChevronLeftIcon } from "lucide-react";
 import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { z } from "zod";
-import { Thread } from "@/app/app/messages/thread";
+import { coachContextHref, Thread } from "@/app/app/messages/thread";
 import { requireCoach, requireCoachOf } from "@/lib/auth";
 import { db } from "@/lib/db";
 
@@ -79,7 +79,7 @@ export default async function CoachMessages({ searchParams }: PageProps<"/coach/
                 {name}
               </Link>
             </h2>
-            <Thread clientId={open.id} viewer={coach} />
+            <Thread clientId={open.id} viewer={coach} contextHref={coachContextHref(open.id)} />
           </div>
         ) : (
           <p className="rounded-lg border border-dashed px-4 py-3 text-sm text-muted-foreground max-lg:hidden">{t("choose")}</p>
