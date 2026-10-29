@@ -797,7 +797,8 @@
     "tabs": {
       "label": "Sekce knihovny",
       "foods": "Potraviny",
-      "recipes": "Recepty"
+      "recipes": "Recepty",
+      "fueling": "Doplňování"
     }
   },
   "Recipes": {
@@ -1269,6 +1270,89 @@
       "MODERATE": "Střední",
       "HIGH": "Vysoká",
       "VERY_HIGH": "Velmi vysoká"
-    }
+    },
+    "edit": "Upravit",
+    "about": "O tréninku",
+    "fueling": "Doplňování energie a tekutin",
+    "byTemplate": "Podle šablony „{name}“",
+    "byCoach": "Šablonu „{name}“ vybral trenér",
+    "noFueling": "Pro tento trénink zatím není plán doplňování.",
+    "phases": {
+      "pre": "Před tréninkem",
+      "during": "Během",
+      "post": "Po tréninku"
+    },
+    "during": {
+      "carbs": "Sacharidy",
+      "fluid": "Tekutiny",
+      "sodium": "Sodík"
+    },
+    "perHour": "{value}/h",
+    "carbs": "{value} g sacharidů",
+    "protein": "{value} g bílkovin",
+    "within": "do {minutes} min",
+    "override": "Šablona doplňování",
+    "automatic": "Automaticky (podle pravidel)",
+    "overrideSave": "Uložit"
+  },
+  "Fueling": {
+    "title": "Doplňování",
+    "lead": "Šablony doplňování energie a tekutin k tréninkům. Tréninku se přiřadí nejvýše postavená šablona, jejíž pravidla sedí.",
+    "new": "Nová šablona",
+    "newTitle": "Nová šablona",
+    "editTitle": "Upravit šablonu {name}",
+    "empty": "Zatím žádné šablony.",
+    "anyType": "Bez výběru = jakýkoli typ.",
+    "anyTypeShort": "Jakýkoli trénink",
+    "anyIntensity": "Jakákoli",
+    "rule": {
+      "between": "{min}–{max} min",
+      "atLeast": "od {min} min",
+      "atMost": "do {max} min",
+      "intensity": "intenzita od {intensity}"
+    },
+    "columns": {
+      "name": "Šablona",
+      "during": "Během",
+      "priority": "Priorita"
+    },
+    "groups": {
+      "rule": "Kdy platí",
+      "pre": "Před tréninkem",
+      "during": "Během tréninku",
+      "post": "Po tréninku"
+    },
+    "fields": {
+      "name": "Název",
+      "sessionTypes": "Typy tréninku",
+      "minDurationMin": "Délka od",
+      "maxDurationMin": "Délka do",
+      "minIntensity": "Intenzita aspoň",
+      "priority": "Priorita",
+      "duringCarbsPerHour": "Sacharidy",
+      "duringFluidPerHour": "Tekutiny",
+      "duringSodiumPerHour": "Sodík",
+      "duringText": "Doporučení",
+      "postWithinMin": "Do",
+      "postProtein": "Bílkoviny",
+      "postCarbs": "Sacharidy",
+      "postFluidText": "Tekutiny"
+    },
+    "priorityHint": "Vyšší vyhrává.",
+    "pre": {
+      "timing": "Kdy, řádek {n}",
+      "text": "Doporučení, řádek {n}",
+      "carbs": "Sacharidy (g), řádek {n}",
+      "timingPlaceholder": "3–4 h před",
+      "textPlaceholder": "Jídlo bohaté na sacharidy",
+      "carbsPlaceholder": "g",
+      "add": "Přidat řádek",
+      "remove": "Odebrat řádek {n}"
+    },
+    "invalid": "Zadejte číslo v rozumném rozsahu.",
+    "invalidName": "Zadejte název.",
+    "invalidPre": "Každý řádek potřebuje kdy i doporučení.",
+    "save": "Uložit šablonu",
+    "delete": "Smazat šablonu"
   }
 }

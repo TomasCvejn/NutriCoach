@@ -8,6 +8,7 @@ import { UnderlineTabs } from "@/components/underline-tabs";
 const TABS = [
   { key: "foods", segment: null },
   { key: "recipes", segment: "recipes" },
+  { key: "fueling", segment: "fueling" },
 ] as const;
 
 export function LibraryTabs() {

@@ -9,26 +9,27 @@ datasource db {
 
 // Better Auth core tables. role / active / timezone / locale are Better Auth additional fields (src/lib/auth.ts).
 model User {
-  id            String         @id @default(cuid())
-  name          String
-  email         String         @unique
-  emailVerified Boolean        @default(false)
-  image         String?
-  role          String // ROLES
-  active        Boolean        @default(true)
-  timezone      String         @default("Europe/Prague")
-  locale        String         @default("cs")
-  welcomeText   String? // coach only: the first onboarding screen; null → the i18n default
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
-  sessions      Session[]
-  accounts      Account[]
-  client        Client?        @relation("ClientUser")
-  clients       Client[]       @relation("CoachClients")
-  invites       Invite[]
-  notifications Notification[]
-  foods         Food[]
-  recipes       Recipe[]
+  id               String            @id @default(cuid())
+  name             String
+  email            String            @unique
+  emailVerified    Boolean           @default(false)
+  image            String?
+  role             String // ROLES
+  active           Boolean           @default(true)
+  timezone         String            @default("Europe/Prague")
+  locale           String            @default("cs")
+  welcomeText      String? // coach only: the first onboarding screen; null → the i18n default
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  sessions         Session[]
+  accounts         Account[]
+  client           Client?           @relation("ClientUser")
+  clients          Client[]          @relation("CoachClients")
+  invites          Invite[]
+  notifications    Notification[]
+  foods            Food[]
+  recipes          Recipe[]
+  fuelingTemplates FuelingTemplate[]
 
   @@map("user")
 }
@@ -480,22 +481,52 @@ model BodyComp {
 
 // A training session (training.md), created by the client or their coach; "repeat weekly" writes independent rows.
 model TrainingSession {
-  id          String   @id @default(cuid())
-  clientId    String
-  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  date        String // YYYY-MM-DD
-  startTime   String? // HH:MM
-  type        String
-  sport       String?
-  durationMin Int
-  intensity   String
-  description String?
+  id                String           @id @default(cuid())
+  clientId          String
+  client            Client           @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date              String // YYYY-MM-DD
+  startTime         String? // HH:MM
+  type              String
+  sport             String?
+  durationMin       Int
+  intensity         String
+  description       String?
   // After the session (Performance in progress.md).
-  rpe         Int?
-  felt        Int?
-  note        String?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  rpe               Int?
+  felt              Int?
+  note              String?
+  // The coach's fueling override for this session: a template from their library (null = the matching one).
+  fuelingTemplateId String?
+  fuelingTemplate   FuelingTemplate? @relation(fields: [fuelingTemplateId], references: [id], onDelete: SetNull)
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
 
   @@index([clientId, date])
+}
+
+// A coach's fueling template (training.md): when it applies to a session, and what to eat and drink before, during and
+// after. lib/fueling.ts picks a session's template.
+model FuelingTemplate {
+  id                  String            @id @default(cuid())
+  coachId             String
+  coach               User              @relation(fields: [coachId], references: [id], onDelete: Cascade)
+  name                String
+  // Matching rule (all must hold): session types ([] = any), duration bounds (inclusive), a minimum intensity.
+  sessionTypes        Json              @default("[]")
+  minDurationMin      Int?
+  maxDurationMin      Int?
+  minIntensity        String?
+  priority            Int               @default(0) // the highest matching one wins
+  pre                 Json              @default("[]") // { timing, text, carbs? }[]
+  duringCarbsPerHour  Int?
+  duringFluidPerHour  Int? // ml
+  duringSodiumPerHour Int? // mg
+  duringText          String?
+  postWithinMin       Int?
+  postProtein         Int?
+  postCarbs           Int?
+  postFluidText       String?
+  sessions            TrainingSession[]
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
 }

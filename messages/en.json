@@ -797,7 +797,8 @@
     "tabs": {
       "label": "Library sections",
       "foods": "Foods",
-      "recipes": "Recipes"
+      "recipes": "Recipes",
+      "fueling": "Fueling"
     }
   },
   "Recipes": {
@@ -1269,6 +1270,89 @@
       "MODERATE": "Moderate",
       "HIGH": "High",
       "VERY_HIGH": "Very high"
-    }
+    },
+    "edit": "Edit",
+    "about": "About the session",
+    "fueling": "Fueling and fluids",
+    "byTemplate": "From the template “{name}”",
+    "byCoach": "Template “{name}” chosen by your coach",
+    "noFueling": "No fueling plan for this session yet.",
+    "phases": {
+      "pre": "Before",
+      "during": "During",
+      "post": "After"
+    },
+    "during": {
+      "carbs": "Carbs",
+      "fluid": "Fluid",
+      "sodium": "Sodium"
+    },
+    "perHour": "{value}/h",
+    "carbs": "{value} g carbs",
+    "protein": "{value} g protein",
+    "within": "within {minutes} min",
+    "override": "Fueling template",
+    "automatic": "Automatic (by the rules)",
+    "overrideSave": "Save"
+  },
+  "Fueling": {
+    "title": "Fueling",
+    "lead": "Fueling and fluid templates for training. A session gets the highest-priority template whose rules it meets.",
+    "new": "New template",
+    "newTitle": "New template",
+    "editTitle": "Edit template {name}",
+    "empty": "No templates yet.",
+    "anyType": "None selected = any type.",
+    "anyTypeShort": "Any session",
+    "anyIntensity": "Any",
+    "rule": {
+      "between": "{min}–{max} min",
+      "atLeast": "from {min} min",
+      "atMost": "up to {max} min",
+      "intensity": "intensity from {intensity}"
+    },
+    "columns": {
+      "name": "Template",
+      "during": "During",
+      "priority": "Priority"
+    },
+    "groups": {
+      "rule": "When it applies",
+      "pre": "Before training",
+      "during": "During training",
+      "post": "After training"
+    },
+    "fields": {
+      "name": "Name",
+      "sessionTypes": "Session types",
+      "minDurationMin": "Duration from",
+      "maxDurationMin": "Duration up to",
+      "minIntensity": "Intensity at least",
+      "priority": "Priority",
+      "duringCarbsPerHour": "Carbs",
+      "duringFluidPerHour": "Fluid",
+      "duringSodiumPerHour": "Sodium",
+      "duringText": "Recommendation",
+      "postWithinMin": "Within",
+      "postProtein": "Protein",
+      "postCarbs": "Carbs",
+      "postFluidText": "Fluids"
+    },
+    "priorityHint": "Higher wins.",
+    "pre": {
+      "timing": "When, row {n}",
+      "text": "Recommendation, row {n}",
+      "carbs": "Carbs (g), row {n}",
+      "timingPlaceholder": "3–4 h before",
+      "textPlaceholder": "A carb-rich meal",
+      "carbsPlaceholder": "g",
+      "add": "Add row",
+      "remove": "Remove row {n}"
+    },
+    "invalid": "Enter a number in a sensible range.",
+    "invalidName": "Enter a name.",
+    "invalidPre": "Every row needs both when and a recommendation.",
+    "save": "Save template",
+    "delete": "Delete template"
   }
 }

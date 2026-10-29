@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { z } from "zod";
 import { requireClientAccess } from "@/lib/auth";
 import { addDays, diffDays } from "@/lib/dates";
@@ -58,4 +58,7 @@ export async function deleteSession(form: FormData) {
   const { count } = await db.trainingSession.deleteMany({ where: { id: String(form.get("id")), clientId: client.id } });
   if (count === 0) notFound();
   refresh(client.id);
+  // Only a page of this app's own areas (no open redirect).
+  const back = String(form.get("back") ?? "");
+  if (/^\/(app|coach)\/[\w/-]*$/.test(back)) redirect(back);
 }

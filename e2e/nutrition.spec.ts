@@ -197,7 +197,7 @@ test("coach adds a meal and a recommendation for race@, then copies race@'s plan
 });
 
 // Last in this file: a session today makes it a training day for the tests above too, so it is deleted at the end.
-test("sports@ adds a session for today: home shows it and the day becomes a training day; deleting it brings the rest day back", async ({ page }) => {
+test("sports@ adds a session for today: home shows it, the day becomes a training day, its page shows 68 g of carbs; deleting it brings the rest day back", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await logIn(page, "sports@demo.cz");
   await expect(page).toHaveURL("/app");
@@ -214,8 +214,8 @@ test("sports@ adds a session for today: home shows it and the day becomes a trai
   await dialog.getByRole("button", { name: "Save" }).click();
   await expect(dialog).toBeHidden();
   const today = page.getByRole("list", { name: "Sessions this week" }).locator("li[aria-current=date]");
-  await expect(today.getByRole("button")).toContainText("Bike");
-  await expect(today.getByRole("button")).toContainText("17:00 · 90 min");
+  await expect(today.getByRole("link")).toContainText("Bike");
+  await expect(today.getByRole("link")).toContainText("17:00 · 90 min");
 
   await page.goto("/app"); // the dev indicator covers the "Today" tab
   await expect(page.getByRole("region", { name: "Today's training" })).toContainText("Bike");
@@ -225,7 +225,13 @@ test("sports@ adds a session for today: home shows it and the day becomes a trai
   await expect(page.getByRole("region", { name: "Day type" })).toContainText("Automatic (Training day)"); // the session, not a hand-set type
 
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Training" }).click();
-  await today.getByRole("button", { name: /Bike/ }).click();
+  await today.getByRole("link", { name: /Bike/ }).click();
+  // Its fueling: the seeded "75–150 min" template, 45 g/h over 90 min.
+  const fueling = page.getByRole("region", { name: "Fueling and fluids" });
+  await expect(fueling).toContainText("From the template “75–150 min”");
+  await expect(fueling.getByRole("definition").filter({ hasText: /^68 g$/ })).toBeVisible();
+  await page.getByRole("button", { name: "Edit" }).click();
   await page.getByRole("dialog", { name: "Edit session" }).getByRole("button", { name: "Delete" }).click();
+  await expect(page).toHaveURL("/app/training");
   await expect(today).toContainText("Rest");
 });

@@ -328,6 +328,22 @@ async function seed() {
       ["Svačina", ["Regenerační nápoj", 500, 30, 75, 8]],
     ],
   ];
+  // Fueling templates from training.md (the coach should review the numbers); the long and the very hard one rank highest.
+  const pre = (carbs: number) => [
+    { timing: "3–4 h před", text: "Jídlo bohaté na sacharidy, málo tuku a vlákniny", carbs },
+    { timing: "30–60 min před", text: "Banán nebo rýžový chlebíček s medem", carbs: 30 },
+  ];
+  const post = { postWithinMin: 60, postProtein: 25, postCarbs: 60, postFluidText: "Doplnit 1,5× to, co ubylo na váze" };
+  const during = (carbs: number, fluid: number, sodium: number, text: string) => ({ duringCarbsPerHour: carbs, duringFluidPerHour: fluid, duringSodiumPerHour: sodium, duringText: text });
+  await db.fuelingTemplate.createMany({
+    data: [
+      { name: "Do 75 min", maxDurationMin: 74, priority: 1, pre: [{ timing: "2–3 h před", text: "Běžné jídlo" }], duringCarbsPerHour: 0, duringText: "Voda podle žízně", postWithinMin: 120, postProtein: 20 },
+      { name: "75–150 min", minDurationMin: 75, maxDurationMin: 150, priority: 1, pre: pre(80), ...during(45, 500, 400, "Gel nebo iontový nápoj každých 20–30 min"), ...post },
+      { name: "Nad 150 min", minDurationMin: 151, priority: 2, pre: pre(120), ...during(75, 600, 600, "Gel každých 20 min, iontový nápoj, něco pevného v první půlce"), ...post },
+      { name: "Velmi vysoká intenzita", minIntensity: "VERY_HIGH", priority: 2, pre: pre(80), ...during(75, 600, 600, "Iontový nápoj se sacharidy průběžně"), ...post },
+    ].map((template) => ({ ...template, coachId: coach.id })),
+  });
+
   await db.trainingSession.createMany({
     data: training.flatMap(([clientId, sessions]) =>
       sessions.map(([days, type, durationMin, intensity, startTime, description, rpe, felt]) => ({ clientId, date: addDays(today, days), type, durationMin, intensity, startTime, description, rpe, felt })),

@@ -11,8 +11,9 @@ import type { TrainingSession } from "@/generated/prisma/client";
 import { INTENSITIES, SESSION_TYPES } from "@/lib/enums";
 import { deleteSession, saveSession } from "./actions";
 
-// Add a session (no `session`; it can repeat weekly) or edit one: the plan, then how it went (RPE, felt, note).
-export function SessionDialog({ clientId, date, session, trigger }: { clientId: string; date: string; session?: TrainingSession; trigger: ReactElement<Record<string, unknown>> }) {
+// Add a session (no `session`; it can repeat weekly) or edit one: the plan, then how it went (RPE, felt, note). Deleting
+// goes to `back` (the week), since the session's own page is gone.
+export function SessionDialog({ clientId, date, session, back, trigger }: { clientId: string; date: string; session?: TrainingSession; back?: string; trigger: ReactElement<Record<string, unknown>> }) {
   const t = useTranslations("Training");
   const id = useId();
   const field = (name: string, invalid: (field: string) => boolean, input: ReactElement, hint?: string) => (
@@ -34,6 +35,7 @@ export function SessionDialog({ clientId, date, session, trigger }: { clientId: 
         <>
           <input type="hidden" name="clientId" value={clientId} />
           {session && <input type="hidden" name="id" value={session.id} />}
+          {back && <input type="hidden" name="back" value={back} />}
           <div className="grid grid-cols-2 gap-4">
             {field("date", invalid, <Input id={`${id}-date`} name="date" type="date" required defaultValue={session?.date ?? date} aria-describedby={note("date")} className="h-10" />)}
             {field("startTime", invalid, <Input id={`${id}-startTime`} name="startTime" type="time" defaultValue={session?.startTime ?? ""} aria-describedby={note("startTime")} className="h-10" />)}
