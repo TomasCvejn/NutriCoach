@@ -8,6 +8,7 @@ import { featuresOf } from "@/lib/features";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
 import { buttonVariants } from "@/components/ui/button";
 import { currentCheckIn } from "@/lib/check-ins";
+import { CompetitionSummary } from "./competition/competition-summary";
 import { HydrationCard } from "./hydration/hydration-card";
 import { DayProgress } from "./nutrition/day-progress";
 
@@ -17,10 +18,11 @@ export default async function ClientHome() {
   const { user, client } = await requireClient();
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const today = todayIn(user.timezone);
-  const [period, feedback, { training }] = await Promise.all([
+  const [period, feedback, { training, competition: competes }, competition] = await Promise.all([
     currentCheckIn(client, user.timezone),
     db.checkIn.findFirst({ where: { clientId: client.id, reviewedAt: { not: null }, feedbackSeenAt: null }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
     featuresOf(client, today),
+    db.competition.findFirst({ where: { clientId: client.id, date: { gte: today } }, orderBy: { date: "asc" } }),
   ]);
   const day = await loadDay(
     client.id,
@@ -116,6 +118,9 @@ export default async function ClientHome() {
 
       {/* Widget 4: today's fluid with the quick adds. */}
       <HydrationCard clientId={client.id} date={today} target={day.fluidTarget} variant="home" />
+
+      {/* Widget 5: the next competition, while one is coming. */}
+      {competes && competition && <CompetitionSummary competition={competition} today={today} />}
 
       {/* Widget 6: the check-in reminder while the period is open, and the coach's feedback until it is opened. */}
       {(period.status === "due" || period.status === "overdue") && (

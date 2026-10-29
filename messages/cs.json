@@ -1461,6 +1461,9 @@
     "templateSummary": "{phases, plural, one {# fáze} few {# fáze} other {# fází}} · {tasks, plural, one {# úkol} few {# úkoly} other {# úkolů}} · {packing, plural, one {# věc} few {# věci} other {# věcí}} k zabalení",
     "deleteTemplate": "Smazat šablonu {name}",
     "delete": "Smazat",
-    "nutritionPriorities": "Výživové priority"
+    "nutritionPriorities": "Výživové priority",
+    "openTasks": "Otevřené úkoly",
+    "openTimeline": "Celý časový plán",
+    "laterOnes": "Další závody"
   }
 }

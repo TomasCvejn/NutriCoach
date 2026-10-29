@@ -7,7 +7,7 @@ test("race@ sees her marathon in 10 days, its phase, and the half marathon's res
   await logIn(page, "race@demo.cz");
   await expect(page).toHaveURL("/app");
   await page.goto("/app/competition");
-  const upcoming = page.getByRole("listitem").filter({ hasText: "Podzimní maraton Praha" });
+  const upcoming = page.getByRole("region", { name: "Podzimní maraton Praha" }); // the next one, summarized on top
   await expect(upcoming).toContainText("Za 10 dní");
   await expect(upcoming).toContainText("2 týdny do závodu");
   await expect(page.getByRole("listitem").filter({ hasText: "Půlmaraton Ústí" })).toContainText("1:39:12");
@@ -29,7 +29,7 @@ test("race@ ticks a task of the current phase on her marathon's timeline; it sta
   await logIn(page, "race@demo.cz");
   await expect(page).toHaveURL("/app");
   await page.goto("/app/competition");
-  await page.getByRole("link", { name: "Podzimní maraton Praha" }).click();
+  await page.getByRole("link", { name: "Celý časový plán" }).click();
   await expect(page.getByRole("heading", { name: "Podzimní maraton Praha", level: 1 })).toBeVisible();
   await expect(page.getByRole("checkbox", { name: "Vyzkoušet závodní snídani před dlouhým tréninkem" })).toBeChecked(); // seeded, the phase before
 
@@ -41,4 +41,16 @@ test("race@ ticks a task of the current phase on her marathon's timeline; it sta
     await page.reload();
     await expect(task).toBeChecked({ timeout: 1000 });
   }).toPass();
+});
+
+test("race@'s home shows the marathon in 10 days, the two-weeks phase and its open tasks", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "race@demo.cz");
+  await expect(page).toHaveURL("/app");
+  const widget = page.getByRole("region", { name: "Podzimní maraton Praha" });
+  await expect(widget).toContainText("Za 10 dní");
+  await expect(widget).toContainText("2 týdny do závodu");
+  await expect(widget.getByRole("checkbox", { name: "Nakoupit gely a iontové nápoje" })).not.toBeChecked();
+  await widget.getByRole("link", { name: "Celý časový plán" }).click();
+  await expect(page.getByRole("heading", { name: "Podzimní maraton Praha", level: 1 })).toBeVisible();
 });
