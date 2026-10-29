@@ -26,3 +26,23 @@ test("client on a phone adds a weigh-in: the table shows the change against the 
   await weight.getByRole("button", { name: "Tabulka" }).click();
   await expect(weight.getByRole("row").last()).toHaveText(/93,9\s?kg/);
 });
+
+test("coach opens sports@'s Progress tab over 12 weeks: one point per week, check-in scores, each chart with its table", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await logIn(page, "coach@demo.cz");
+  await expect(page).toHaveURL("/coach");
+  await page.goto("/coach/clients");
+  await page.getByRole("link", { name: "Emma Walker" }).click();
+  await page.getByRole("navigation", { name: "Sekce klienta" }).getByRole("link", { name: "Pokrok" }).click();
+  await page.getByRole("link", { name: "12 týdnů" }).click();
+  await expect(page).toHaveURL(/\/progress\?range=12$/);
+
+  const adherence = page.getByRole("region", { name: "Dodržování plánu (% dní v týdnu)" });
+  await adherence.getByRole("button", { name: "Tabulka" }).click();
+  await expect(adherence.getByRole("row")).toHaveCount(12);
+  await expect(adherence.getByRole("row").first()).toContainText("bez dat"); // before the seeded log
+  await expect(page.getByRole("img", { name: /^Průměrný příjem \(kcal\), / })).toBeVisible(); // CALORIES
+  const energy = page.getByRole("region", { name: "Energie" });
+  await energy.getByRole("button", { name: "Tabulka" }).click();
+  await expect(energy.getByRole("row")).toHaveCount(8); // eight weekly check-ins seeded
+});

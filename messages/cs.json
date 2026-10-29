@@ -234,7 +234,15 @@
     "checkInDay": "Den",
     "checkInSave": "Uložit",
     "lastCheckIn": "Poslední: <link>{date}</link>",
-    "noCheckIn": "Zatím žádný odeslaný"
+    "noCheckIn": "Zatím žádný odeslaný",
+    "trends": "Klíčové trendy",
+    "allProgress": "Celý pokrok",
+    "trend": {
+      "adherence": "Dodržování (4 týdny)",
+      "checkIn": "Check-in, průměr",
+      "weight": "Váha"
+    },
+    "trendLabel": "{trend}: {values}"
   },
   "Notes": {
     "add": "Přidat poznámku",
@@ -1126,12 +1134,25 @@
     "weight": "Poslední váha"
   },
   "Progress": {
-    "title": "Pokrok"
+    "title": "Pokrok",
+    "range": "Období",
+    "weeks": "{count, plural, one {# týden} few {# týdny} other {# týdnů}}",
+    "nutrition": "Výživa",
+    "adherence": "Dodržování plánu (% dní v týdnu)",
+    "kcal": "Průměrný příjem (kcal)",
+    "protein": "Průměrné bílkoviny (g)",
+    "average": "Průměr zapsaných dní",
+    "target": "Cíl",
+    "versus": "{value} z {target} {unit}",
+    "checkIns": "Check-iny",
+    "noCheckIns": "V tomto období zatím žádný check-in."
   },
   "Charts": {
     "showTable": "Tabulka",
     "showChart": "Graf",
-    "label": "{title}, {from} až {to}, naposledy {latest}"
+    "label": "{title}, {from} až {to}, naposledy {latest}",
+    "empty": "Za toto období zatím žádná data.",
+    "noData": "bez dat"
   },
   "BodyComp": {
     "title": "Tělesné složení",

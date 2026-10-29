@@ -234,7 +234,15 @@
     "checkInDay": "Day",
     "checkInSave": "Save",
     "lastCheckIn": "Last: <link>{date}</link>",
-    "noCheckIn": "None sent yet"
+    "noCheckIn": "None sent yet",
+    "trends": "Key trends",
+    "allProgress": "All progress",
+    "trend": {
+      "adherence": "Adherence (4 weeks)",
+      "checkIn": "Check-in average",
+      "weight": "Weight"
+    },
+    "trendLabel": "{trend}: {values}"
   },
   "Notes": {
     "add": "Add note",
@@ -1126,12 +1134,25 @@
     "weight": "Latest weight"
   },
   "Progress": {
-    "title": "Progress"
+    "title": "Progress",
+    "range": "Period",
+    "weeks": "{count, plural, one {# week} other {# weeks}}",
+    "nutrition": "Nutrition",
+    "adherence": "Plan adherence (% of the week's days)",
+    "kcal": "Average intake (kcal)",
+    "protein": "Average protein (g)",
+    "average": "Average of logged days",
+    "target": "Target",
+    "versus": "{value} of {target} {unit}",
+    "checkIns": "Check-ins",
+    "noCheckIns": "No check-in in this period yet."
   },
   "Charts": {
     "showTable": "Table",
     "showChart": "Chart",
-    "label": "{title}, {from} to {to}, latest {latest}"
+    "label": "{title}, {from} to {to}, latest {latest}",
+    "empty": "No data for this period yet.",
+    "noData": "no data"
   },
   "BodyComp": {
     "title": "Body composition",

@@ -5,7 +5,10 @@ import { setCheckInWeekday } from "@/app/app/check-in/actions";
 import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
-import { currentCheckIn } from "@/lib/check-ins";
+import { type CheckInAnswers, currentCheckIn } from "@/lib/check-ins";
+import { Sparkline } from "@/components/sparkline";
+import { nutritionDays } from "@/lib/adherence";
+import { daysUntilToday, weeklyNutrition, weekStarts } from "@/lib/progress";
 import { requireCoachOf } from "@/lib/auth";
 import { ageOn, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
@@ -14,8 +17,8 @@ import { latestWeight, targetFor } from "@/lib/nutrition";
 import { targetSummary } from "@/lib/target-summary";
 import { type Allergen, DAY_TYPES, type DietType, type Goal, type Sex, type SportLevel, type TrackingMode } from "@/lib/enums";
 
-// Overview: what the client works toward and what to know before planning (profile summary, allergies first in mind).
-// Current targets, the last check-in and key trends join when their features land.
+// Overview: what the client works toward, the current targets, key trends, the check-in and what to know before planning
+// (profile summary, allergies first in mind).
 export default async function ClientOverview({ params }: PageProps<"/coach/clients/[id]">) {
   const { client } = await requireCoachOf((await params).id);
   const [t, format, user, targetRows, lastCheckIn, weighIn] = await Promise.all([
@@ -27,7 +30,40 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
     latestWeighIn(client.id),
   ]);
   const today = todayIn(user.timezone);
-  const checkIn = await currentCheckIn(client, user.timezone);
+  // Key trends: the last 4 weeks' adherence, the last 4 check-ins' average score, the last 4 weigh-ins.
+  const starts = weekStarts(today, 4);
+  const [checkIn, days, recentCheckIns, weighIns] = await Promise.all([
+    currentCheckIn(client, user.timezone),
+    nutritionDays([{ id: client.id, trackingMode: client.trackingMode, timezone: user.timezone }], new Map([[client.id, daysUntilToday(starts[0], today)]])),
+    db.checkIn.findMany({ where: { clientId: client.id }, orderBy: { dueDate: "desc" }, take: 4, select: { dueDate: true, answers: true } }),
+    db.bodyComp.findMany({ where: { clientId: client.id, weightKg: { not: null } }, orderBy: [{ date: "desc" }, { createdAt: "desc" }], take: 4, select: { date: true, weightKg: true } }),
+  ]);
+  const one = (value: number) => format.number(value, { maximumFractionDigits: 1 });
+  const short = (date: string) => format.dateTime(new Date(date), { day: "numeric", month: "numeric", timeZone: "UTC" });
+  const trends = [
+    {
+      key: "adherence",
+      domain: [0, 100] as [number, number],
+      points: weeklyNutrition(days.get(client.id)!, starts).flatMap((w) => (w.adherence == null ? [] : [{ value: w.adherence, tip: `${short(w.start)}: ${format.number(w.adherence / 100, { style: "percent" })}` }])),
+      show: (v: number) => format.number(v / 100, { style: "percent" }),
+    },
+    {
+      key: "checkIn",
+      domain: [1, 10] as [number, number],
+      points: recentCheckIns.toReversed().map((c) => {
+        const scores = Object.values(c.answers as CheckInAnswers).map((a) => a.score);
+        const value = Math.round((scores.reduce((sum, v) => sum + v, 0) / scores.length) * 10) / 10;
+        return { value, tip: `${short(c.dueDate)}: ${one(value)}` };
+      }),
+      show: (v: number) => t("CheckIn.outOf", { score: one(v) }),
+    },
+    {
+      key: "weight",
+      domain: undefined,
+      points: weighIns.toReversed().map((w) => ({ value: w.weightKg!, tip: `${short(w.date)}: ${one(w.weightKg!)} kg` })),
+      show: (v: number) => t("ClientDashboard.kg", { value: one(v) }),
+    },
+  ] as const;
   const mode = client.trackingMode as TrackingMode;
   // Today's targets per day type: its own row, else the rest day's (shown as such).
   const targets = DAY_TYPES.map((dayType) => ({ dayType, own: targetFor(targetRows.filter((r) => r.dayType === dayType), today, dayType) }));
@@ -140,6 +176,33 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
           {since && <p className="mt-3 text-xs text-muted-foreground">{t("ClientDashboard.targetsSince", { date: format.dateTime(new Date(since), { dateStyle: "medium", timeZone: "UTC" }) })}</p>}
         </section>
       </div>
+
+      <section aria-labelledby="overview-trends" className="rounded-lg border bg-card p-6">
+        <div className="flex items-baseline justify-between gap-4">
+          <h2 id="overview-trends" className="text-base font-semibold">
+            {t("ClientDashboard.trends")}
+          </h2>
+          <Link href={`/coach/clients/${client.id}/progress`} className="text-sm font-medium text-primary-ink hover:underline">
+            {t("ClientDashboard.allProgress")}
+          </Link>
+        </div>
+        <dl className="mt-4 grid gap-6 sm:grid-cols-3">
+          {trends.map(({ key, domain, points, show }) => {
+            const values = points.map((p) => p.value);
+            return (
+              <div key={key} className="flex items-end justify-between gap-4">
+                <div className="flex flex-col gap-1">
+                  <dt className="text-xs text-muted-foreground">{t(`ClientDashboard.trend.${key}`)}</dt>
+                  <dd className={points.length ? "text-base font-medium tabular-nums" : "text-muted-foreground"}>{points.length ? show(values.at(-1)!) : "—"}</dd>
+                </div>
+                {points.length > 1 && (
+                  <Sparkline points={points} domain={domain ?? [Math.floor(Math.min(...values) - 1), Math.ceil(Math.max(...values) + 1)]} label={t("ClientDashboard.trendLabel", { trend: t(`ClientDashboard.trend.${key}`), values: points.map((p) => p.tip).join(", ") })} />
+                )}
+              </div>
+            );
+          })}
+        </dl>
+      </section>
 
       {/* The weekly check-in: its day (the coach sets it) and where the current period stands. */}
       <section aria-labelledby="overview-check-in" className="flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-card px-6 py-4">
