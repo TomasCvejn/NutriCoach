@@ -48,7 +48,8 @@
     "hydration": "Hydration",
     "checkIn": "Check-in",
     "checkIns": "Check-ins",
-    "progress": "Progress"
+    "progress": "Progress",
+    "competition": "Competition"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -153,7 +154,8 @@
       "actions": "Actions",
       "lastLogged": "Last logged",
       "adherence": "7-day adherence",
-      "checkIn": "Check-in"
+      "checkIn": "Check-in",
+      "competition": "Next competition"
     },
     "invite": {
       "open": "Invite client",
@@ -182,7 +184,8 @@
       "due": "Due",
       "overdue": "Overdue",
       "toReview": "To review"
-    }
+    },
+    "nextCompetition": "{name} · {days, plural, =0 {today} one {in # day} other {in # days}}"
   },
   "ClientDashboard": {
     "mode": "Tracking: {mode}",
@@ -192,6 +195,7 @@
       "overview": "Overview",
       "nutrition": "Nutrition",
       "training": "Training",
+      "competition": "Competition",
       "progress": "Progress",
       "checkIns": "Check-ins",
       "notes": "Notes"
@@ -261,7 +265,8 @@
       "TRACKING_MODE": "Tracking change",
       "TARGETS": "Targets change",
       "PLAN": "Plan change",
-      "CHECK_IN": "Check-in"
+      "CHECK_IN": "Check-in",
+      "COMPETITION": "Competition"
     },
     "invalid": {
       "date": "Enter a valid date.",
@@ -278,7 +283,8 @@
       "TRACKING_MODE": "Tracking changes",
       "TARGETS": "Target changes",
       "PLAN": "Plan changes",
-      "CHECK_IN": "Check-ins"
+      "CHECK_IN": "Check-ins",
+      "COMPETITION": "Competitions"
     },
     "pinned": "Pinned",
     "history": "History",
@@ -297,6 +303,9 @@
       "toReview": "Sent check-in waiting for your feedback.",
       "open": "Open",
       "openFrom": "Open the check-in for the week of {date}"
+    },
+    "competition": {
+      "openFrom": "Open competitions, {name}"
     }
   },
   "Targets": {
@@ -941,7 +950,8 @@
     "title": "Overview",
     "tiles": "Summary",
     "activeClients": "Active clients",
-    "checkInsWaiting": "Check-ins to review"
+    "checkInsWaiting": "Check-ins to review",
+    "competitionsSoon": "Competitions in 30 days"
   },
   "ClientHome": {
     "title": "Today",
@@ -1160,7 +1170,8 @@
     "performance": "Performance",
     "minutes": "Training minutes per week",
     "rpe": "Average RPE",
-    "felt": "How training felt"
+    "felt": "How training felt",
+    "competitions": "Competitions and results"
   },
   "Charts": {
     "showTable": "Table",
@@ -1365,5 +1376,57 @@
     "invalidPre": "Every row needs both when and a recommendation.",
     "save": "Save template",
     "delete": "Delete template"
+  },
+  "Competition": {
+    "title": "Competitions",
+    "add": "Add competition",
+    "addTitle": "New competition",
+    "editTitle": "Edit competition",
+    "edit": "Edit",
+    "editFor": "Edit competition {name}",
+    "resultTitle": "Result: {name}",
+    "fields": {
+      "name": "Name",
+      "date": "Date",
+      "sport": "Sport / discipline",
+      "location": "Location",
+      "priority": "Priority",
+      "notes": "Notes",
+      "result": "Result",
+      "felt": "Felt (1–10)"
+    },
+    "invalid": {
+      "name": "Enter a name (at most 100 characters).",
+      "date": "Enter a valid date.",
+      "sport": "At most 100 characters.",
+      "location": "At most 100 characters.",
+      "felt": "Enter 1–10."
+    },
+    "priorities": {
+      "A": "A – main race",
+      "B": "B – important",
+      "C": "C – build-up"
+    },
+    "priorityShort": "Priority {priority}",
+    "countdown": "{days, plural, =0 {Today} one {In # day} other {In # days}}",
+    "phases": {
+      "BASE": "Base training",
+      "4_WEEKS": "4 weeks out",
+      "2_WEEKS": "2 weeks out",
+      "RACE_WEEK": "Race week",
+      "DAY_BEFORE": "Day before",
+      "RACE_DAY": "Race day"
+    },
+    "result": "Result: {result}",
+    "felt": "felt {felt}/10",
+    "noResult": "No result yet.",
+    "addResult": "Add result",
+    "editResult": "Edit result",
+    "resultHint": "A time, a placing or a few words.",
+    "feltHint": "How you felt, 1–10.",
+    "upcoming": "Upcoming",
+    "past": "Past",
+    "none": "No competition planned. Your coach adds them.",
+    "noneCoach": "No competition planned."
   }
 }

@@ -137,6 +137,7 @@ model Client {
   checkIns         CheckIn[]
   bodyComps        BodyComp[]
   trainingSessions TrainingSession[]
+  competitions     Competition[]
 
   @@index([coachId])
 }
@@ -529,4 +530,24 @@ model FuelingTemplate {
   sessions            TrainingSession[]
   createdAt           DateTime          @default(now())
   updatedAt           DateTime          @updatedAt
+}
+
+// A client's competition (competition.md): the coach creates it, the client or the coach records the result.
+model Competition {
+  id        String   @id @default(cuid())
+  clientId  String
+  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name      String
+  date      String // YYYY-MM-DD
+  sport     String?
+  location  String?
+  priority  String // A / B / C
+  notes     String?
+  // After it (Performance in progress.md).
+  result    String?
+  felt      Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([clientId, date])
 }

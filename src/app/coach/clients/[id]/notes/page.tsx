@@ -8,7 +8,7 @@ import { requireCoachOf } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import type { HistoryPayloads, HistoryType } from "@/lib/enums";
-import { FEED_TYPES, type FeedCheckIn, historyFeed } from "@/lib/history";
+import { FEED_TYPES, type FeedCheckIn, type FeedCompetition, historyFeed } from "@/lib/history";
 import { NoteDialog } from "./note-dialog";
 
 const filter = z.object({ type: z.enum(FEED_TYPES).optional().catch(undefined) });
@@ -17,15 +17,16 @@ const filter = z.object({ type: z.enum(FEED_TYPES).optional().catch(undefined) }
 export default async function ClientNotes({ params, searchParams }: PageProps<"/coach/clients/[id]/notes">) {
   const { client } = await requireCoachOf((await params).id);
   const { type } = filter.parse(await searchParams);
-  const [t, format, user, notes, events, checkIns] = await Promise.all([
+  const [t, format, user, notes, events, checkIns, competitions] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { timezone: true } }),
     db.coachNote.findMany({ where: { clientId: client.id } }),
     db.historyEvent.findMany({ where: { clientId: client.id } }),
     db.checkIn.findMany({ where: { clientId: client.id }, select: { id: true, dueDate: true, createdAt: true, reviewedAt: true, response: true } }),
+    db.competition.findMany({ where: { clientId: client.id }, select: { id: true, name: true, date: true, createdAt: true, result: true, felt: true } }),
   ]);
-  const { pinned, feed } = historyFeed(notes, events, checkIns, type);
+  const { pinned, feed } = historyFeed({ notes, events, checkIns, competitions }, type);
   const today = todayIn(user.timezone);
   // A calendar day: formatted at UTC midnight so no timezone can move it.
   const day = (date: string) => format.dateTime(new Date(date), { dateStyle: "medium", timeZone: "UTC" });
@@ -67,6 +68,16 @@ export default async function ClientNotes({ params, searchParams }: PageProps<"/
     return t("Notes.trackingMode", { from: t(`TrackingModes.${from}`), to: t(`TrackingModes.${to}`) });
   };
   const eventRow = (event: HistoryEvent) => row(event.id, event.date, <Pill>{t(`Notes.types.${event.type as HistoryType}`)}</Pill>, eventText(event));
+  const competitionRow = (competition: FeedCompetition) =>
+    row(
+      competition.id,
+      competition.date,
+      <Pill tone="accent">{t("Notes.types.COMPETITION")}</Pill>,
+      [competition.name, competition.result && t("Competition.result", { result: competition.result }), competition.felt != null && t("Competition.felt", { felt: competition.felt })].filter(Boolean).join(" · "),
+      <Link href={`/coach/clients/${client.id}/competition`} aria-label={t("Notes.competition.openFrom", { name: competition.name })} className="inline-flex h-10 items-center px-2.5 text-sm font-medium hover:underline sm:h-8">
+        {t("Notes.checkIn.open")}
+      </Link>,
+    );
   const checkInRow = (checkIn: FeedCheckIn) =>
     row(
       checkIn.id,
@@ -110,7 +121,7 @@ export default async function ClientNotes({ params, searchParams }: PageProps<"/
         {feed.length === 0 ? (
           <p className="mt-3 rounded-lg border border-dashed px-4 py-3 text-sm text-muted-foreground">{t(type ? "Notes.emptyFiltered" : "Notes.empty")}</p>
         ) : (
-          <ul className="mt-1">{feed.map((item) => ("note" in item ? noteRow(item.note) : "event" in item ? eventRow(item.event) : checkInRow(item.checkIn)))}</ul>
+          <ul className="mt-1">{feed.map((item) => ("note" in item ? noteRow(item.note) : "event" in item ? eventRow(item.event) : "checkIn" in item ? checkInRow(item.checkIn) : competitionRow(item.competition)))}</ul>
         )}
       </section>
     </div>

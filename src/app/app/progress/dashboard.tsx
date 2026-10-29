@@ -20,13 +20,14 @@ type Client = { id: string; trackingMode: string };
 export async function ProgressDashboard({ client, timezone, weeks, base, training }: { client: Client; timezone: string; weeks: number; base: string; training: boolean }) {
   const today = todayIn(timezone);
   const starts = weekStarts(today, weeks);
-  const [t, format, days, checkIns, sessions] = await Promise.all([
+  const [t, format, days, checkIns, sessions, competitions] = await Promise.all([
     getTranslations(),
     getFormatter(),
     nutritionDays([{ ...client, timezone }], new Map([[client.id, daysUntilToday(starts[0], today)]])),
     db.checkIn.findMany({ where: { clientId: client.id, dueDate: { gte: starts[0] } }, orderBy: { dueDate: "asc" }, select: { dueDate: true, answers: true } }),
     // The sessions done so far (today's may still be ahead).
     training ? db.trainingSession.findMany({ where: { clientId: client.id, date: { gte: starts[0], lt: today } }, select: { date: true, durationMin: true, rpe: true, felt: true } }) : [],
+    training ? db.competition.findMany({ where: { clientId: client.id, date: { gte: starts[0], lt: today } }, orderBy: { date: "desc" } }) : [],
   ]);
   const performance = weeklyTraining(sessions, starts);
   const weekly = weeklyNutrition(days.get(client.id)!, starts);
@@ -86,6 +87,27 @@ export async function ProgressDashboard({ client, timezone, weeks, base, trainin
               />
             ))}
           </div>
+          {competitions.length > 0 && (
+            <div className="rounded-lg border bg-card p-5">
+              <h3 className="text-sm font-semibold">{t("Progress.competitions")}</h3>
+              <table className="mt-2 w-full text-sm">
+                <caption className="sr-only">{t("Progress.competitions")}</caption>
+                <tbody>
+                  {competitions.map((c) => (
+                    <tr key={c.id} className="border-t border-rule first:border-0">
+                      <th scope="row" className="py-2 pr-4 text-left font-normal text-muted-foreground tabular-nums">
+                        {label(c.date)}
+                      </th>
+                      <td className="py-2 pr-4 font-medium">{c.name}</td>
+                      <td className="py-2 text-right tabular-nums">
+                        {[c.result, c.felt != null && t("Competition.felt", { felt: c.felt })].filter(Boolean).join(" · ") || "—"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </section>
       )}
 

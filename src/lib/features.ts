@@ -13,9 +13,11 @@ export function clientFeatures({ hasSport, hasSession, lastCompetitionDate }: Cl
   };
 }
 
-// The features of a client from their data: a sport on the profile, any session.
-// ponytail: no competitions exist yet; their item feeds the latest date in here.
+// The features of a client from their data: a sport on the profile, any session, the latest competition.
 export async function featuresOf(client: { id: string; sports: string | null }, today: string) {
-  const session = await db.trainingSession.findFirst({ where: { clientId: client.id }, select: { id: true } });
-  return clientFeatures({ hasSport: Boolean(client.sports), hasSession: Boolean(session), lastCompetitionDate: null }, today);
+  const [session, competition] = await Promise.all([
+    db.trainingSession.findFirst({ where: { clientId: client.id }, select: { id: true } }),
+    db.competition.findFirst({ where: { clientId: client.id }, orderBy: { date: "desc" }, select: { date: true } }),
+  ]);
+  return clientFeatures({ hasSport: Boolean(client.sports), hasSession: Boolean(session), lastCompetitionDate: competition?.date ?? null }, today);
 }

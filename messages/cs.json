@@ -48,7 +48,8 @@
     "hydration": "Hydratace",
     "checkIn": "Check-in",
     "checkIns": "Check-iny",
-    "progress": "Pokrok"
+    "progress": "Pokrok",
+    "competition": "Závod"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -153,7 +154,8 @@
       "actions": "Akce",
       "lastLogged": "Naposledy zapsáno",
       "adherence": "Adherence 7 dní",
-      "checkIn": "Check-in"
+      "checkIn": "Check-in",
+      "competition": "Další závod"
     },
     "invite": {
       "open": "Pozvat klienta",
@@ -182,7 +184,8 @@
       "due": "K vyplnění",
       "overdue": "Po termínu",
       "toReview": "Ke kontrole"
-    }
+    },
+    "nextCompetition": "{name} · {days, plural, =0 {dnes} one {za # den} few {za # dny} other {za # dní}}"
   },
   "ClientDashboard": {
     "mode": "Sledování: {mode}",
@@ -192,6 +195,7 @@
       "overview": "Přehled",
       "nutrition": "Výživa",
       "training": "Trénink",
+      "competition": "Závody",
       "progress": "Pokrok",
       "checkIns": "Check-iny",
       "notes": "Poznámky"
@@ -261,7 +265,8 @@
       "TRACKING_MODE": "Změna sledování",
       "TARGETS": "Změna cílů",
       "PLAN": "Změna plánu",
-      "CHECK_IN": "Check-in"
+      "CHECK_IN": "Check-in",
+      "COMPETITION": "Závod"
     },
     "invalid": {
       "date": "Zadejte platné datum.",
@@ -278,7 +283,8 @@
       "TRACKING_MODE": "Změny sledování",
       "TARGETS": "Změny cílů",
       "PLAN": "Změny plánu",
-      "CHECK_IN": "Check-iny"
+      "CHECK_IN": "Check-iny",
+      "COMPETITION": "Závody"
     },
     "pinned": "Připnuté",
     "history": "Historie",
@@ -297,6 +303,9 @@
       "toReview": "Odeslaný check-in čeká na vaši zpětnou vazbu.",
       "open": "Otevřít",
       "openFrom": "Otevřít check-in za týden od {date}"
+    },
+    "competition": {
+      "openFrom": "Otevřít závody, {name}"
     }
   },
   "Targets": {
@@ -941,7 +950,8 @@
     "title": "Přehled",
     "tiles": "Souhrn",
     "activeClients": "Aktivní klienti",
-    "checkInsWaiting": "Check-iny ke kontrole"
+    "checkInsWaiting": "Check-iny ke kontrole",
+    "competitionsSoon": "Závody do 30 dní"
   },
   "ClientHome": {
     "title": "Dnes",
@@ -1160,7 +1170,8 @@
     "performance": "Výkon",
     "minutes": "Minuty tréninku za týden",
     "rpe": "Průměrné RPE",
-    "felt": "Pocit z tréninku"
+    "felt": "Pocit z tréninku",
+    "competitions": "Závody a výsledky"
   },
   "Charts": {
     "showTable": "Tabulka",
@@ -1365,5 +1376,57 @@
     "invalidPre": "Každý řádek potřebuje kdy i doporučení.",
     "save": "Uložit šablonu",
     "delete": "Smazat šablonu"
+  },
+  "Competition": {
+    "title": "Závody",
+    "add": "Přidat závod",
+    "addTitle": "Nový závod",
+    "editTitle": "Upravit závod",
+    "edit": "Upravit",
+    "editFor": "Upravit závod {name}",
+    "resultTitle": "Výsledek: {name}",
+    "fields": {
+      "name": "Název",
+      "date": "Datum",
+      "sport": "Sport / disciplína",
+      "location": "Místo",
+      "priority": "Priorita",
+      "notes": "Poznámky",
+      "result": "Výsledek",
+      "felt": "Pocit (1–10)"
+    },
+    "invalid": {
+      "name": "Zadejte název (nejvýš 100 znaků).",
+      "date": "Zadejte platné datum.",
+      "sport": "Nejvýš 100 znaků.",
+      "location": "Nejvýš 100 znaků.",
+      "felt": "Zadejte 1–10."
+    },
+    "priorities": {
+      "A": "A – hlavní závod",
+      "B": "B – důležitý",
+      "C": "C – přípravný"
+    },
+    "priorityShort": "Priorita {priority}",
+    "countdown": "{days, plural, =0 {Dnes} one {Za # den} few {Za # dny} other {Za # dní}}",
+    "phases": {
+      "BASE": "Základní příprava",
+      "4_WEEKS": "4 týdny do závodu",
+      "2_WEEKS": "2 týdny do závodu",
+      "RACE_WEEK": "Závodní týden",
+      "DAY_BEFORE": "Den před závodem",
+      "RACE_DAY": "Závodní den"
+    },
+    "result": "Výsledek: {result}",
+    "felt": "pocit {felt}/10",
+    "noResult": "Výsledek zatím není zapsaný.",
+    "addResult": "Zapsat výsledek",
+    "editResult": "Upravit výsledek",
+    "resultHint": "Čas, umístění nebo pár slov.",
+    "feltHint": "Jak jste se cítili, 1–10.",
+    "upcoming": "Nadcházející",
+    "past": "Proběhlé",
+    "none": "Žádný naplánovaný závod. Závody zakládá trenér.",
+    "noneCoach": "Žádný naplánovaný závod."
   }
 }

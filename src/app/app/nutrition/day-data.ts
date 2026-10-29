@@ -10,7 +10,7 @@ export const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as cons
 // Everything one day of a client's nutrition shows, for the day screen and the home widget. The caller has authorized
 // the viewer for this client. `fallbackSlots` are the default meal names in the viewer's language.
 export async function loadDay(clientId: string, date: string, fallbackSlots: string[]) {
-  const [client, day, targets, planMeals, entries, portionLogs, guidanceLogs, sessions] = await Promise.all([
+  const [client, day, targets, planMeals, entries, portionLogs, guidanceLogs, sessions, competition] = await Promise.all([
     db.client.findUniqueOrThrow({ where: { id: clientId }, select: { trackingMode: true, coachId: true, user: { select: { timezone: true } } } }),
     db.nutritionDay.findUnique({ where: { clientId_date: { clientId, date } } }),
     db.nutritionTarget.findMany({ where: { clientId } }),
@@ -19,10 +19,11 @@ export async function loadDay(clientId: string, date: string, fallbackSlots: str
     db.portionLog.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
     db.guidanceLog.findMany({ where: { clientId, date } }),
     db.trainingSession.findMany({ where: { clientId, date }, orderBy: [{ startTime: "asc" }, { createdAt: "asc" }] }),
+    db.competition.findFirst({ where: { clientId, date }, select: { id: true } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const override = (day?.dayTypeOverride ?? null) as DayType | null;
-  const derived = dayType({ session: sessions.length > 0 });
+  const derived = dayType({ competition: Boolean(competition), session: sessions.length > 0 });
   const type = override ?? derived;
   // Each mode shows its own log; another mode's logs stay stored and show again when the mode comes back.
   const logged = mode === "CALORIES" ? entries : [];
@@ -47,7 +48,6 @@ export async function loadDay(clientId: string, date: string, fallbackSlots: str
     today: todayIn(client.user.timezone),
     note: day?.note ?? null,
     override,
-    // ponytail: no competitions exist yet; their item passes them to dayType here.
     derived,
     type,
     target,

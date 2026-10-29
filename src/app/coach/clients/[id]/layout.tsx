@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Pill } from "@/components/pill";
 import { requireCoachOf } from "@/lib/auth";
-import { todayIn } from "@/lib/dates";
+import { diffDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import type { Goal, TrackingMode } from "@/lib/enums";
 import { ClientTabs, TrackingModeDialog } from "./client-header";
@@ -13,6 +13,9 @@ import { NoteDialog } from "./notes/note-dialog";
 export default async function ClientLayout({ params, children }: LayoutProps<"/coach/clients/[id]">) {
   const { client } = await requireCoachOf((await params).id);
   const [t, user] = await Promise.all([getTranslations(), db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, active: true, timezone: true } })]);
+  const today = todayIn(user.timezone);
+  // The countdown to the next competition (competition.md).
+  const next = await db.competition.findFirst({ where: { clientId: client.id, date: { gte: today } }, orderBy: { date: "asc" }, select: { name: true, date: true } });
   const mode = client.trackingMode as TrackingMode;
 
   return (
@@ -26,13 +29,18 @@ export default async function ClientLayout({ params, children }: LayoutProps<"/c
           <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1">
             <h1 className="text-2xl font-bold tracking-tight">{user.name}</h1>
             {!user.active ? <Pill>{t("Clients.statuses.INACTIVE")}</Pill> : !client.onboardingCompletedAt && <Pill tone="accent">{t("Clients.statuses.ONBOARDING")}</Pill>}
+            {next && (
+              <Link href={`/coach/clients/${client.id}/competition`} className="rounded-sm hover:underline">
+                <Pill tone="accent">{t("Clients.nextCompetition", { name: next.name, days: diffDays(today, next.date) })}</Pill>
+              </Link>
+            )}
           </div>
           <p className="mt-1 text-sm text-muted-foreground">
             {t("ClientDashboard.mode", { mode: t(`TrackingModes.${mode}`) })} · {client.primaryGoal ? t(`Goals.${client.primaryGoal as Goal}`) : t("ClientDashboard.noGoal")}
           </p>
         </div>
         <div className="flex gap-2">
-          <NoteDialog clientId={client.id} today={todayIn(user.timezone)} />
+          <NoteDialog clientId={client.id} today={today} />
           <TrackingModeDialog clientId={client.id} name={user.name} mode={mode} />
         </div>
       </header>

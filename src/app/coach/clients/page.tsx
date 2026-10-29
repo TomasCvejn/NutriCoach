@@ -120,6 +120,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                       {sortHeader("lastLogged", "hidden w-32 md:table-cell")}
                       {sortHeader("adherence", "hidden w-28 text-right md:table-cell")}
                       {sortHeader("checkIn", "hidden w-36 xl:table-cell")}
+                      {sortHeader("competition", "hidden w-44 xl:table-cell")}
                       <th className="w-28">
                         <span className="sr-only">{t("Clients.columns.actions")}</span>
                       </th>
@@ -148,6 +149,18 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                         </td>
                         <td className="hidden py-3 pr-4 text-right tabular-nums md:table-cell">{adherence(client)}</td>
                         <td className="hidden py-3 pr-4 xl:table-cell">{checkInMark(client.checkIn)}</td>
+                        <td className="hidden py-3 pr-4 xl:table-cell">
+                          {client.nextCompetition ? (
+                            <>
+                              <span className="block tabular-nums">{t("Competition.countdown", { days: client.nextCompetition.days })}</span>
+                              <span className="block truncate text-xs text-muted-foreground" title={client.nextCompetition.name}>
+                                {client.nextCompetition.name}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </td>
                         <td className="py-3 text-right">
                           {client.status === "INACTIVE" ? (
                             <form action={setClientActive}>

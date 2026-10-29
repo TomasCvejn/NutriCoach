@@ -328,6 +328,16 @@ async function seed() {
       ["Svačina", ["Regenerační nápoj", 500, 30, 75, 8]],
     ],
   ];
+  // Competitions: race@'s marathon is her profile's target date (10 days out), with a half marathon behind her; sports@ has
+  // a triathlon further ahead.
+  await db.competition.createMany({
+    data: [
+      { clientId: race, name: "Podzimní maraton Praha", date: addDays(today, 10), sport: "Běh – maraton", location: "Praha", priority: "A", notes: "Cíl pod 3:30, gely každých 30 min." },
+      { clientId: race, name: "Půlmaraton Ústí", date: addDays(today, -35), sport: "Běh – půlmaraton", location: "Ústí nad Labem", priority: "B", result: "1:39:12", felt: 8 },
+      { clientId: sports, name: "Olympic-distance triathlon", date: addDays(today, 45), sport: "Triathlon", location: "Roudnice", priority: "A" },
+    ],
+  });
+
   // Fueling templates from training.md (the coach should review the numbers); the long and the very hard one rank highest.
   const pre = (carbs: number) => [
     { timing: "3–4 h před", text: "Jídlo bohaté na sacharidy, málo tuku a vlákniny", carbs },

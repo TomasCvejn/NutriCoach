@@ -19,6 +19,11 @@ test("coachNav: Overview, Clients and Check-ins as tabs; Library and Settings un
   expect(keys(coachNav.more)).toEqual(["library", "settings"]);
 });
 
+test("clientNav: Competition leads the More sheet only with an upcoming or recent competition", () => {
+  expect(keys(clientNav({ training: true, competition: true }).more)[0]).toBe("competition");
+  expect(keys(clientNav({ training: true, competition: false }).more)).not.toContain("competition");
+});
+
 test("the bottom bar holds at most 4 tabs besides More", () => {
   expect(clientNav({ training: true, competition: true }).tabs.length).toBeLessThanOrEqual(4);
   expect(coachNav.tabs.length).toBeLessThanOrEqual(4);

@@ -16,6 +16,7 @@ const TABS = [
   { key: "overview", segment: null },
   { key: "nutrition", segment: "nutrition" },
   { key: "training", segment: "training" },
+  { key: "competition", segment: "competition" },
   { key: "progress", segment: "progress" },
   { key: "checkIns", segment: "check-ins" },
   { key: "notes", segment: "notes" },

@@ -1,20 +1,25 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { requireCoach } from "@/lib/auth";
+import { addDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 
 // Coach home: tiles land with their features (check-ins waiting, unread messages, calls, competitions, packages, needs attention).
 export default async function CoachHome() {
   const coach = await requireCoach();
-  const [t, format, activeClients, checkInsWaiting] = await Promise.all([
+  const today = todayIn(coach.timezone);
+  const [t, format, activeClients, checkInsWaiting, competitionsSoon] = await Promise.all([
     getTranslations("CoachHome"),
     getFormatter(),
     db.client.count({ where: { coachId: coach.id, user: { active: true } } }),
     db.checkIn.count({ where: { reviewedAt: null, client: { coachId: coach.id, user: { active: true } } } }),
+    // ponytail: by the coach's calendar; a client a timezone away may be a day off at the edges.
+    db.competition.count({ where: { date: { gte: today, lte: addDays(today, 30) }, client: { coachId: coach.id, user: { active: true } } } }),
   ]);
   const tiles = [
     { href: "/coach/clients", label: t("activeClients"), value: activeClients },
     { href: "/coach/check-ins", label: t("checkInsWaiting"), value: checkInsWaiting },
+    { href: "/coach/clients?sort=competition", label: t("competitionsSoon"), value: competitionsSoon },
   ];
 
   return (

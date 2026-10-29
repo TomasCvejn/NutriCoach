@@ -15,16 +15,17 @@ type Client = { id: string; trackingMode: string; timezone: string; today?: stri
 // was logged) next to that day's targets.
 export type NutritionDay = { date: string; adherence: Adherence | null; kcal: number | null; protein: number | null; kcalTarget: number | null; proteinTarget: number | null };
 
-// Each client's days (their dates in `windows`). Seven queries for any number of clients and days.
+// Each client's days (their dates in `windows`). Eight queries for any number of clients and days.
 // ponytail: GUIDANCE plans its day's meals or, without plan meals, the four default ones; marks on other slots aren't added.
 export async function nutritionDays(clients: Client[], windows: Map<string, string[]>): Promise<Map<string, NutritionDay[]>> {
   const ids = clients.map((c) => c.id);
   const inMode = (mode: string) => clients.filter((c) => c.trackingMode === mode).map((c) => c.id);
   const dates = [...new Set([...windows.values()].flat())];
-  const [targets, overrides, sessions, planMeals, entries, portions, marks] = await Promise.all([
+  const [targets, overrides, sessions, competitions, planMeals, entries, portions, marks] = await Promise.all([
     db.nutritionTarget.findMany({ where: { clientId: { in: ids } } }),
     db.nutritionDay.findMany({ where: { clientId: { in: ids }, date: { in: dates }, dayTypeOverride: { not: null } }, select: { clientId: true, date: true, dayTypeOverride: true } }),
     db.trainingSession.findMany({ where: { clientId: { in: ids }, date: { in: dates } }, select: { clientId: true, date: true } }),
+    db.competition.findMany({ where: { clientId: { in: ids }, date: { in: dates } }, select: { clientId: true, date: true } }),
     db.planMeal.findMany({ where: { clientId: { in: inMode("GUIDANCE") } }, select: { clientId: true, dayType: true } }),
     db.foodEntry.findMany({ where: { clientId: { in: inMode("CALORIES") }, date: { in: dates } }, select: { clientId: true, date: true, kcal: true, protein: true } }),
     db.portionLog.findMany({ where: { clientId: { in: inMode("PORTIONS") }, date: { in: dates } } }),
@@ -35,7 +36,7 @@ export async function nutritionDays(clients: Client[], windows: Map<string, stri
     clients.map((c) => {
       const on = <T extends { clientId: string; date: string }>(rows: T[], date: string) => rows.filter((r) => r.clientId === c.id && r.date === date);
       const days = windows.get(c.id)!.map((date): NutritionDay => {
-        const type = dayType({ override: on(overrides, date)[0]?.dayTypeOverride as DayType | undefined, session: on(sessions, date).length > 0 });
+        const type = dayType({ override: on(overrides, date)[0]?.dayTypeOverride as DayType | undefined, competition: on(competitions, date).length > 0, session: on(sessions, date).length > 0 });
         const target = targetFor(
           targets.filter((t) => t.clientId === c.id),
           date,
@@ -60,7 +61,7 @@ export type NutritionSummary = { lastLogged: string | null; daysAgo: number | nu
 
 // For the coach's client list: each client's last logged day (any log of their current mode) and 7-day adherence %, the
 // 7 days ending yesterday in the client's timezone (today is still in progress), or before `today` when given (a check-in's
-// week ends the day before its due date). Ten queries for any number of clients.
+// week ends the day before its due date). Eleven queries for any number of clients.
 export async function nutritionSummaries(clients: Client[]): Promise<Map<string, NutritionSummary>> {
   const inMode = (mode: string) => clients.filter((c) => c.trackingMode === mode).map((c) => c.id);
   const today = new Map(clients.map((c) => [c.id, c.today ?? todayIn(c.timezone)]));
