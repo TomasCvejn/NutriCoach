@@ -22,6 +22,7 @@ const ICONS: Record<NavItem["key"], LucideIcon> = {
   recipes: ChefHatIcon,
   hydration: DropletIcon,
   checkIn: ClipboardCheckIcon,
+  checkIns: ClipboardCheckIcon,
   profile: UserRoundIcon,
   settings: SettingsIcon,
 };

@@ -10,16 +10,17 @@ export function adherencePercent(days: (Adherence | null)[]) {
   return counted.length ? Math.round((counted.filter((d) => d === "ADHERENT").length / counted.length) * 100) : null;
 }
 
-type Client = { id: string; trackingMode: string; timezone: string };
+type Client = { id: string; trackingMode: string; timezone: string; today?: string };
 export type NutritionSummary = { lastLogged: string | null; daysAgo: number | null; adherence: number | null };
 
 // For the coach's client list: each client's last logged day (any log of their current mode) and 7-day adherence %, the
-// 7 days ending yesterday in the client's timezone (today is still in progress). Nine queries for any number of clients.
+// 7 days ending yesterday in the client's timezone (today is still in progress), or before `today` when given (a check-in's
+// week ends the day before its due date). Nine queries for any number of clients.
 // ponytail: GUIDANCE plans its day's meals or, without plan meals, the four default ones; marks on other slots aren't added.
 export async function nutritionSummaries(clients: Client[]): Promise<Map<string, NutritionSummary>> {
   const ids = clients.map((c) => c.id);
   const inMode = (mode: string) => clients.filter((c) => c.trackingMode === mode).map((c) => c.id);
-  const today = new Map(clients.map((c) => [c.id, todayIn(c.timezone)]));
+  const today = new Map(clients.map((c) => [c.id, c.today ?? todayIn(c.timezone)]));
   const windows = new Map(clients.map((c) => [c.id, Array.from({ length: 7 }, (_, i) => addDays(today.get(c.id)!, -(i + 1)))]));
   const dates = [...new Set([...windows.values()].flat())];
   const [targets, overrides, planMeals, entries, portions, marks, lastEntry, lastPortion, lastMark] = await Promise.all([

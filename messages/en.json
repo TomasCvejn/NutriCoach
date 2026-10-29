@@ -46,7 +46,8 @@
     "library": "Library",
     "recipes": "Recipes",
     "hydration": "Hydration",
-    "checkIn": "Check-in"
+    "checkIn": "Check-in",
+    "checkIns": "Check-ins"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -188,8 +189,9 @@
     "tabs": {
       "label": "Client sections",
       "overview": "Overview",
-      "notes": "Notes",
-      "nutrition": "Nutrition"
+      "nutrition": "Nutrition",
+      "checkIns": "Check-ins",
+      "notes": "Notes"
     },
     "changeMode": {
       "open": "Change tracking",
@@ -245,7 +247,8 @@
       "DECISION": "Decision",
       "TRACKING_MODE": "Tracking change",
       "TARGETS": "Targets change",
-      "PLAN": "Plan change"
+      "PLAN": "Plan change",
+      "CHECK_IN": "Check-in"
     },
     "invalid": {
       "date": "Enter a valid date.",
@@ -261,7 +264,8 @@
       "DECISION": "Decisions",
       "TRACKING_MODE": "Tracking changes",
       "TARGETS": "Target changes",
-      "PLAN": "Plan changes"
+      "PLAN": "Plan changes",
+      "CHECK_IN": "Check-ins"
     },
     "pinned": "Pinned",
     "history": "History",
@@ -274,6 +278,12 @@
       "RECOMMENDATIONS": "Recommendations changed.",
       "SPECIFICS": "Specifics changed.",
       "COPY": "Plan copied from {source}."
+    },
+    "checkIn": {
+      "reviewed": "Feedback: {response}",
+      "toReview": "Sent check-in waiting for your feedback.",
+      "open": "Open",
+      "openFrom": "Open the check-in for the week of {date}"
     }
   },
   "Targets": {
@@ -897,7 +907,8 @@
   "CoachHome": {
     "title": "Overview",
     "tiles": "Summary",
-    "activeClients": "Active clients"
+    "activeClients": "Active clients",
+    "checkInsWaiting": "Check-ins to review"
   },
   "ClientHome": {
     "title": "Today",
@@ -1055,5 +1066,39 @@
       "summary": "Summary",
       "tracking": "Preferred tracking"
     }
+  },
+  "CheckInReview": {
+    "title": "Check-ins",
+    "waiting": "{count, plural, =0 {Nothing to review} one {# to review} other {# to review}} · oldest first",
+    "queue": "To review",
+    "empty": "All reviewed. New check-ins show up here as clients send them.",
+    "week": "Week of {date}",
+    "sent": "sent {date}",
+    "hasQuestions": "Has questions",
+    "reviewed": "Reviewed",
+    "answers": "Answers",
+    "trend": "{count, plural, one {Trend over # check-in} other {Trend over # check-ins}}",
+    "trendLabel": "{scale}, trend: {values}",
+    "feedback": "Feedback",
+    "fields": {
+      "response": "Response to the client",
+      "changes": "Changes made",
+      "newGoals": "New goals",
+      "nextSteps": "Next steps"
+    },
+    "optional": "Optional",
+    "invalidResponse": "Write a response to the client (at most 5,000 characters).",
+    "publish": "Publish feedback",
+    "context": "The week in numbers",
+    "mode": "Tracking",
+    "adherence": "Adherence (7 days)",
+    "editPlan": "Edit the nutrition plan",
+    "notes": "Notes",
+    "noNotes": "No notes yet. The client never sees them.",
+    "allNotes": "All notes",
+    "none": "The client hasn't sent a check-in yet.",
+    "history": "The client's check-ins",
+    "weekOf": "Week of",
+    "status": "Status"
   }
 }

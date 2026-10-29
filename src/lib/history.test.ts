@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import type { CoachNote, HistoryEvent } from "@/generated/prisma/client";
-import { historyFeed } from "./history";
+import { type FeedCheckIn, historyFeed } from "./history";
 
 const at = (iso: string) => new Date(iso);
 const note = (id: string, date: string, type: string, pinned = false, createdAt = at(`${date}T09:00:00Z`)) =>
@@ -9,18 +9,20 @@ const event = (id: string, date: string, createdAt: Date) => ({ id, clientId: "c
 
 const notes = [note("old", "2026-10-01", "NOTE"), note("pin", "2026-10-03", "DECISION", true), note("late", "2026-10-05", "NOTE", false, at("2026-10-05T18:00:00Z")), note("decided", "2026-10-02", "DECISION")];
 const events = [event("switch", "2026-10-05", at("2026-10-05T10:00:00Z"))];
-const ids = (items: { note?: CoachNote; event?: HistoryEvent }[]) => items.map((i) => (i.note ?? i.event)!.id);
+const checkIns = [{ id: "week", dueDate: "2026-10-04", createdAt: at("2026-10-04T08:00:00Z"), reviewedAt: null, response: null }] satisfies FeedCheckIn[];
+const ids = (items: { note?: CoachNote; event?: HistoryEvent; checkIn?: FeedCheckIn }[]) => items.map((i) => (i.note ?? i.event ?? i.checkIn)!.id);
 
-test("one feed of notes and history, newest day first and the later entry first within a day; pinned notes only on top", () => {
-  const { pinned, feed } = historyFeed(notes, events);
+test("one feed of notes, history and check-ins, newest day first and the later entry first within a day; pinned notes only on top", () => {
+  const { pinned, feed } = historyFeed(notes, events, checkIns);
   expect(pinned.map((n) => n.id)).toEqual(["pin"]);
-  expect(ids(feed)).toEqual(["late", "switch", "decided", "old"]);
+  expect(ids(feed)).toEqual(["late", "switch", "week", "decided", "old"]);
 });
 
 test("the type filter applies to the pinned block and the feed", () => {
-  expect(historyFeed(notes, events, "DECISION")).toMatchObject({ pinned: [{ id: "pin" }], feed: [{ note: { id: "decided" } }] });
-  const modes = historyFeed(notes, events, "TRACKING_MODE");
+  expect(historyFeed(notes, events, checkIns, "DECISION")).toMatchObject({ pinned: [{ id: "pin" }], feed: [{ note: { id: "decided" } }] });
+  const modes = historyFeed(notes, events, checkIns, "TRACKING_MODE");
   expect(modes.pinned).toEqual([]);
   expect(ids(modes.feed)).toEqual(["switch"]);
-  expect(historyFeed([], [])).toEqual({ pinned: [], feed: [] });
+  expect(ids(historyFeed(notes, events, checkIns, "CHECK_IN").feed)).toEqual(["week"]);
+  expect(historyFeed([], [], [])).toEqual({ pinned: [], feed: [] });
 });

@@ -441,6 +441,11 @@ model CheckIn {
   dueDate    String // YYYY-MM-DD, the check-in weekday that opened the period
   answers    Json
   questions  String?
+  // The coach's feedback, published together with reviewedAt.
+  response   String?
+  changes    String?
+  newGoals   String?
+  nextSteps  String?
   reviewedAt DateTime?
   createdAt  DateTime  @default(now())
   updatedAt  DateTime  @updatedAt

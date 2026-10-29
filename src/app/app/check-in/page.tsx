@@ -1,11 +1,9 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import { requireClient } from "@/lib/auth";
 import { addDays, weekday } from "@/lib/dates";
-import { CHECK_IN_SCALES, type CheckInScale } from "@/lib/enums";
+import { CHECK_IN_SCALES } from "@/lib/enums";
 import { CheckInForm } from "./check-in-form";
-import { currentCheckIn } from "@/lib/check-ins";
-
-type Answers = Record<CheckInScale, { score: number; comment: string | null }>;
+import { type CheckInAnswers, currentCheckIn } from "@/lib/check-ins";
 
 // The weekly check-in (More → Check-in): the form while the period is open, else what was sent and when the next one is.
 export default async function ClientCheckIn() {
@@ -32,7 +30,7 @@ export default async function ClientCheckIn() {
           </h2>
           <dl className="mt-3 text-sm">
             {CHECK_IN_SCALES.map((scale) => {
-              const answer = (period.checkIn!.answers as Answers)[scale];
+              const answer = (period.checkIn!.answers as CheckInAnswers)[scale];
               return (
                 <div key={scale} className="flex justify-between gap-4 border-t border-rule py-2">
                   <dt className="text-muted-foreground">{t(`scales.${scale}.title`)}</dt>

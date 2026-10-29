@@ -1,6 +1,6 @@
 import type { clientFeatures } from "./features";
 
-export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "recipes" | "hydration" | "checkIn" | "profile" | "settings"; href: string };
+export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "recipes" | "hydration" | "checkIn" | "checkIns" | "profile" | "settings"; href: string };
 // Phone: the tabs in the bottom bar (at most 4, plus "More") and the rest in the "More" sheet. Desktop: all of them in the sidebar.
 export type Nav = { tabs: NavItem[]; more: NavItem[] };
 
@@ -9,6 +9,7 @@ export const coachNav: Nav = {
   tabs: [
     { key: "overview", href: "/coach" },
     { key: "clients", href: "/coach/clients" },
+    { key: "checkIns", href: "/coach/check-ins" },
   ],
   more: [
     { key: "library", href: "/coach/library" },

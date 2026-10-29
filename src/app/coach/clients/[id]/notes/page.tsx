@@ -8,7 +8,7 @@ import { requireCoachOf } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import type { HistoryPayloads, HistoryType } from "@/lib/enums";
-import { FEED_TYPES, historyFeed } from "@/lib/history";
+import { FEED_TYPES, type FeedCheckIn, historyFeed } from "@/lib/history";
 import { NoteDialog } from "./note-dialog";
 
 const filter = z.object({ type: z.enum(FEED_TYPES).optional().catch(undefined) });
@@ -17,14 +17,15 @@ const filter = z.object({ type: z.enum(FEED_TYPES).optional().catch(undefined) }
 export default async function ClientNotes({ params, searchParams }: PageProps<"/coach/clients/[id]/notes">) {
   const { client } = await requireCoachOf((await params).id);
   const { type } = filter.parse(await searchParams);
-  const [t, format, user, notes, events] = await Promise.all([
+  const [t, format, user, notes, events, checkIns] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { timezone: true } }),
     db.coachNote.findMany({ where: { clientId: client.id } }),
     db.historyEvent.findMany({ where: { clientId: client.id } }),
+    db.checkIn.findMany({ where: { clientId: client.id }, select: { id: true, dueDate: true, createdAt: true, reviewedAt: true, response: true } }),
   ]);
-  const { pinned, feed } = historyFeed(notes, events, type);
+  const { pinned, feed } = historyFeed(notes, events, checkIns, type);
   const today = todayIn(user.timezone);
   // A calendar day: formatted at UTC midnight so no timezone can move it.
   const day = (date: string) => format.dateTime(new Date(date), { dateStyle: "medium", timeZone: "UTC" });
@@ -66,6 +67,16 @@ export default async function ClientNotes({ params, searchParams }: PageProps<"/
     return t("Notes.trackingMode", { from: t(`TrackingModes.${from}`), to: t(`TrackingModes.${to}`) });
   };
   const eventRow = (event: HistoryEvent) => row(event.id, event.date, <Pill>{t(`Notes.types.${event.type as HistoryType}`)}</Pill>, eventText(event));
+  const checkInRow = (checkIn: FeedCheckIn) =>
+    row(
+      checkIn.id,
+      checkIn.dueDate,
+      <Pill tone={checkIn.reviewedAt ? "neutral" : "accent"}>{t("Notes.types.CHECK_IN")}</Pill>,
+      checkIn.response ? t("Notes.checkIn.reviewed", { response: checkIn.response }) : t("Notes.checkIn.toReview"),
+      <Link href={`/coach/check-ins/${checkIn.id}`} aria-label={t("Notes.checkIn.openFrom", { date: day(checkIn.dueDate) })} className="inline-flex h-10 items-center px-2.5 text-sm font-medium hover:underline sm:h-8">
+        {t("Notes.checkIn.open")}
+      </Link>,
+    );
 
   return (
     <div className="flex max-w-3xl flex-col gap-8">
@@ -99,7 +110,7 @@ export default async function ClientNotes({ params, searchParams }: PageProps<"/
         {feed.length === 0 ? (
           <p className="mt-3 rounded-lg border border-dashed px-4 py-3 text-sm text-muted-foreground">{t(type ? "Notes.emptyFiltered" : "Notes.empty")}</p>
         ) : (
-          <ul className="mt-1">{feed.map((item) => ("note" in item ? noteRow(item.note) : eventRow(item.event)))}</ul>
+          <ul className="mt-1">{feed.map((item) => ("note" in item ? noteRow(item.note) : "event" in item ? eventRow(item.event) : checkInRow(item.checkIn)))}</ul>
         )}
       </section>
     </div>

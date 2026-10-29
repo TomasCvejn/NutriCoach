@@ -42,6 +42,7 @@ export const FOOD_SOURCES = ["OFF", "COACH", "CLIENT"] as const;
 // The weekly check-in's 1–10 scales (check-ins.md), in the form's order.
 export const CHECK_IN_SCALES = ["energy", "hunger", "recovery", "digestion", "training", "adherence", "mood"] as const;
 export const CHECK_IN_STATUSES = ["ok", "due", "overdue", "toReview"] as const;
+export const FEEDBACK_FIELDS = ["response", "changes", "newGoals", "nextSteps"] as const;
 export const DRINK_TYPES = ["WATER", "ELECTROLYTE", "SPORTS", "COFFEE_TEA", "OTHER"] as const;
 // Recipes (recipes.md): fixed categories, diet flags, statuses.
 export const RECIPE_CATEGORIES = ["BREAKFAST", "LUNCH", "DINNER", "SNACK", "PRE_TRAINING", "POST_TRAINING", "COMPETITION", "DESSERT"] as const;

@@ -46,7 +46,8 @@
     "library": "Knihovna",
     "recipes": "Recepty",
     "hydration": "Hydratace",
-    "checkIn": "Check-in"
+    "checkIn": "Check-in",
+    "checkIns": "Check-iny"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -188,8 +189,9 @@
     "tabs": {
       "label": "Sekce klienta",
       "overview": "Přehled",
-      "notes": "Poznámky",
-      "nutrition": "Výživa"
+      "nutrition": "Výživa",
+      "checkIns": "Check-iny",
+      "notes": "Poznámky"
     },
     "changeMode": {
       "open": "Změnit sledování",
@@ -245,7 +247,8 @@
       "DECISION": "Rozhodnutí",
       "TRACKING_MODE": "Změna sledování",
       "TARGETS": "Změna cílů",
-      "PLAN": "Změna plánu"
+      "PLAN": "Změna plánu",
+      "CHECK_IN": "Check-in"
     },
     "invalid": {
       "date": "Zadejte platné datum.",
@@ -261,7 +264,8 @@
       "DECISION": "Rozhodnutí",
       "TRACKING_MODE": "Změny sledování",
       "TARGETS": "Změny cílů",
-      "PLAN": "Změny plánu"
+      "PLAN": "Změny plánu",
+      "CHECK_IN": "Check-iny"
     },
     "pinned": "Připnuté",
     "history": "Historie",
@@ -274,6 +278,12 @@
       "RECOMMENDATIONS": "Upravena doporučení.",
       "SPECIFICS": "Upravena specifika klienta.",
       "COPY": "Plán zkopírován od klienta {source}."
+    },
+    "checkIn": {
+      "reviewed": "Zpětná vazba: {response}",
+      "toReview": "Odeslaný check-in čeká na vaši zpětnou vazbu.",
+      "open": "Otevřít",
+      "openFrom": "Otevřít check-in za týden od {date}"
     }
   },
   "Targets": {
@@ -897,7 +907,8 @@
   "CoachHome": {
     "title": "Přehled",
     "tiles": "Souhrn",
-    "activeClients": "Aktivní klienti"
+    "activeClients": "Aktivní klienti",
+    "checkInsWaiting": "Check-iny ke kontrole"
   },
   "ClientHome": {
     "title": "Dnes",
@@ -1055,5 +1066,39 @@
       "summary": "Shrnutí",
       "tracking": "Preferované sledování"
     }
+  },
+  "CheckInReview": {
+    "title": "Check-iny",
+    "waiting": "{count, plural, =0 {Nic nečeká na kontrolu} one {# čeká na kontrolu} few {# čekají na kontrolu} other {# čeká na kontrolu}} · nejstarší první",
+    "queue": "Ke kontrole",
+    "empty": "Vše zkontrolováno. Nové check-iny se tu objeví, jakmile je klienti odešlou.",
+    "week": "Týden od {date}",
+    "sent": "odesláno {date}",
+    "hasQuestions": "Má otázky",
+    "reviewed": "Zkontrolováno",
+    "answers": "Odpovědi",
+    "trend": "{count, plural, one {Trend z # check-inu} few {Trend z # check-inů} other {Trend z # check-inů}}",
+    "trendLabel": "{scale}, vývoj: {values}",
+    "feedback": "Zpětná vazba",
+    "fields": {
+      "response": "Odpověď klientovi",
+      "changes": "Co jsme změnili",
+      "newGoals": "Nové cíle",
+      "nextSteps": "Další kroky"
+    },
+    "optional": "Nepovinné",
+    "invalidResponse": "Napište odpověď klientovi (nejvýš 5 000 znaků).",
+    "publish": "Zveřejnit zpětnou vazbu",
+    "context": "Týden v číslech",
+    "mode": "Sledování",
+    "adherence": "Dodržování (7 dní)",
+    "editPlan": "Upravit plán výživy",
+    "notes": "Poznámky",
+    "noNotes": "Zatím žádné poznámky. Klient je nikdy neuvidí.",
+    "allNotes": "Všechny poznámky",
+    "none": "Klient zatím neodeslal žádný check-in.",
+    "history": "Check-iny klienta",
+    "weekOf": "Týden od",
+    "status": "Stav"
   }
 }

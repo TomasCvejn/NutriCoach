@@ -15,6 +15,7 @@ import { changeTrackingMode } from "./actions";
 const TABS = [
   { key: "overview", segment: null },
   { key: "nutrition", segment: "nutrition" },
+  { key: "checkIns", segment: "check-ins" },
   { key: "notes", segment: "notes" },
 ] as const;
 

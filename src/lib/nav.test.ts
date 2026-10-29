@@ -14,6 +14,11 @@ test("clientNav: plan, recipes, hydration, check-in, profile and settings under 
   expect(keys(clientNav({ training: false, competition: false }).more)).toEqual(["plan", "recipes", "hydration", "checkIn", "profile", "settings"]);
 });
 
+test("coachNav: Overview, Clients and Check-ins as tabs; Library and Settings under More", () => {
+  expect(keys(coachNav.tabs)).toEqual(["overview", "clients", "checkIns"]);
+  expect(keys(coachNav.more)).toEqual(["library", "settings"]);
+});
+
 test("the bottom bar holds at most 4 tabs besides More", () => {
   expect(clientNav({ training: true, competition: true }).tabs.length).toBeLessThanOrEqual(4);
   expect(coachNav.tabs.length).toBeLessThanOrEqual(4);

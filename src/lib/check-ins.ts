@@ -1,7 +1,9 @@
 import { addDays, diffDays, todayIn, weekday } from "./dates";
 import { db } from "./db";
-import type { CheckInStatus } from "./enums";
+import type { CheckInScale, CheckInStatus } from "./enums";
 import { notify } from "./notifications";
+
+export type CheckInAnswers = Record<CheckInScale, { score: number; comment: string | null }>;
 
 // The current check-in period (IMPLEMENTATION_PLAN.md Notes): its due date is the latest check-in weekday on or before
 // today in the client's timezone, never before the day onboarding was finished (null = no period yet).

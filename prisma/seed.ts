@@ -58,6 +58,7 @@ async function seed() {
       profile: {
         trackingMode: "CALORIES",
         preferredTrackingMode: "CALORIES",
+        onboardingCompletedAt: daysAgo(56), // eight weeks of check-ins
         sex: "FEMALE",
         birthDate: "1994-09-03",
         heightCm: 168,
@@ -108,13 +109,13 @@ async function seed() {
     },
     { email: "inactive@demo.cz", name: "Lucie Králová", locale: "cs", active: false, profile: {} },
   ];
-  // Everyone has finished onboarding, two weeks ago (race@ a day later).
+  // Everyone has finished onboarding, two weeks ago (race@ a day later, sports@ eight weeks ago).
   const onboarded = { onboardingStep: ONBOARDING_STEPS.length - 1, onboardingCompletedAt: daysAgo(14) };
   for (const { profile, ...user } of clients) {
     await createUser({ ...user, role: "CLIENT", client: { create: { ...onboarded, ...profile, coachId: coach.id } } });
   }
   // The coach hasn't read race@'s onboarding notification yet (the bell shows 1).
-  for (const [email, days, read] of [["general@demo.cz", 14, true], ["sports@demo.cz", 14, true], ["race@demo.cz", 13, false]] as const) {
+  for (const [email, days, read] of [["general@demo.cz", 14, true], ["sports@demo.cz", 56, true], ["race@demo.cz", 13, false]] as const) {
     const client = await db.client.findFirstOrThrow({ where: { user: { email } }, include: { user: true } });
     const payload = { client: client.user.name, clientId: client.id } satisfies NotificationPayloads["ONBOARDING_COMPLETED"];
     await db.notification.create({
@@ -423,20 +424,25 @@ async function seed() {
   // notification already read), general@ and race@ still owe theirs, so their home shows the reminder.
   const answers = (scores: number[], comments: Record<string, string> = {}) =>
     Object.fromEntries(CHECK_IN_SCALES.map((scale, i) => [scale, { score: scores[i], comment: comments[scale] ?? null }]));
-  const sets: [clientId: string, onboardedDaysAgo: number, scores: number[], comments: Record<string, string>, questions: string | null][] = [
-    [general, 14, [6, 5, 7, 8, 6, 7, 7], { hunger: "Večer hlad na sladké." }, "Můžu si dát večer ovoce místo sušenky?"],
-    [sports, 14, [7, 6, 6, 8, 8, 8, 8], { recovery: "Long ride on Saturday, legs heavy on Sunday." }, "Should I add carbs before the Wednesday intervals?"],
-    [race, 13, [8, 7, 7, 6, 9, 8, 8], { digestion: "Na dlouhém běhu trochu nafouknutá." }, null],
+  const DRIFT = [[1, 0, 2, 1, 0, 1, 1], [0, 1, 1, 2, 1, 0, 1], [2, 1, 0, 1, 2, 1, 0], [1, 2, 1, 0, 1, 2, 2], [0, 1, 2, 1, 0, 1, 1], [1, 0, 1, 2, 1, 0, 2], [2, 1, 1, 1, 2, 1, 1]]; // per week back, per scale
+  // Each with the feedback on the reviewed ones (the last one in full, the earlier ones a line), in the client's language.
+  const sets: [clientId: string, onboardedDaysAgo: number, scores: number[], comments: Record<string, string>, questions: string | null, feedback: [string, string, string]][] = [
+    [general, 14, [6, 5, 7, 8, 6, 7, 7], { hunger: "Večer hlad na sladké." }, "Můžu si dát večer ovoce místo sušenky?", ["Pěkný týden, talíř se daří skládat. Hlad večer hlídejte bílkovinou u večeře.", "K večeři přidejte tvaroh nebo vejce.", "Stabilní týden, pokračujeme beze změn."]],
+    [sports, 56, [7, 6, 6, 8, 8, 8, 8], { recovery: "Long ride on Saturday, legs heavy on Sunday." }, "Should I add carbs before the Wednesday intervals?", ["Solid week. Recovery dips after the long ride, so the carbs after it matter most.", "Recovery meal within an hour of the long ride.", "Steady week, no changes."]],
+    [race, 13, [8, 7, 7, 6, 9, 8, 8], { digestion: "Na dlouhém běhu trochu nafouknutá." }, null, ["Trénink jede, trávení na dlouhém běhu vyřešíme testováním gelů.", "Na příštím dlouhém běhu zkuste půlku gelu po 40 minutách.", "Stabilní týden, pokračujeme beze změn."]],
   ];
-  for (const [clientId, onboardedDaysAgo, scores, comments, questions] of sets) {
+  for (const [clientId, onboardedDaysAgo, scores, comments, questions, [response, nextSteps, steady]] of sets) {
     const current = currentDueDate(today, 1, addDays(today, -onboardedDaysAgo))!;
-    for (const back of [14, 7]) {
-      const dueDate = addDays(current, -back);
+    for (let week = 7; week >= 1; week--) {
+      const dueDate = addDays(current, -7 * week);
       if (dueDate < addDays(today, -onboardedDaysAgo)) continue;
-      await db.checkIn.create({ data: { clientId, dueDate, answers: answers(scores.map((v) => Math.max(1, v - back / 7))), reviewedAt: daysAgo(back - 2) } });
+      // Scores wander below this week's, differently per scale and a step lower in the first weeks, so each trend has a shape.
+      const past = answers(scores.map((v, i) => Math.max(1, v - DRIFT[week - 1][i] - (week >= 5 ? 1 : 0))));
+      const feedback = week === 1 ? { response, nextSteps } : { response: steady };
+      await db.checkIn.create({ data: { clientId, dueDate, answers: past, ...feedback, createdAt: new Date(`${dueDate}T08:30:00Z`), reviewedAt: daysAgo(7 * week - 2) } });
     }
     if (clientId === sports) {
-      const sent = await db.checkIn.create({ data: { clientId, dueDate: current, answers: answers(scores, comments), questions } });
+      const sent = await db.checkIn.create({ data: { clientId, dueDate: current, answers: answers(scores, comments), questions, createdAt: new Date(Math.min(Date.parse(`${current}T08:30:00Z`), Date.now() - 3_600_000)) } }); // never after now, on the due day itself
       await db.notification.create({ data: { userId: coach.id, type: "CHECK_IN_SUBMITTED", payload: { client: "Emma Walker", checkInId: sent.id } satisfies NotificationPayloads["CHECK_IN_SUBMITTED"], readAt: new Date() } });
     }
   }
