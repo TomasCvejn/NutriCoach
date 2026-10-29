@@ -191,6 +191,7 @@
       "label": "Client sections",
       "overview": "Overview",
       "nutrition": "Nutrition",
+      "training": "Training",
       "progress": "Progress",
       "checkIns": "Check-ins",
       "notes": "Notes"
@@ -949,7 +950,10 @@
     "checkInOpen": "Fill in the check-in",
     "feedback": "New feedback from your coach",
     "feedbackText": "On your check-in for the week of {date}.",
-    "feedbackOpen": "Read it"
+    "feedbackOpen": "Read it",
+    "training": "Today's training",
+    "trainingOpen": "Whole week",
+    "trainingNone": "No training today."
   },
   "Notifications": {
     "title": "Notifications",
@@ -1201,6 +1205,70 @@
     "charts": {
       "weightKg": "Weight",
       "bodyFatPct": "Body fat"
+    }
+  },
+  "Training": {
+    "title": "Training",
+    "add": "Add session",
+    "addTitle": "New session",
+    "editTitle": "Edit session",
+    "week": "Sessions this week",
+    "weekNav": "Week",
+    "previous": "Previous week",
+    "next": "Next week",
+    "thisWeek": "This week",
+    "rest": "Rest",
+    "upcoming": "Upcoming",
+    "noUpcoming": "No sessions planned.",
+    "minutes": "{count} min",
+    "rpe": "RPE {rpe}",
+    "felt": "felt {felt}/10",
+    "after": "After the session (optional)",
+    "repeatHint": "Creates the same session every week up to this date; each one can then be edited on its own.",
+    "hints": {
+      "rpe": "How hard it was, 1–10.",
+      "felt": "How you felt, 1–10."
+    },
+    "fields": {
+      "date": "Date",
+      "startTime": "Start",
+      "type": "Type",
+      "sport": "Sport (details)",
+      "durationMin": "Duration (min)",
+      "intensity": "Intensity",
+      "description": "Description",
+      "repeatUntil": "Repeat weekly until",
+      "rpe": "RPE",
+      "felt": "Felt",
+      "note": "Note"
+    },
+    "invalid": {
+      "date": "Enter a valid date.",
+      "startTime": "Enter a time like 06:30.",
+      "type": "Choose a type.",
+      "sport": "At most 100 characters.",
+      "durationMin": "Enter 1–720 minutes.",
+      "intensity": "Choose an intensity.",
+      "description": "At most 1,000 characters.",
+      "repeatUntil": "The date must be after the session, within a year.",
+      "rpe": "Enter 1–10.",
+      "felt": "Enter 1–10.",
+      "note": "At most 1,000 characters."
+    },
+    "types": {
+      "RUN": "Run",
+      "BIKE": "Bike",
+      "SWIM": "Swim",
+      "STRENGTH": "Strength",
+      "TEAM_PRACTICE": "Team practice",
+      "MATCH": "Match",
+      "OTHER": "Other"
+    },
+    "intensities": {
+      "LOW": "Low",
+      "MODERATE": "Moderate",
+      "HIGH": "High",
+      "VERY_HIGH": "Very high"
     }
   }
 }

@@ -9,7 +9,7 @@ export const FALLBACK_SLOTS = ["BREAKFAST", "LUNCH", "DINNER", "SNACKS"] as cons
 // Everything one day of a client's nutrition shows, for the day screen and the home widget. The caller has authorized
 // the viewer for this client. `fallbackSlots` are the default meal names in the viewer's language.
 export async function loadDay(clientId: string, date: string, fallbackSlots: string[]) {
-  const [client, day, targets, planMeals, entries, portionLogs, guidanceLogs] = await Promise.all([
+  const [client, day, targets, planMeals, entries, portionLogs, guidanceLogs, session] = await Promise.all([
     db.client.findUniqueOrThrow({ where: { id: clientId }, select: { trackingMode: true, coachId: true, user: { select: { timezone: true } } } }),
     db.nutritionDay.findUnique({ where: { clientId_date: { clientId, date } } }),
     db.nutritionTarget.findMany({ where: { clientId } }),
@@ -17,10 +17,12 @@ export async function loadDay(clientId: string, date: string, fallbackSlots: str
     db.foodEntry.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
     db.portionLog.findMany({ where: { clientId, date }, orderBy: { createdAt: "asc" } }),
     db.guidanceLog.findMany({ where: { clientId, date } }),
+    db.trainingSession.findFirst({ where: { clientId, date }, select: { id: true } }),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const override = (day?.dayTypeOverride ?? null) as DayType | null;
-  const type = dayType({ override });
+  const derived = dayType({ session: Boolean(session) });
+  const type = override ?? derived;
   // Each mode shows its own log; another mode's logs stay stored and show again when the mode comes back.
   const logged = mode === "CALORIES" ? entries : [];
   const portions = mode === "PORTIONS" ? portionLogs : [];
@@ -38,8 +40,8 @@ export async function loadDay(clientId: string, date: string, fallbackSlots: str
     today: todayIn(client.user.timezone),
     note: day?.note ?? null,
     override,
-    // ponytail: no sessions or competitions exist yet; their items pass them to dayType here.
-    derived: dayType({}),
+    // ponytail: no competitions exist yet; their item passes them to dayType here.
+    derived,
     type,
     target: targetFor(targets, date, type),
     dayMeals,

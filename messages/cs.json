@@ -191,6 +191,7 @@
       "label": "Sekce klienta",
       "overview": "Přehled",
       "nutrition": "Výživa",
+      "training": "Trénink",
       "progress": "Pokrok",
       "checkIns": "Check-iny",
       "notes": "Poznámky"
@@ -949,7 +950,10 @@
     "checkInOpen": "Vyplnit check-in",
     "feedback": "Nová zpětná vazba od trenéra",
     "feedbackText": "K vašemu check-inu za týden od {date}.",
-    "feedbackOpen": "Přečíst"
+    "feedbackOpen": "Přečíst",
+    "training": "Dnešní trénink",
+    "trainingOpen": "Celý týden",
+    "trainingNone": "Dnes žádný trénink."
   },
   "Notifications": {
     "title": "Oznámení",
@@ -1201,6 +1205,70 @@
     "charts": {
       "weightKg": "Hmotnost",
       "bodyFatPct": "Tělesný tuk"
+    }
+  },
+  "Training": {
+    "title": "Trénink",
+    "add": "Přidat trénink",
+    "addTitle": "Nový trénink",
+    "editTitle": "Upravit trénink",
+    "week": "Tréninky v týdnu",
+    "weekNav": "Týden",
+    "previous": "Předchozí týden",
+    "next": "Další týden",
+    "thisWeek": "Tento týden",
+    "rest": "Volno",
+    "upcoming": "Nadcházející",
+    "noUpcoming": "Žádný naplánovaný trénink.",
+    "minutes": "{count} min",
+    "rpe": "RPE {rpe}",
+    "felt": "pocit {felt}/10",
+    "after": "Po tréninku (nepovinné)",
+    "repeatHint": "Vytvoří stejný trénink každý týden až do tohoto data; každý pak upravíte zvlášť.",
+    "hints": {
+      "rpe": "Jak náročné to bylo, 1–10.",
+      "felt": "Jak jste se cítili, 1–10."
+    },
+    "fields": {
+      "date": "Datum",
+      "startTime": "Začátek",
+      "type": "Typ",
+      "sport": "Sport (upřesnění)",
+      "durationMin": "Délka (min)",
+      "intensity": "Intenzita",
+      "description": "Popis",
+      "repeatUntil": "Opakovat každý týden do",
+      "rpe": "RPE",
+      "felt": "Pocit",
+      "note": "Poznámka"
+    },
+    "invalid": {
+      "date": "Zadejte platné datum.",
+      "startTime": "Zadejte čas ve tvaru 06:30.",
+      "type": "Vyberte typ.",
+      "sport": "Nejvýš 100 znaků.",
+      "durationMin": "Zadejte délku 1–720 minut.",
+      "intensity": "Vyberte intenzitu.",
+      "description": "Nejvýš 1 000 znaků.",
+      "repeatUntil": "Datum musí být po dni tréninku, nejvýš za rok.",
+      "rpe": "Zadejte 1–10.",
+      "felt": "Zadejte 1–10.",
+      "note": "Nejvýš 1 000 znaků."
+    },
+    "types": {
+      "RUN": "Běh",
+      "BIKE": "Kolo",
+      "SWIM": "Plavání",
+      "STRENGTH": "Posilování",
+      "TEAM_PRACTICE": "Týmový trénink",
+      "MATCH": "Zápas",
+      "OTHER": "Jiné"
+    },
+    "intensities": {
+      "LOW": "Nízká",
+      "MODERATE": "Střední",
+      "HIGH": "Vysoká",
+      "VERY_HIGH": "Velmi vysoká"
     }
   }
 }

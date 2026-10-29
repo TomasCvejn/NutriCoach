@@ -116,7 +116,7 @@ model Client {
   dislikedFoods    String?
   mealsPerDay      Int?
   dietType         String? // DIET_TYPES
-  allergens        Json           @default("[]") // ALLERGENS[]
+  allergens        Json              @default("[]") // ALLERGENS[]
   allergiesNote    String?
   restrictions     String?
   sports           String? // set → the Training section is on (clientFeatures)
@@ -135,6 +135,7 @@ model Client {
   drinkPresets     DrinkPreset[]
   checkIns         CheckIn[]
   bodyComps        BodyComp[]
+  trainingSessions TrainingSession[]
 
   @@index([coachId])
 }
@@ -473,6 +474,28 @@ model BodyComp {
   note       String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@index([clientId, date])
+}
+
+// A training session (training.md), created by the client or their coach; "repeat weekly" writes independent rows.
+model TrainingSession {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date        String // YYYY-MM-DD
+  startTime   String? // HH:MM
+  type        String
+  sport       String?
+  durationMin Int
+  intensity   String
+  description String?
+  // After the session (Performance in progress.md).
+  rpe         Int?
+  felt        Int?
+  note        String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   @@index([clientId, date])
 }

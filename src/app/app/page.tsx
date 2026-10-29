@@ -3,7 +3,8 @@ import Link from "next/link";
 import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
-import type { Followed } from "@/lib/enums";
+import type { Followed, Intensity, SessionType } from "@/lib/enums";
+import { clientFeatures } from "@/lib/features";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
 import { buttonVariants } from "@/components/ui/button";
 import { currentCheckIn } from "@/lib/check-ins";
@@ -16,10 +17,13 @@ export default async function ClientHome() {
   const { user, client } = await requireClient();
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const today = todayIn(user.timezone);
-  const [period, feedback] = await Promise.all([
+  const [period, feedback, sessions, trains] = await Promise.all([
     currentCheckIn(client, user.timezone),
     db.checkIn.findFirst({ where: { clientId: client.id, reviewedAt: { not: null }, feedbackSeenAt: null }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
+    db.trainingSession.findMany({ where: { clientId: client.id, date: today }, orderBy: [{ startTime: "asc" }, { createdAt: "asc" }] }),
+    db.trainingSession.findFirst({ where: { clientId: client.id }, select: { id: true } }),
   ]);
+  const training = clientFeatures({ hasSport: Boolean(client.sports), hasSession: Boolean(trains), lastCompetitionDate: null }, today).training;
   const day = await loadDay(
     client.id,
     today,
@@ -64,7 +68,38 @@ export default async function ClientHome() {
         )}
       </section>
 
-      {/* Widget 4: today's fluid with the quick adds (widget 3, training, lands with its feature). */}
+      {/* Widget 3: today's training, for a client who trains. */}
+      {training && (
+        <section aria-labelledby="home-training" className="rounded-lg border bg-card p-5">
+          <div className="flex items-baseline justify-between gap-4">
+            <h2 id="home-training" className="text-base font-semibold">
+              {t("ClientHome.training")}
+            </h2>
+            <Link href="/app/training" className="text-sm font-medium text-primary-ink hover:underline">
+              {t("ClientHome.trainingOpen")}
+            </Link>
+          </div>
+          {sessions.length === 0 ? (
+            <p className="mt-2 text-sm text-muted-foreground">{t("ClientHome.trainingNone")}</p>
+          ) : (
+            <ul className="mt-2">
+              {sessions.map((session) => (
+                <li key={session.id} className="flex justify-between gap-3 border-t border-rule py-2 text-sm first:border-0">
+                  <span className="font-medium">
+                    {t(`Training.types.${session.type as SessionType}`)}
+                    {session.sport && ` · ${session.sport}`}
+                  </span>
+                  <span className="text-muted-foreground tabular-nums">
+                    {[session.startTime, t("Training.minutes", { count: session.durationMin }), t(`Training.intensities.${session.intensity as Intensity}`)].filter(Boolean).join(" · ")}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      )}
+
+      {/* Widget 4: today's fluid with the quick adds. */}
       <HydrationCard clientId={client.id} date={today} target={day.target?.fluidMl ?? null} variant="home" />
 
       {/* Widget 6: the check-in reminder while the period is open, and the coach's feedback until it is opened. */}

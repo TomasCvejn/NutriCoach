@@ -293,12 +293,57 @@ async function seed() {
       ],
     },
   ];
+  // Training sessions (sports@ and race@ train; general@ doesn't): the past ones with how they went, none today (so today
+  // stays a rest day), the coming week planned. A session makes its day a training day, so those days' logs carry a
+  // recovery drink on top and meet the training-day targets.
+  type Session = [daysFromToday: number, type: string, durationMin: number, intensity: string, startTime: string, description?: string, rpe?: number, felt?: number];
+  const training: [clientId: string, sessions: Session[], shake: Item][] = [
+    [
+      sports,
+      [
+        [-12, "BIKE", 90, "MODERATE", "17:30", undefined, 5, 7],
+        [-7, "BIKE", 150, "HIGH", "08:00", "Long ride, last hour at race pace", 8, 6],
+        [-4, "RUN", 60, "MODERATE", "06:30", undefined, 6, 8],
+        [-2, "SWIM", 45, "MODERATE", "07:00", "Drills + 10×100 m", 5, 8],
+        [1, "BIKE", 120, "HIGH", "17:00", "3×10 min tempo"],
+        [3, "RUN", 50, "MODERATE", "06:30"],
+        [5, "SWIM", 45, "LOW", "07:00"],
+      ],
+      ["Snack", ["Recovery shake", 500, 30, 75, 8]],
+    ],
+    [
+      race,
+      [
+        [-12, "RUN", 45, "LOW", "06:00", undefined, 3, 8],
+        [-10, "RUN", 75, "HIGH", "17:30", "Intervaly 6×1 km", 8, 7],
+        [-8, "RUN", 130, "MODERATE", "08:00", "Dlouhý běh", 7, 6],
+        [-5, "STRENGTH", 40, "MODERATE", "18:00", undefined, 5, 8],
+        [-3, "RUN", 60, "HIGH", "17:30", "Tempo 3×3 km", 8, 8],
+        [-1, "RUN", 45, "LOW", "06:00", "Klusání", 3, 9],
+        [1, "RUN", 60, "HIGH", "17:30", "Intervaly 6×800 m"],
+        [3, "RUN", 45, "LOW", "06:00"],
+        [4, "STRENGTH", 40, "MODERATE", "18:00"],
+        [6, "RUN", 120, "MODERATE", "08:00", "Dlouhý běh v závodním tempu"],
+      ],
+      ["Svačina", ["Regenerační nápoj", 500, 30, 75, 8]],
+    ],
+  ];
+  await db.trainingSession.createMany({
+    data: training.flatMap(([clientId, sessions]) =>
+      sessions.map(([days, type, durationMin, intensity, startTime, description, rpe, felt]) => ({ clientId, date: addDays(today, days), type, durationMin, intensity, startTime, description, rpe, felt })),
+    ),
+  });
+  const shakeOn = (clientId: string, date: string): Item[] => {
+    const [, sessions, shake] = training.find(([id]) => id === clientId) ?? [];
+    return sessions?.some(([days]) => addDays(today, days) === date) ? [shake!] : [];
+  };
+
   await db.foodEntry.createMany({
     data: logs.flatMap(({ clientId, factors, items }) =>
       factors.flatMap((factor, i) => {
         if (factor == null) return [];
         const date = addDays(today, -(i + 1));
-        return items.map(([slot, food, grams, scales]) => {
+        return [...items, ...shakeOn(clientId, date)].map(([slot, food, grams, scales]) => {
           if (!Array.isArray(food)) return { clientId, date, slot, foodId: food.id, name: food.name, brand: food.brand, grams, ...nutrientsOf(food, grams!) };
           const [name, kcal, protein, carbs, fat] = food;
           const f = scales ? factor : 1;

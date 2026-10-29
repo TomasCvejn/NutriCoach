@@ -195,3 +195,37 @@ test("coach adds a meal and a recommendation for race@, then copies race@'s plan
   await expect(recommendations.getByText("Spánek před závodem")).toBeVisible();
   await expect(page.getByRole("region", { name: "Odpočinkový den" }).getByLabel("Energie (kcal)")).toHaveValue("2100");
 });
+
+// Last in this file: a session today makes it a training day for the tests above too, so it is deleted at the end.
+test("sports@ adds a session for today: home shows it and the day becomes a training day; deleting it brings the rest day back", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "sports@demo.cz");
+  await expect(page).toHaveURL("/app");
+  await expect(page.getByRole("region", { name: "Today's training" })).toContainText("No training today.");
+
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Training" }).click();
+  await expect(page.getByRole("heading", { name: "Training", level: 1 })).toBeVisible();
+  await page.getByRole("button", { name: "Add session" }).click();
+  const dialog = page.getByRole("dialog", { name: "New session" });
+  await dialog.getByLabel("Type").selectOption("BIKE");
+  await dialog.getByLabel("Start").fill("17:00");
+  await dialog.getByLabel("Duration (min)").fill("90");
+  await dialog.getByLabel("Intensity").selectOption("HIGH");
+  await dialog.getByRole("button", { name: "Save" }).click();
+  await expect(dialog).toBeHidden();
+  const today = page.getByRole("list", { name: "Sessions this week" }).locator("li[aria-current=date]");
+  await expect(today.getByRole("button")).toContainText("Bike");
+  await expect(today.getByRole("button")).toContainText("17:00 · 90 min");
+
+  await page.goto("/app"); // the dev indicator covers the "Today" tab
+  await expect(page.getByRole("region", { name: "Today's training" })).toContainText("Bike");
+  await expect(page.getByText("Training day", { exact: true })).toBeVisible();
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Nutrition" }).click();
+  await expect(page.getByRole("region", { name: "Day type" }).getByRole("heading")).toHaveText("Day type: Training day");
+  await expect(page.getByRole("region", { name: "Day type" })).toContainText("Automatic (Training day)"); // the session, not a hand-set type
+
+  await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Training" }).click();
+  await today.getByRole("button", { name: /Bike/ }).click();
+  await page.getByRole("dialog", { name: "Edit session" }).getByRole("button", { name: "Delete" }).click();
+  await expect(today).toContainText("Rest");
+});
