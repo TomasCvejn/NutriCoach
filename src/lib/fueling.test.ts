@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { duringTotals, fuelingFor } from "./fueling";
+import { dailyFluidTarget, duringTotals, fuelingFor } from "./fueling";
 
 const template = (id: string, rule: Partial<{ sessionTypes: string[]; minDurationMin: number; maxDurationMin: number; minIntensity: string; priority: number }>) => ({
   ...{ id, name: id, sessionTypes: [] as string[], minDurationMin: null, maxDurationMin: null, minIntensity: null, priority: 0 },
@@ -43,4 +43,12 @@ test("the coach's override wins, even over a better match", () => {
 test("during totals: per hour × duration", () => {
   expect(duringTotals({ duringCarbsPerHour: 45, duringFluidPerHour: 500, duringSodiumPerHour: 400 }, 90)).toEqual({ carbs: 68, fluidMl: 750, sodiumMg: 600 }); // 67.5 → 68
   expect(duringTotals({ duringCarbsPerHour: 0, duringFluidPerHour: null, duringSodiumPerHour: null }, 45)).toEqual({ carbs: 0, fluidMl: null, sodiumMg: null });
+});
+
+test("daily fluid target: the base, plus the sessions' fluid on training and competition days only", () => {
+  expect(dailyFluidTarget(2150, "TRAINING", [750, null, 300])).toBe(3200);
+  expect(dailyFluidTarget(2150, "COMPETITION", [900])).toBe(3050);
+  expect(dailyFluidTarget(2150, "REST", [750])).toBe(2150); // overridden to a rest day: the session's fluid doesn't count
+  expect(dailyFluidTarget(2150, "TRAINING", [])).toBe(2150);
+  expect(dailyFluidTarget(null, "TRAINING", [750])).toBeNull();
 });

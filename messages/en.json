@@ -666,7 +666,10 @@
     "savePreset": "Save a drink",
     "presetTitle": "Save a drink",
     "invalid": "Check this value.",
-    "today": "Today"
+    "today": "Today",
+    "training": "Hydration for training",
+    "electrolytes": "Sodium from drinks vs. sessions",
+    "electrolytesText": "{value} of {target} mg"
   },
   "CheckIn": {
     "title": "Weekly check-in",
@@ -954,7 +957,8 @@
     "feedbackOpen": "Read it",
     "training": "Today's training",
     "trainingOpen": "Whole week",
-    "trainingNone": "No training today."
+    "trainingNone": "No training today.",
+    "fueling": "During: {during}"
   },
   "Notifications": {
     "title": "Notifications",
@@ -1136,7 +1140,9 @@
     "history": "The client's check-ins",
     "weekOf": "Week of",
     "status": "Status",
-    "weight": "Latest weight"
+    "weight": "Latest weight",
+    "training": "Training (7 days)",
+    "trainingValue": "{minutes} min · {count, plural, one {# session} other {# sessions}}"
   },
   "Progress": {
     "title": "Progress",
@@ -1150,7 +1156,11 @@
     "target": "Target",
     "versus": "{value} of {target} {unit}",
     "checkIns": "Check-ins",
-    "noCheckIns": "No check-in in this period yet."
+    "noCheckIns": "No check-in in this period yet.",
+    "performance": "Performance",
+    "minutes": "Training minutes per week",
+    "rpe": "Average RPE",
+    "felt": "How training felt"
   },
   "Charts": {
     "showTable": "Table",
@@ -1293,7 +1303,8 @@
     "within": "within {minutes} min",
     "override": "Fueling template",
     "automatic": "Automatic (by the rules)",
-    "overrideSave": "Save"
+    "overrideSave": "Save",
+    "noFuelingShort": "No fueling plan"
   },
   "Fueling": {
     "title": "Fueling",

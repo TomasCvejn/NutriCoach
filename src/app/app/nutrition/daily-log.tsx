@@ -158,7 +158,7 @@ export async function DailyLog({ clientId, date, viewer, href }: { clientId: str
         </div>
 
         <div className="flex flex-col gap-6 lg:col-start-2 lg:row-start-2">
-        <HydrationCard clientId={clientId} date={date} target={data.target?.fluidMl ?? null} variant="coach" />
+        <HydrationCard clientId={clientId} date={date} target={data.fluidTarget} variant="coach" />
         <section aria-labelledby="day-note" className="rounded-lg border bg-card p-5">
           <h2 id="day-note" className="text-base font-semibold">
             {t(viewer === "CLIENT" ? "DailyNutrition.note" : "DailyNutrition.clientNote")}

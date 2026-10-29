@@ -197,7 +197,7 @@ test("coach adds a meal and a recommendation for race@, then copies race@'s plan
 });
 
 // Last in this file: a session today makes it a training day for the tests above too, so it is deleted at the end.
-test("sports@ adds a session for today: home shows it, the day becomes a training day, its page shows 68 g of carbs; deleting it brings the rest day back", async ({ page }) => {
+test("sports@ adds a session for today: home shows it, the day becomes a training day, its fluid joins the day's target, its page shows 68 g of carbs; deleting it brings the rest day back", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await logIn(page, "sports@demo.cz");
   await expect(page).toHaveURL("/app");
@@ -223,6 +223,12 @@ test("sports@ adds a session for today: home shows it, the day becomes a trainin
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Nutrition" }).click();
   await expect(page.getByRole("region", { name: "Day type" }).getByRole("heading")).toHaveText("Day type: Training day");
   await expect(page.getByRole("region", { name: "Day type" })).toContainText("Automatic (Training day)"); // the session, not a hand-set type
+  // The fluid target adds the session's fluid: the training-day base copied from race@ (2,500) + 500 ml/h × 1.5 h.
+  await page.goto("/app/hydration");
+  await expect(page.getByRole("meter", { name: "Fluid today" })).toHaveAttribute("aria-valuetext", "0 ml of 3,250 ml");
+  const forTraining = page.getByRole("region", { name: "Hydration for training" });
+  await expect(forTraining).toContainText("750 ml · sodium 600 mg");
+  await expect(forTraining.getByRole("meter", { name: "Sodium from drinks vs. sessions" })).toHaveAttribute("aria-valuetext", "0 of 600 mg");
 
   await page.getByRole("navigation", { name: "Main navigation" }).getByRole("link", { name: "Training" }).click();
   await today.getByRole("link", { name: /Bike/ }).click();

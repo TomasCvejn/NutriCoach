@@ -8,7 +8,7 @@ import { nutritionSummaries } from "@/lib/adherence";
 import { requireCoachOf } from "@/lib/auth";
 import type { CheckInAnswers } from "@/lib/check-ins";
 import { latestWeighIn } from "@/lib/body-comp";
-import { todayIn } from "@/lib/dates";
+import { addDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { CHECK_IN_SCALES, FEEDBACK_FIELDS, type TrackingMode } from "@/lib/enums";
 import { latestWeight } from "@/lib/nutrition";
@@ -20,13 +20,15 @@ export default async function CheckInReview({ params }: PageProps<"/coach/check-
   const found = await db.checkIn.findUnique({ where: { id: (await params).id } });
   const { client } = await requireCoachOf(found?.clientId ?? "");
   const checkIn = found!;
-  const [t, format, user, history, notes, weighIn] = await Promise.all([
+  const [t, format, user, history, notes, weighIn, trained] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, timezone: true } }),
     db.checkIn.findMany({ where: { clientId: client.id, dueDate: { lte: checkIn.dueDate } }, orderBy: { dueDate: "desc" }, take: 8, select: { dueDate: true, answers: true } }),
     db.coachNote.findMany({ where: { clientId: client.id }, orderBy: [{ pinned: "desc" }, { date: "desc" }, { createdAt: "desc" }], take: 5 }),
     latestWeighIn(client.id, checkIn.dueDate),
+    // The week before the due date.
+    db.trainingSession.aggregate({ where: { clientId: client.id, date: { gte: addDays(checkIn.dueDate, -7), lt: checkIn.dueDate } }, _sum: { durationMin: true }, _count: true }),
   ]);
   const weight = latestWeight(client.weightKg, weighIn);
   const week = (await nutritionSummaries([{ id: client.id, trackingMode: client.trackingMode, timezone: user.timezone, today: checkIn.dueDate }])).get(client.id)!;
@@ -129,6 +131,12 @@ export default async function CheckInReview({ params }: PageProps<"/coach/check-
                 <dt className="text-muted-foreground">{t("CheckInReview.adherence")}</dt>
                 <dd className="tabular-nums">{week.adherence == null ? "–" : format.number(week.adherence / 100, { style: "percent" })}</dd>
               </div>
+              {(trained._count > 0 || client.sports) && (
+                <div className="flex justify-between gap-4 border-t border-rule py-2">
+                  <dt className="text-muted-foreground">{t("CheckInReview.training")}</dt>
+                  <dd className="tabular-nums">{t("CheckInReview.trainingValue", { minutes: trained._sum.durationMin ?? 0, count: trained._count })}</dd>
+                </div>
+              )}
               <div className="flex justify-between gap-4 border-t border-rule py-2">
                 <dt className="text-muted-foreground">{t("CheckInReview.weight")}</dt>
                 <dd className="tabular-nums">{weight == null ? "–" : format.number(weight, { style: "unit", unit: "kilogram", maximumFractionDigits: 1 })}</dd>

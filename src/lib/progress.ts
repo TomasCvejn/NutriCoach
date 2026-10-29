@@ -31,3 +31,17 @@ export function weeklyNutrition(days: NutritionDay[], starts: string[]) {
 
 // The days from `start` up to yesterday (today is still in progress).
 export const daysUntilToday = (start: string, today: string) => Array.from({ length: Math.max(0, diffDays(start, today)) }, (_, i) => addDays(start, i));
+
+const mean1 = (values: (number | null)[]) => {
+  const known = values.filter((v) => v != null);
+  return known.length ? Math.round((known.reduce((sum, v) => sum + v, 0) / known.length) * 10) / 10 : null;
+};
+
+// Per week (Performance in progress.md): training minutes of its sessions, and the average RPE and "felt" of those that
+// have them. The caller passes the sessions done so far.
+export function weeklyTraining(sessions: { date: string; durationMin: number; rpe: number | null; felt: number | null }[], starts: string[]) {
+  return starts.map((start) => {
+    const week = sessions.filter((s) => s.date >= start && s.date < addDays(start, 7));
+    return { start, minutes: week.reduce((sum, s) => sum + s.durationMin, 0), rpe: mean1(week.map((s) => s.rpe)), felt: mean1(week.map((s) => s.felt)) };
+  });
+}

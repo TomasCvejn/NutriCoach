@@ -666,7 +666,10 @@
     "savePreset": "Uložit nápoj",
     "presetTitle": "Uložit nápoj",
     "invalid": "Zkontrolujte tuto hodnotu.",
-    "today": "Dnes"
+    "today": "Dnes",
+    "training": "Hydratace k tréninku",
+    "electrolytes": "Sodík z nápojů vs. tréninky",
+    "electrolytesText": "{value} z {target} mg"
   },
   "CheckIn": {
     "title": "Týdenní check-in",
@@ -954,7 +957,8 @@
     "feedbackOpen": "Přečíst",
     "training": "Dnešní trénink",
     "trainingOpen": "Celý týden",
-    "trainingNone": "Dnes žádný trénink."
+    "trainingNone": "Dnes žádný trénink.",
+    "fueling": "Během: {during}"
   },
   "Notifications": {
     "title": "Oznámení",
@@ -1136,7 +1140,9 @@
     "history": "Check-iny klienta",
     "weekOf": "Týden od",
     "status": "Stav",
-    "weight": "Poslední váha"
+    "weight": "Poslední váha",
+    "training": "Trénink (7 dní)",
+    "trainingValue": "{minutes} min · {count, plural, one {# trénink} few {# tréninky} other {# tréninků}}"
   },
   "Progress": {
     "title": "Pokrok",
@@ -1150,7 +1156,11 @@
     "target": "Cíl",
     "versus": "{value} z {target} {unit}",
     "checkIns": "Check-iny",
-    "noCheckIns": "V tomto období zatím žádný check-in."
+    "noCheckIns": "V tomto období zatím žádný check-in.",
+    "performance": "Výkon",
+    "minutes": "Minuty tréninku za týden",
+    "rpe": "Průměrné RPE",
+    "felt": "Pocit z tréninku"
   },
   "Charts": {
     "showTable": "Tabulka",
@@ -1293,7 +1303,8 @@
     "within": "do {minutes} min",
     "override": "Šablona doplňování",
     "automatic": "Automaticky (podle pravidel)",
-    "overrideSave": "Uložit"
+    "overrideSave": "Uložit",
+    "noFuelingShort": "Bez plánu doplňování"
   },
   "Fueling": {
     "title": "Doplňování",

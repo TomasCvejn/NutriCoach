@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 import type { NutritionDay } from "./adherence";
-import { weeklyNutrition, weekStarts } from "./progress";
+import { weeklyNutrition, weeklyTraining, weekStarts } from "./progress";
 
 const day = (date: string, adherence: NutritionDay["adherence"], kcal: number | null = null, protein: number | null = null): NutritionDay => ({
   ...{ date, adherence, kcal, protein },
@@ -25,5 +25,17 @@ test("a full week, a partial current week and a week with no data", () => {
     { start: "2026-10-12", adherence: null, kcal: null, kcalTarget: null, protein: null, proteinTarget: null },
     { start: "2026-10-19", adherence: 67, kcal: 2080, kcalTarget: 2000, protein: 118, proteinTarget: 120 }, // 4 of 6; (4 × 1950 + 2600) / 5
     { start: "2026-10-26", adherence: 50, kcal: 1755, kcalTarget: 2000, protein: 99, proteinTarget: 120 },
+  ]);
+});
+
+test("weekly training: minutes add up, RPE and felt average the sessions that have them; an empty week is 0 and none", () => {
+  const sessions = [
+    { date: "2026-10-19", durationMin: 60, rpe: 6, felt: 8 },
+    { date: "2026-10-21", durationMin: 90, rpe: 7, felt: null },
+    { date: "2026-10-25", durationMin: 45, rpe: null, felt: null },
+  ];
+  expect(weeklyTraining(sessions, ["2026-10-12", "2026-10-19"])).toEqual([
+    { start: "2026-10-12", minutes: 0, rpe: null, felt: null },
+    { start: "2026-10-19", minutes: 195, rpe: 6.5, felt: 8 },
   ]);
 });

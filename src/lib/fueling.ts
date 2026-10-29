@@ -25,3 +25,8 @@ export function duringTotals(template: { duringCarbsPerHour: number | null; duri
   const total = (perHour: number | null) => (perHour == null ? null : Math.round((perHour * durationMin) / 60));
   return { carbs: total(template.duringCarbsPerHour), fluidMl: total(template.duringFluidPerHour), sodiumMg: total(template.duringSodiumPerHour) };
 }
+
+// The day's fluid target (training.md): the coach-set base, plus on TRAINING / COMPETITION days the during-session fluid
+// of that day's fueling plans. No base → no target.
+export const dailyFluidTarget = (base: number | null, dayType: string, sessionFluidMl: (number | null)[]) =>
+  base == null ? null : base + (dayType === "REST" ? 0 : sessionFluidMl.reduce<number>((sum, ml) => sum + (ml ?? 0), 0));

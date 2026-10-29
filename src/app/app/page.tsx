@@ -4,7 +4,7 @@ import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import type { Followed, Intensity, SessionType } from "@/lib/enums";
-import { clientFeatures } from "@/lib/features";
+import { featuresOf } from "@/lib/features";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
 import { buttonVariants } from "@/components/ui/button";
 import { currentCheckIn } from "@/lib/check-ins";
@@ -17,13 +17,11 @@ export default async function ClientHome() {
   const { user, client } = await requireClient();
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const today = todayIn(user.timezone);
-  const [period, feedback, sessions, trains] = await Promise.all([
+  const [period, feedback, { training }] = await Promise.all([
     currentCheckIn(client, user.timezone),
     db.checkIn.findFirst({ where: { clientId: client.id, reviewedAt: { not: null }, feedbackSeenAt: null }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
-    db.trainingSession.findMany({ where: { clientId: client.id, date: today }, orderBy: [{ startTime: "asc" }, { createdAt: "asc" }] }),
-    db.trainingSession.findFirst({ where: { clientId: client.id }, select: { id: true } }),
+    featuresOf(client, today),
   ]);
-  const training = clientFeatures({ hasSport: Boolean(client.sports), hasSession: Boolean(trains), lastCompetitionDate: null }, today).training;
   const day = await loadDay(
     client.id,
     today,
@@ -68,7 +66,7 @@ export default async function ClientHome() {
         )}
       </section>
 
-      {/* Widget 3: today's training, for a client who trains. */}
+      {/* Widget 3: today's training with each session's fueling, for a client who trains. */}
       {training && (
         <section aria-labelledby="home-training" className="rounded-lg border bg-card p-5">
           <div className="flex items-baseline justify-between gap-4">
@@ -79,19 +77,36 @@ export default async function ClientHome() {
               {t("ClientHome.trainingOpen")}
             </Link>
           </div>
-          {sessions.length === 0 ? (
+          {day.sessions.length === 0 ? (
             <p className="mt-2 text-sm text-muted-foreground">{t("ClientHome.trainingNone")}</p>
           ) : (
             <ul className="mt-2">
-              {sessions.map((session) => (
-                <li key={session.id} className="flex justify-between gap-3 border-t border-rule py-2 text-sm first:border-0">
-                  <span className="font-medium">
-                    {t(`Training.types.${session.type as SessionType}`)}
-                    {session.sport && ` · ${session.sport}`}
-                  </span>
-                  <span className="text-muted-foreground tabular-nums">
-                    {[session.startTime, t("Training.minutes", { count: session.durationMin }), t(`Training.intensities.${session.intensity as Intensity}`)].filter(Boolean).join(" · ")}
-                  </span>
+              {day.sessions.map(({ session, totals }) => (
+                <li key={session.id} className="border-t border-rule first:border-0">
+                  <Link href={`/app/training/${session.id}`} className="flex flex-col gap-0.5 py-2 text-sm hover:underline">
+                    <span className="flex justify-between gap-3">
+                      <span className="font-medium">
+                        {t(`Training.types.${session.type as SessionType}`)}
+                        {session.sport && ` · ${session.sport}`}
+                      </span>
+                      <span className="text-muted-foreground tabular-nums">
+                        {[session.startTime, t("Training.minutes", { count: session.durationMin }), t(`Training.intensities.${session.intensity as Intensity}`)].filter(Boolean).join(" · ")}
+                      </span>
+                    </span>
+                    <span className="text-muted-foreground tabular-nums">
+                      {totals
+                        ? t("ClientHome.fueling", {
+                            during: [
+                              totals.carbs != null && t("Training.carbs", { value: format.number(totals.carbs) }),
+                              totals.fluidMl != null && t("Hydration.ml", { ml: format.number(totals.fluidMl) }),
+                              totals.sodiumMg != null && t("Hydration.sodium", { mg: format.number(totals.sodiumMg) }),
+                            ]
+                              .filter(Boolean)
+                              .join(" · "),
+                          })
+                        : t("Training.noFuelingShort")}
+                    </span>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -100,7 +115,7 @@ export default async function ClientHome() {
       )}
 
       {/* Widget 4: today's fluid with the quick adds. */}
-      <HydrationCard clientId={client.id} date={today} target={day.target?.fluidMl ?? null} variant="home" />
+      <HydrationCard clientId={client.id} date={today} target={day.fluidTarget} variant="home" />
 
       {/* Widget 6: the check-in reminder while the period is open, and the coach's feedback until it is opened. */}
       {(period.status === "due" || period.status === "overdue") && (

@@ -7,7 +7,7 @@ import type { CheckInAnswers } from "@/lib/check-ins";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { CHECK_IN_SCALES } from "@/lib/enums";
-import { daysUntilToday, weeklyNutrition, weekStarts } from "@/lib/progress";
+import { daysUntilToday, weeklyNutrition, weeklyTraining, weekStarts } from "@/lib/progress";
 
 export const RANGES = [4, 12, 26] as const;
 export const rangeParam = z.object({ range: z.coerce.number().pipe(z.literal(RANGES)).catch(4) });
@@ -15,17 +15,20 @@ export const rangeParam = z.object({ range: z.coerce.number().pipe(z.literal(RAN
 type Client = { id: string; trackingMode: string };
 
 // The trends on the client's Progress page and the coach's Progress tab, over the last 4 / 12 / 26 weeks (the range lives
-// in the URL): weekly nutrition adherence (CALORIES also the average kcal and protein against the target) and the check-in
-// scores. Body composition follows it on both pages. Training joins with its feature.
-export async function ProgressDashboard({ client, timezone, weeks, base }: { client: Client; timezone: string; weeks: number; base: string }) {
+// in the URL): weekly nutrition adherence (CALORIES also the average kcal and protein against the target), for a client who
+// trains their weekly training minutes, RPE and "felt", and the check-in scores. Body composition follows it on both pages.
+export async function ProgressDashboard({ client, timezone, weeks, base, training }: { client: Client; timezone: string; weeks: number; base: string; training: boolean }) {
   const today = todayIn(timezone);
   const starts = weekStarts(today, weeks);
-  const [t, format, days, checkIns] = await Promise.all([
+  const [t, format, days, checkIns, sessions] = await Promise.all([
     getTranslations(),
     getFormatter(),
     nutritionDays([{ ...client, timezone }], new Map([[client.id, daysUntilToday(starts[0], today)]])),
     db.checkIn.findMany({ where: { clientId: client.id, dueDate: { gte: starts[0] } }, orderBy: { dueDate: "asc" }, select: { dueDate: true, answers: true } }),
+    // The sessions done so far (today's may still be ahead).
+    training ? db.trainingSession.findMany({ where: { clientId: client.id, date: { gte: starts[0], lt: today } }, select: { date: true, durationMin: true, rpe: true, felt: true } }) : [],
   ]);
+  const performance = weeklyTraining(sessions, starts);
   const weekly = weeklyNutrition(days.get(client.id)!, starts);
   const label = (date: string) => format.dateTime(new Date(date), { day: "numeric", month: "numeric", timeZone: "UTC" });
   const n = (value: number) => format.number(value);
@@ -66,6 +69,25 @@ export async function ProgressDashboard({ client, timezone, weeks, base }: { cli
           )}
         </div>
       </section>
+
+      {training && (
+        <section aria-labelledby="progress-performance" className="flex flex-col gap-4">
+          <h2 id="progress-performance" className="text-lg font-semibold">
+            {t("Progress.performance")}
+          </h2>
+          <div className="grid gap-4 md:grid-cols-2">
+            <ChartCard title={t("Progress.minutes")} points={performance.map((w) => ({ label: label(w.start), value: w.minutes, display: t("Training.minutes", { count: w.minutes }) }))} />
+            {(["rpe", "felt"] as const).map((key) => (
+              <ChartCard
+                key={key}
+                title={t(`Progress.${key}`)}
+                domain={[1, 10]}
+                points={performance.map((w) => ({ label: label(w.start), value: w[key], display: w[key] == null ? t("Charts.noData") : t("CheckIn.outOf", { score: format.number(w[key]) }) }))}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
       <section aria-labelledby="progress-check-ins" className="flex flex-col gap-4">
         <h2 id="progress-check-ins" className="text-lg font-semibold">

@@ -4,6 +4,9 @@ import { Button } from "@/components/ui/button";
 import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
+import type { SessionType } from "@/lib/enums";
+import { featuresOf } from "@/lib/features";
+import { TargetBar } from "@/components/target-bar";
 import { FALLBACK_SLOTS, loadDay } from "../nutrition/day-data";
 import { deletePreset, logPreset } from "./actions";
 import { AddDrinkDialog, SavePresetDialog } from "./forms";
@@ -14,12 +17,16 @@ import { HydrationCard } from "./hydration-card";
 export default async function ClientHydration() {
   const { user, client } = await requireClient();
   const today = todayIn(user.timezone);
-  const [t, format, day, presets] = await Promise.all([
+  const [t, format, day, presets, drinks, { training }] = await Promise.all([
     getTranslations(),
     getFormatter(),
     loadDay(client.id, today, [...FALLBACK_SLOTS]),
     db.drinkPreset.findMany({ where: { clientId: client.id }, orderBy: { createdAt: "asc" } }),
+    db.fluidLog.aggregate({ where: { clientId: client.id, date: today }, _sum: { sodium: true } }),
+    featuresOf(client, today),
   ]);
+  const sessionSodium = day.sessions.reduce((sum, s) => sum + (s.totals?.sodiumMg ?? 0), 0);
+  const n = (value: number) => format.number(value);
 
   return (
     <div className="flex max-w-3xl flex-col gap-6">
@@ -30,7 +37,46 @@ export default async function ClientHydration() {
         </div>
         <AddDrinkDialog date={today} />
       </header>
-      <HydrationCard clientId={client.id} date={today} target={day.target?.fluidMl ?? null} variant="page" />
+      <HydrationCard clientId={client.id} date={today} target={day.fluidTarget} variant="page" />
+      {/* For a client who trains: today's sessions with their fluid and sodium, and the drinks' sodium against it. */}
+      {training && (
+        <section aria-labelledby="hydration-training" className="flex flex-col gap-4 rounded-lg border bg-card p-5">
+          <h2 id="hydration-training" className="text-base font-semibold">
+            {t("Hydration.training")}
+          </h2>
+          {day.sessions.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t("ClientHome.trainingNone")}</p>
+          ) : (
+            <>
+              <ul>
+                {day.sessions.map(({ session, plan, totals }) => (
+                  <li key={session.id} className="flex flex-col gap-0.5 border-t border-rule py-2 text-sm first:border-0">
+                    <span className="flex justify-between gap-3">
+                      <span className="font-medium">
+                        {t(`Training.types.${session.type as SessionType}`)} · {t("Training.minutes", { count: session.durationMin })}
+                      </span>
+                      <span className="tabular-nums">
+                        {totals
+                          ? [totals.fluidMl != null && t("Hydration.ml", { ml: n(totals.fluidMl) }), totals.sodiumMg != null && t("Hydration.sodium", { mg: n(totals.sodiumMg) })].filter(Boolean).join(" · ") || "—"
+                          : t("Training.noFuelingShort")}
+                      </span>
+                    </span>
+                    {plan?.duringText && <span className="text-muted-foreground">{plan.duringText}</span>}
+                  </li>
+                ))}
+              </ul>
+              {sessionSodium > 0 && (
+                <TargetBar
+                  label={t("Hydration.electrolytes")}
+                  value={drinks._sum.sodium ?? 0}
+                  target={sessionSodium}
+                  text={t("Hydration.electrolytesText", { value: n(drinks._sum.sodium ?? 0), target: n(sessionSodium) })}
+                />
+              )}
+            </>
+          )}
+        </section>
+      )}
       <section aria-labelledby="my-drinks" className="flex flex-col gap-3 rounded-lg border bg-card p-5">
         <h2 id="my-drinks" className="text-base font-semibold">
           {t("Hydration.myDrinks")}
