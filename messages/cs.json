@@ -49,7 +49,8 @@
     "checkIn": "Check-in",
     "checkIns": "Check-iny",
     "progress": "Pokrok",
-    "competition": "Závod"
+    "competition": "Závod",
+    "supplements": "Doplňky"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -198,6 +199,7 @@
       "competition": "Závody",
       "progress": "Pokrok",
       "checkIns": "Check-iny",
+      "supplements": "Doplňky",
       "notes": "Poznámky"
     },
     "changeMode": {
@@ -1486,7 +1488,8 @@
       "fluid": "Tekutiny (ml)",
       "sodium": "Sodík (mg)",
       "caffeine": "Kofein (mg)",
-      "recipe": "Recept"
+      "recipe": "Recept",
+      "supplement": "Doplněk"
     },
     "types": {
       "EVENT": "Start",
@@ -1503,7 +1506,8 @@
       "title": "Zadejte název (nejvýš 100 znaků).",
       "recipeId": "Vyberte jeden ze svých zveřejněných receptů.",
       "amount": "Zadejte 0–5 000.",
-      "shift": "Posun by vyvedl položku mimo den (00:00–23:59)."
+      "shift": "Posun by vyvedl položku mimo den (00:00–23:59).",
+      "supplementId": "Vyberte jeden z doplňků klienta."
     },
     "noRecipe": "Bez receptu",
     "recipe": "Recept: {name}",
@@ -1523,6 +1527,46 @@
     "duplicate": "Duplikovat {title}",
     "emptyClient": "Trenér zatím plán závodního dne nepřipravil.",
     "now": "Teď {time}",
-    "nowAt": "Teď je {time}"
+    "nowAt": "Teď je {time}",
+    "supplement": "Doplněk: {name}",
+    "noSupplement": "Bez doplňku"
+  },
+  "Supplements": {
+    "title": "Doplňky",
+    "assign": "Přidat doplněk",
+    "addOwn": "Přidat vlastní doplněk",
+    "addTitle": "Nový doplněk",
+    "editTitle": "Upravit doplněk",
+    "edit": "Upravit",
+    "editFor": "Upravit {name}",
+    "addedByClient": "Přidal klient",
+    "yours": "přidali jste sami",
+    "from": "od {date}",
+    "until": "do {date}",
+    "ended": "Ukončené",
+    "empty": "Zatím žádné doplňky. Trenér vám je může přidat, nebo si zapište ty, které berete sami.",
+    "emptyCoach": "Zatím žádné doplňky.",
+    "categories": {
+      "DAILY": "Denně",
+      "TRAINING": "K tréninku",
+      "COMPETITION": "Na závod"
+    },
+    "fields": {
+      "name": "Název",
+      "brand": "Výrobce / produkt",
+      "category": "Kdy",
+      "dose": "Dávka",
+      "timing": "Načasování",
+      "purpose": "K čemu",
+      "notes": "Poznámky",
+      "activeFrom": "Od",
+      "activeTo": "Do",
+      "active": "Užívání"
+    },
+    "invalid": {
+      "name": "Zadejte název (nejvýš 100 znaků).",
+      "text": "Text je příliš dlouhý.",
+      "dates": "„Do“ nesmí být před „Od“."
+    }
   }
 }

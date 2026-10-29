@@ -18,13 +18,14 @@ export default async function CompetitionPlan({ params }: PageProps<"/coach/clie
   const { coach, client } = await requireCoachOf(id);
   const competition = await db.competition.findFirst({ where: { id: competitionId, clientId: client.id }, include: { schedule: true } });
   if (!competition) notFound();
-  const [t, format, user, templates, recipes] = await Promise.all([
+  const [t, format, user, templates, recipes, supplements] = await Promise.all([
     getTranslations("Competition"),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { timezone: true } }),
     db.timelineTemplate.findMany({ where: { coachId: coach.id }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
     // Schedule items can link one of the coach's published recipes (the ones the client can open).
     db.recipe.findMany({ where: { coachId: coach.id, status: "PUBLISHED" }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    db.supplement.findMany({ where: { clientId: client.id }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
   const today = todayIn(user.timezone);
   const days = diffDays(today, competition.date);
@@ -58,7 +59,7 @@ export default async function CompetitionPlan({ params }: PageProps<"/coach/clie
         </h3>
         <TimelineEditor competitionId={competition.id} timeline={timelineOf(competition.timeline)} templates={templates} />
       </section>
-      <ScheduleBuilder competitionId={competition.id} items={competition.schedule} recipes={recipes} />
+      <ScheduleBuilder competitionId={competition.id} items={competition.schedule} recipes={recipes} supplements={supplements} />
     </div>
   );
 }

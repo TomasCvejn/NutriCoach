@@ -398,6 +398,18 @@ async function seed() {
   marathon.phases["4_WEEKS"]!.tasks = marathon.phases["4_WEEKS"]!.tasks.map((task) => ({ ...task, done: true }));
   await db.competition.updateMany({ where: { clientId: race, date: addDays(today, 10) }, data: { timeline: marathon } });
   await db.competition.updateMany({ where: { clientId: sports }, data: { timeline: fromContent(timelines.en) } });
+  // Supplements: the coach's, and one sports@ takes on her own (flagged for the coach).
+  await db.supplement.createMany({
+    data: [
+      { clientId: general, name: "Omega-3", category: "DAILY", dose: "2 kapsle", timing: "K obědu", purpose: "Zdraví srdce a cév" },
+      { clientId: sports, name: "Creatine monohydrate", category: "DAILY", dose: "3 g", timing: "Any time, with a meal", purpose: "Strength and recovery" },
+      { clientId: sports, name: "Vitamin D", category: "DAILY", dose: "2000 IU", timing: "Morning", addedByClient: true },
+      { clientId: race, name: "Iontové tablety", category: "TRAINING", dose: "1 tableta na 500 ml", timing: "Na tréninky nad 75 min", purpose: "Sodík při pocení" },
+      { clientId: race, name: "Kofeinový gel", brand: "Enervit", category: "COMPETITION", dose: "1 gel (75 mg kofeinu)", timing: "V druhé hodině závodu", purpose: "Méně únavy v závěru" },
+    ],
+  });
+  const caffeineGel = await db.supplement.findFirstOrThrow({ where: { clientId: race, name: "Kofeinový gel" } });
+
   // race@'s race-day schedule: breakfast, the start, gels and drinks on the course, recovery.
   const marathonId = (await db.competition.findFirstOrThrow({ where: { clientId: race, date: addDays(today, 10) } })).id;
   await db.scheduleItem.createMany({
@@ -407,7 +419,7 @@ async function seed() {
       { time: "08:45", type: "CARBS", title: "Gel před startem", carbs: 25 },
       { time: "09:00", type: "EVENT", title: "Start maratonu" },
       { time: "09:30", type: "CARBS", title: "Gel", carbs: 25 },
-      { time: "10:00", type: "CARBS", title: "Gel s kofeinem", carbs: 25, caffeine: 75 },
+      { time: "10:00", type: "CARBS", title: "Gel s kofeinem", carbs: 25, caffeine: 75, supplementId: caffeineGel.id },
       { time: "10:00", type: "HYDRATION", title: "Ionťák na občerstvovačce", fluid: 200, sodium: 150, position: 1 },
       { time: "10:30", type: "CARBS", title: "Gel", carbs: 25 },
       { time: "12:45", type: "RECOVERY", title: "Regenerační nápoj", carbs: 60, fluid: 500 },

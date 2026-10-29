@@ -10,7 +10,9 @@ import { ScheduleItemDialog, ShiftForm } from "./schedule-forms";
 
 // The coach's race-day schedule builder (competition.md): the items in the day's order with their amounts, what the
 // fueling between consecutive events adds up to, the day's totals; add, edit, duplicate, move among the same time, shift.
-export async function ScheduleBuilder({ competitionId, items, recipes }: { competitionId: string; items: ScheduleItem[]; recipes: { id: string; name: string }[] }) {
+type Option = { id: string; name: string };
+
+export async function ScheduleBuilder({ competitionId, items, recipes, supplements }: { competitionId: string; items: ScheduleItem[]; recipes: Option[]; supplements: Option[] }) {
   const [t, format] = await Promise.all([getTranslations("Schedule"), getFormatter()]);
   const list = ordered(items);
   const between = new Map(betweenEvents(items).map((b) => [b.after, b.totals]));
@@ -26,7 +28,7 @@ export async function ScheduleBuilder({ competitionId, items, recipes }: { compe
         </h3>
         <div className="flex flex-wrap items-end gap-4">
           {list.length > 0 && <ShiftForm competitionId={competitionId} />}
-          <ScheduleItemDialog competitionId={competitionId} recipes={recipes} trigger={<Button className="h-10 px-4 sm:h-8 sm:px-3">{t("add")}</Button>} />
+          <ScheduleItemDialog competitionId={competitionId} recipes={recipes} supplements={supplements} trigger={<Button className="h-10 px-4 sm:h-8 sm:px-3">{t("add")}</Button>} />
         </div>
       </div>
       {list.length === 0 ? (
@@ -45,6 +47,7 @@ export async function ScheduleBuilder({ competitionId, items, recipes }: { compe
                     </p>
                     {(item.details || amounts(item)) && <p className="mt-0.5 text-sm text-muted-foreground tabular-nums">{[item.details, amounts(item)].filter(Boolean).join(" · ")}</p>}
                     {item.recipeId && <p className="text-xs text-muted-foreground">{t("recipe", { name: recipes.find((r) => r.id === item.recipeId)?.name ?? "—" })}</p>}
+                    {item.supplementId && <p className="text-xs text-muted-foreground">{t("supplement", { name: supplements.find((s) => s.id === item.supplementId)?.name ?? "—" })}</p>}
                   </div>
                   <div className="flex flex-none items-center">
                     {(["up", "down"] as const).map((direction) => {
@@ -71,6 +74,7 @@ export async function ScheduleBuilder({ competitionId, items, recipes }: { compe
                       competitionId={competitionId}
                       item={item}
                       recipes={recipes}
+                      supplements={supplements}
                       trigger={
                         <Button variant="ghost" className="h-10 px-2.5 sm:h-8" aria-label={t("editFor", { time: item.time, title: item.title })}>
                           {t("edit")}

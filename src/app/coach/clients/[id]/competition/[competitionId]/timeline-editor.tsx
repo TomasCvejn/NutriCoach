@@ -5,16 +5,9 @@ import { useActionState, useId } from "react";
 import { Field } from "@/components/field";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  applyTimelineTemplate,
-  saveTimeline,
-  saveTimelineTemplate,
-} from "@/app/app/competition/actions";
+import { applyTimelineTemplate, saveTimeline, saveTimelineTemplate } from "@/app/app/competition/actions";
 import { PACKING_GROUPS, TIMELINE_PHASES } from "@/lib/enums";
 import type { Timeline } from "@/lib/timeline";
 
@@ -33,39 +26,18 @@ export function TimelineEditor({
 }) {
   const t = useTranslations("Competition");
   const id = useId();
-  const [state, save, saving] = useActionState(
-    async (_: State, form: FormData): Promise<State> =>
-      (await saveTimeline(form)) ?? "saved",
-    null,
-  );
-  const [templateState, saveTemplate] = useActionState(
-    async (_: State, form: FormData): Promise<State> =>
-      (await saveTimelineTemplate(form)) ?? "saved",
-    null,
-  );
-  const lines = (items: { text: string }[] = []) =>
-    items.map((i) => i.text).join("\n");
+  const [state, save, saving] = useActionState(async (_: State, form: FormData): Promise<State> => (await saveTimeline(form)) ?? "saved", null);
+  const [templateState, saveTemplate] = useActionState(async (_: State, form: FormData): Promise<State> => (await saveTimelineTemplate(form)) ?? "saved", null);
+  const lines = (items: { text: string }[] = []) => items.map((i) => i.text).join("\n");
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-end gap-x-6 gap-y-4 rounded-lg border bg-card p-5">
         {templates.length > 0 && (
-          <form
-            action={applyTimelineTemplate}
-            className="flex flex-wrap items-end gap-2"
-          >
+          <form action={applyTimelineTemplate} className="flex flex-wrap items-end gap-2">
             <input type="hidden" name="competitionId" value={competitionId} />
-            <Field
-              id={`${id}-template`}
-              label={t("applyTemplate")}
-              hint={t("applyHint")}
-            >
-              <NativeSelect
-                id={`${id}-template`}
-                name="templateId"
-                aria-describedby={`${id}-template-note`}
-                className="[&_select]:h-10 sm:[&_select]:h-8"
-              >
+            <Field id={`${id}-template`} label={t("applyTemplate")} hint={t("applyHint")}>
+              <NativeSelect id={`${id}-template`} name="templateId" aria-describedby={`${id}-template-note`} className="[&_select]:h-10 sm:[&_select]:h-8">
                 {templates.map((template) => (
                   <NativeSelectOption key={template.id} value={template.id}>
                     {template.name}
@@ -73,11 +45,7 @@ export function TimelineEditor({
                 ))}
               </NativeSelect>
             </Field>
-            <Button
-              type="submit"
-              variant="outline"
-              className="mb-6 h-10 sm:h-8"
-            >
+            <Button type="submit" variant="outline" className="mb-6 h-10 sm:h-8">
               {t("apply")}
             </Button>
           </form>
@@ -87,23 +55,10 @@ export function TimelineEditor({
           <Field
             id={`${id}-name`}
             label={t("saveAsTemplate")}
-            hint={
-              templateState === "saved" ? t("templateSaved") : t("templateHint")
-            }
-            error={
-              templateState && templateState !== "saved"
-                ? t("invalid.name")
-                : undefined
-            }
+            hint={templateState === "saved" ? t("templateSaved") : t("templateHint")}
+            error={templateState && templateState !== "saved" ? t("invalid.name") : undefined}
           >
-            <Input
-              id={`${id}-name`}
-              name="name"
-              maxLength={100}
-              required
-              aria-describedby={`${id}-name-note`}
-              className="h-10 sm:h-8"
-            />
+            <Input id={`${id}-name`} name="name" maxLength={100} required aria-describedby={`${id}-name-note`} className="h-10 sm:h-8" />
           </Field>
           <Button type="submit" variant="outline" className="mb-6 h-10 sm:h-8">
             {t("saveTemplate")}
@@ -120,9 +75,7 @@ export function TimelineEditor({
             return (
               <fieldset key={phase} className="rounded-lg border bg-card p-5">
                 <legend className="float-left flex w-full flex-wrap items-baseline justify-between gap-2">
-                  <span className="text-base font-semibold">
-                    {t(`phases.${phase}`)}
-                  </span>
+                  <span className="text-base font-semibold">{t(`phases.${phase}`)}</span>
                   {tasks.length > 0 && (
                     <span className="text-sm text-muted-foreground tabular-nums">
                       {t("ticked", {
@@ -142,11 +95,7 @@ export function TimelineEditor({
                       defaultValue={timeline.phases[phase]?.priorities ?? ""}
                     />
                   </Field>
-                  <Field
-                    id={`${id}-t-${phase}`}
-                    label={t("tasks")}
-                    hint={t("perLine")}
-                  >
+                  <Field id={`${id}-t-${phase}`} label={t("tasks")} hint={t("perLine")}>
                     <Textarea
                       id={`${id}-t-${phase}`}
                       name={`tasks.${phase}`}
@@ -161,25 +110,16 @@ export function TimelineEditor({
             );
           })}
           <fieldset className="rounded-lg border bg-card p-5">
-            <legend className="float-left text-base font-semibold">
-              {t("packing")}
-            </legend>
+            <legend className="float-left text-base font-semibold">{t("packing")}</legend>
             <div className="clear-both grid gap-4 pt-3 md:grid-cols-2">
               {PACKING_GROUPS.map((group) => (
-                <Field
-                  key={group}
-                  id={`${id}-k-${group}`}
-                  label={t(`packingGroups.${group}`)}
-                  hint={t("perLine")}
-                >
+                <Field key={group} id={`${id}-k-${group}`} label={t(`packingGroups.${group}`)} hint={t("perLine")}>
                   <Textarea
                     id={`${id}-k-${group}`}
                     name={`packing.${group}`}
                     maxLength={4000}
                     rows={3}
-                    defaultValue={lines(
-                      timeline.packing.filter((p) => p.group === group),
-                    )}
+                    defaultValue={lines(timeline.packing.filter((p) => p.group === group))}
                     aria-describedby={`${id}-k-${group}-note`}
                   />
                 </Field>

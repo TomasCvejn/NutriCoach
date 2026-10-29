@@ -18,25 +18,11 @@ export const weekParam = z.object({
 
 // The training page (client) and Training tab (coach): one week, Monday first (`week` = any day of it, in the URL), with
 // each day's sessions, then the next sessions from today. Both add sessions; a session opens its page (`base`/id).
-export async function TrainingWeek({
-  clientId,
-  timezone,
-  week,
-  base,
-}: {
-  clientId: string;
-  timezone: string;
-  week?: string;
-  base: string;
-}) {
+export async function TrainingWeek({ clientId, timezone, week, base }: { clientId: string; timezone: string; week?: string; base: string }) {
   const today = todayIn(timezone);
   const [monday] = weekStarts(week ?? today, 1);
   const days = Array.from({ length: 7 }, (_, i) => addDays(monday, i));
-  const order = [
-    { date: "asc" },
-    { startTime: "asc" },
-    { createdAt: "asc" },
-  ] as const;
+  const order = [{ date: "asc" }, { startTime: "asc" }, { createdAt: "asc" }] as const;
   const [t, format, sessions, upcoming] = await Promise.all([
     getTranslations("Training"),
     getFormatter(),
@@ -50,8 +36,7 @@ export async function TrainingWeek({
       take: 5,
     }),
   ]);
-  const day = (date: string, options: DateTimeFormatOptions) =>
-    format.dateTime(new Date(date), { ...options, timeZone: "UTC" });
+  const day = (date: string, options: DateTimeFormatOptions) => format.dateTime(new Date(date), { ...options, timeZone: "UTC" });
   const current = monday === weekStarts(today, 1)[0];
   const href = (date: string) => `${base}?week=${date}`;
 
@@ -66,13 +51,7 @@ export async function TrainingWeek({
           {t(`types.${session.type as SessionType}`)}
           {session.sport && ` · ${session.sport}`}
         </span>
-        <Pill
-          tone={
-            session.intensity === "VERY_HIGH" || session.intensity === "HIGH"
-              ? "accent"
-              : "neutral"
-          }
-        >
+        <Pill tone={session.intensity === "VERY_HIGH" || session.intensity === "HIGH" ? "accent" : "neutral"}>
           {t(`intensities.${session.intensity as Intensity}`)}
         </Pill>
       </span>
@@ -92,11 +71,7 @@ export async function TrainingWeek({
           .filter(Boolean)
           .join(" · ")}
       </span>
-      {session.description && (
-        <span className="line-clamp-2 text-sm font-normal">
-          {session.description}
-        </span>
-      )}
+      {session.description && <span className="line-clamp-2 text-sm font-normal">{session.description}</span>}
     </Link>
   );
 
@@ -134,21 +109,12 @@ export async function TrainingWeek({
             <ChevronRightIcon aria-hidden />
           </Link>
           {!current && (
-            <Link
-              href={base}
-              className="ml-1 text-sm font-medium text-primary-ink hover:underline"
-            >
+            <Link href={base} className="ml-1 text-sm font-medium text-primary-ink hover:underline">
               {t("thisWeek")}
             </Link>
           )}
         </nav>
-        <SessionDialog
-          clientId={clientId}
-          date={current ? today : monday}
-          trigger={
-            <Button className="h-10 px-4 sm:h-8 sm:px-3">{t("add")}</Button>
-          }
-        />
+        <SessionDialog clientId={clientId} date={current ? today : monday} trigger={<Button className="h-10 px-4 sm:h-8 sm:px-3">{t("add")}</Button>} />
       </div>
 
       <ol aria-label={t("week")} className="flex flex-col">
@@ -161,44 +127,29 @@ export async function TrainingWeek({
               className="grid grid-cols-[4.5rem_minmax(0,1fr)] gap-3 border-b border-rule py-3 last:border-0"
             >
               <p className="pt-1 text-sm">
-                <span
-                  className={`block font-medium first-letter:uppercase ${date === today ? "text-primary-ink" : ""}`}
-                >
+                <span className={`block font-medium first-letter:uppercase ${date === today ? "text-primary-ink" : ""}`}>
                   {day(date, { weekday: "short" })}
                 </span>
-                <span className="text-muted-foreground tabular-nums">
-                  {day(date, { day: "numeric", month: "numeric" })}
-                </span>
+                <span className="text-muted-foreground tabular-nums">{day(date, { day: "numeric", month: "numeric" })}</span>
               </p>
               {own.length ? (
-                <div className="flex flex-col gap-2">
-                  {own.map((s) => row(s))}
-                </div>
+                <div className="flex flex-col gap-2">{own.map((s) => row(s))}</div>
               ) : (
-                <p className="pt-1 text-sm text-muted-foreground">
-                  {t("rest")}
-                </p>
+                <p className="pt-1 text-sm text-muted-foreground">{t("rest")}</p>
               )}
             </li>
           );
         })}
       </ol>
 
-      <section
-        aria-labelledby="training-upcoming"
-        className="flex flex-col gap-3"
-      >
+      <section aria-labelledby="training-upcoming" className="flex flex-col gap-3">
         <h2 id="training-upcoming" className="text-base font-semibold">
           {t("upcoming")}
         </h2>
         {upcoming.length ? (
-          <div className="flex flex-col gap-2">
-            {upcoming.map((s) => row(s, true))}
-          </div>
+          <div className="flex flex-col gap-2">{upcoming.map((s) => row(s, true))}</div>
         ) : (
-          <p className="rounded-lg border border-dashed px-4 py-3 text-sm text-muted-foreground">
-            {t("noUpcoming")}
-          </p>
+          <p className="rounded-lg border border-dashed px-4 py-3 text-sm text-muted-foreground">{t("noUpcoming")}</p>
         )}
       </section>
     </div>

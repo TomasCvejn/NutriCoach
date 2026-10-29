@@ -13,7 +13,9 @@ import { SCHEDULE_TYPES } from "@/lib/enums";
 import { AMOUNTS } from "@/lib/schedule";
 
 // Add a schedule item (no `item`) or edit one, with delete while editing.
-export function ScheduleItemDialog({ competitionId, item, recipes, trigger }: { competitionId: string; item?: ScheduleItem; recipes: { id: string; name: string }[]; trigger: ReactElement<Record<string, unknown>> }) {
+type Option = { id: string; name: string };
+
+export function ScheduleItemDialog({ competitionId, item, recipes, supplements, trigger }: { competitionId: string; item?: ScheduleItem; recipes: Option[]; supplements: Option[]; trigger: ReactElement<Record<string, unknown>> }) {
   const t = useTranslations("Schedule");
   const id = useId();
   const error = (invalid: (field: string) => boolean, field: string) => (invalid(field) ? t(`invalid.${field as "time"}`) : undefined);
@@ -50,6 +52,18 @@ export function ScheduleItemDialog({ competitionId, item, recipes, trigger }: { 
               </Field>
             ))}
           </div>
+          {supplements.length > 0 && (
+            <Field id={`${id}-supplement`} label={t("fields.supplement")} error={error(invalid, "supplementId")}>
+              <NativeSelect id={`${id}-supplement`} name="supplementId" defaultValue={item?.supplementId ?? ""} className="w-full [&_select]:h-10">
+                <NativeSelectOption value="">{t("noSupplement")}</NativeSelectOption>
+                {supplements.map((supplement) => (
+                  <NativeSelectOption key={supplement.id} value={supplement.id}>
+                    {supplement.name}
+                  </NativeSelectOption>
+                ))}
+              </NativeSelect>
+            </Field>
+          )}
           {recipes.length > 0 && (
             <Field id={`${id}-recipe`} label={t("fields.recipe")} error={error(invalid, "recipeId")}>
               <NativeSelect id={`${id}-recipe`} name="recipeId" defaultValue={item?.recipeId ?? ""} className="w-full [&_select]:h-10">

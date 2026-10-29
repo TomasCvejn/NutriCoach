@@ -20,7 +20,9 @@ const itemInput = z.object({
   fluid: amount,
   sodium: amount,
   caffeine: amount,
-  recipeId: optional(z.string()),
+  // The dialog leaves a link out when there is nothing to pick: absent keeps what is there.
+  recipeId: optional(z.string()).optional(),
+  supplementId: optional(z.string()).optional(),
 });
 
 // The competition and its coach: the schedule is the coach's to write.
@@ -35,13 +37,15 @@ const refresh = (clientId: string) => {
 };
 const nextPosition = (items: { time: string; position: number }[], time: string) => Math.max(-1, ...items.filter((i) => i.time === time).map((i) => i.position)) + 1;
 
-// Adds or edits an item; a recipe link must be one of the coach's published recipes (the ones the client can open).
+// Adds or edits an item; a recipe link must be one of the coach's published recipes (the ones the client can open), a
+// supplement link one of the client's supplements.
 export async function saveScheduleItem(form: FormData): Promise<{ invalid: string[] } | null> {
   const { coach, client, competition } = await competitionOf(form);
   const parsed = itemInput.safeParse(Object.fromEntries(form));
   if (!parsed.success) return { invalid: [...new Set(parsed.error.issues.map((issue) => String(issue.path[0])))] };
   const { id, ...data } = parsed.data;
   if (data.recipeId && !(await db.recipe.findFirst({ where: { id: data.recipeId, coachId: coach.id, status: "PUBLISHED" } }))) return { invalid: ["recipeId"] };
+  if (data.supplementId && !(await db.supplement.findFirst({ where: { id: data.supplementId, clientId: client.id } }))) return { invalid: ["supplementId"] };
   if (id) {
     const old = competition.schedule.find((i) => i.id === id);
     if (!old) notFound();
@@ -65,10 +69,10 @@ export async function duplicateScheduleItem(form: FormData) {
   const { client, competition } = await competitionOf(form);
   const item = competition.schedule.find((i) => i.id === form.get("id"));
   if (!item) notFound();
-  const { competitionId, time, type, title, details, carbs, fluid, sodium, caffeine, recipeId } = item;
+  const { competitionId, time, type, title, details, carbs, fluid, sodium, caffeine, recipeId, supplementId } = item;
   await db.$transaction([
     ...competition.schedule.filter((i) => i.time === item.time && i.position > item.position).map((i) => db.scheduleItem.update({ where: { id: i.id }, data: { position: i.position + 1 } })),
-    db.scheduleItem.create({ data: { competitionId, time, type, title, details, carbs, fluid, sodium, caffeine, recipeId, position: item.position + 1 } }),
+    db.scheduleItem.create({ data: { competitionId, time, type, title, details, carbs, fluid, sodium, caffeine, recipeId, supplementId, position: item.position + 1 } }),
   ]);
   refresh(client.id);
 }

@@ -19,6 +19,7 @@ const TABS = [
   { key: "competition", segment: "competition" },
   { key: "progress", segment: "progress" },
   { key: "checkIns", segment: "check-ins" },
+  { key: "supplements", segment: "supplements" },
   { key: "notes", segment: "notes" },
 ] as const;
 

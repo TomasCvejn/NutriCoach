@@ -139,6 +139,7 @@ model Client {
   bodyComps        BodyComp[]
   trainingSessions TrainingSession[]
   competitions     Competition[]
+  supplements      Supplement[]
 
   @@index([coachId])
 }
@@ -583,9 +584,33 @@ model ScheduleItem {
   sodium        Int? // mg
   caffeine      Int? // mg
   recipeId      String?
+  supplementId  String?
+  supplement    Supplement? @relation(fields: [supplementId], references: [id], onDelete: SetNull)
   done          Boolean     @default(false)
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 
   @@index([competitionId, time])
+}
+
+// A supplement a client takes (supplements.md): assigned by the coach, or added by the client (flagged for the coach).
+model Supplement {
+  id            String         @id @default(cuid())
+  clientId      String
+  client        Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name          String
+  brand         String?
+  category      String // DAILY / TRAINING / COMPETITION
+  dose          String?
+  timing        String?
+  purpose       String?
+  notes         String?
+  activeFrom    String? // YYYY-MM-DD
+  activeTo      String? // YYYY-MM-DD
+  addedByClient Boolean        @default(false)
+  scheduleItems ScheduleItem[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  @@index([clientId])
 }

@@ -49,7 +49,8 @@
     "checkIn": "Check-in",
     "checkIns": "Check-ins",
     "progress": "Progress",
-    "competition": "Competition"
+    "competition": "Competition",
+    "supplements": "Supplements"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -198,6 +199,7 @@
       "competition": "Competition",
       "progress": "Progress",
       "checkIns": "Check-ins",
+      "supplements": "Supplements",
       "notes": "Notes"
     },
     "changeMode": {
@@ -1486,7 +1488,8 @@
       "fluid": "Fluid (ml)",
       "sodium": "Sodium (mg)",
       "caffeine": "Caffeine (mg)",
-      "recipe": "Recipe"
+      "recipe": "Recipe",
+      "supplement": "Supplement"
     },
     "types": {
       "EVENT": "Start",
@@ -1503,7 +1506,8 @@
       "title": "Enter a title (at most 100 characters).",
       "recipeId": "Choose one of your published recipes.",
       "amount": "Enter 0–5,000.",
-      "shift": "That would move an item out of the day (00:00–23:59)."
+      "shift": "That would move an item out of the day (00:00–23:59).",
+      "supplementId": "Choose one of the client's supplements."
     },
     "noRecipe": "No recipe",
     "recipe": "Recipe: {name}",
@@ -1523,6 +1527,46 @@
     "duplicate": "Duplicate {title}",
     "emptyClient": "Your coach hasn't prepared the race-day schedule yet.",
     "now": "Now {time}",
-    "nowAt": "It is {time} now"
+    "nowAt": "It is {time} now",
+    "supplement": "Supplement: {name}",
+    "noSupplement": "No supplement"
+  },
+  "Supplements": {
+    "title": "Supplements",
+    "assign": "Add supplement",
+    "addOwn": "Add your own",
+    "addTitle": "New supplement",
+    "editTitle": "Edit supplement",
+    "edit": "Edit",
+    "editFor": "Edit {name}",
+    "addedByClient": "Added by client",
+    "yours": "added by you",
+    "from": "from {date}",
+    "until": "until {date}",
+    "ended": "Ended",
+    "empty": "No supplements yet. Your coach can add them, or note the ones you take yourself.",
+    "emptyCoach": "No supplements yet.",
+    "categories": {
+      "DAILY": "Daily",
+      "TRAINING": "For training",
+      "COMPETITION": "For competitions"
+    },
+    "fields": {
+      "name": "Name",
+      "brand": "Brand / product",
+      "category": "When",
+      "dose": "Dose",
+      "timing": "Timing",
+      "purpose": "What for",
+      "notes": "Notes",
+      "activeFrom": "From",
+      "activeTo": "Until",
+      "active": "Taking it"
+    },
+    "invalid": {
+      "name": "Enter a name (at most 100 characters).",
+      "text": "The text is too long.",
+      "dates": "“Until” can't be before “From”."
+    }
   }
 }
