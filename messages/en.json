@@ -961,7 +961,18 @@
     "checkInsWaiting": "Check-ins to review",
     "competitionsSoon": "Competitions in 30 days",
     "unreadMessages": "Unread messages",
-    "callsSoon": "Calls in 7 days"
+    "callsSoon": "Calls in 7 days",
+    "attention": "Needs attention",
+    "allGood": "All clients are on track.",
+    "noCompetitions": "No competitions in the next 30 days.",
+    "inDays": "{days, plural, =0 {today} one {in # day} other {in # days}}",
+    "reasons": {
+      "NOT_LOGGED": "Nothing logged for {days} days",
+      "CHECK_IN_OVERDUE": "Check-in overdue",
+      "CHECK_IN_TO_REVIEW": "Check-in to review",
+      "UNREAD": "{count, plural, one {# unread message} other {# unread messages}}",
+      "NO_PLAN": "No nutrition plan"
+    }
   },
   "ClientHome": {
     "title": "Today",

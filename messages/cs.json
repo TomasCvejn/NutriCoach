@@ -961,7 +961,18 @@
     "checkInsWaiting": "Check-iny ke kontrole",
     "competitionsSoon": "Závody do 30 dní",
     "unreadMessages": "Nepřečtené zprávy",
-    "callsSoon": "Hovory do 7 dní"
+    "callsSoon": "Hovory do 7 dní",
+    "attention": "Vyžaduje pozornost",
+    "allGood": "Všichni klienti jsou v pořádku.",
+    "noCompetitions": "Žádný závod v příštích 30 dnech.",
+    "inDays": "{days, plural, =0 {dnes} one {za # den} few {za # dny} other {za # dní}}",
+    "reasons": {
+      "NOT_LOGGED": "Nic nezapsáno {days} dní",
+      "CHECK_IN_OVERDUE": "Check-in po termínu",
+      "CHECK_IN_TO_REVIEW": "Check-in ke kontrole",
+      "UNREAD": "{count, plural, one {# nepřečtená zpráva} few {# nepřečtené zprávy} other {# nepřečtených zpráv}}",
+      "NO_PLAN": "Chybí plán výživy"
+    }
   },
   "ClientHome": {
     "title": "Dnes",

@@ -14,7 +14,8 @@ test("coach writes to race@: the message arrives in her open thread within a pol
   await logIn(coach, "coach@demo.cz");
   await expect(coach).toHaveURL("/coach");
   await coach.getByRole("link", { name: /^Zprávy/ }).first().click();
-  await coach.getByRole("link", { name: /Tereza Svobodová/ }).click();
+  await expect(coach).toHaveURL("/coach/messages");
+  await coach.getByRole("navigation", { name: "Konverzace s klienty" }).getByRole("link", { name: /Tereza Svobodová/ }).click();
   await expect(coach.getByRole("list", { name: "Zprávy v konverzaci" })).toContainText("těstoviny s rajčatovou omáčkou");
   await coach.getByLabel("Zpráva").fill("Ano, těstoviny jsou ideální. Omáčku spíš bez smetany.");
   await coach.getByRole("button", { name: "Odeslat" }).click();
