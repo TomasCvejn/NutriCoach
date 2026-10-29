@@ -15,7 +15,7 @@ import { TickItem } from "../tick-item";
 // the tasks to tick off, and the race-day packing list.
 export default async function ClientCompetitionDetail({ params }: PageProps<"/app/competition/[id]">) {
   const { user, client } = await requireClient();
-  const competition = await db.competition.findFirst({ where: { id: (await params).id, clientId: client.id } });
+  const competition = await db.competition.findFirst({ where: { id: (await params).id, clientId: client.id }, include: { _count: { select: { schedule: true } } } });
   if (!competition) notFound();
   const [t, format] = await Promise.all([getTranslations("Competition"), getFormatter()]);
   const today = todayIn(user.timezone);
@@ -35,6 +35,11 @@ export default async function ClientCompetitionDetail({ params }: PageProps<"/ap
         <p className="mt-1 text-sm text-muted-foreground first-letter:uppercase">
           {[day(competition.date), competition.location, days >= 0 && t("countdown", { days }).toLowerCase()].filter(Boolean).join(" · ")}
         </p>
+        {competition._count.schedule > 0 && (
+          <Link href={`/app/competition/${competition.id}/schedule`} className="mt-2 inline-flex h-10 items-center text-sm font-medium text-primary-ink hover:underline">
+            {t("openSchedule")}
+          </Link>
+        )}
       </header>
 
       {TIMELINE_PHASES.filter((phase) => timeline.phases[phase]).map((phase) => {

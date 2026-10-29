@@ -24,3 +24,8 @@ export function diffDays(from: string, to: string) {
 export function ageOn(birthDate: string, today: string) {
   return Number(today.slice(0, 4)) - Number(birthDate.slice(0, 4)) - (today.slice(5) < birthDate.slice(5) ? 1 : 0);
 }
+
+// The time now in the user's timezone, as HH:MM (24 h).
+export function nowIn(timezone: string, now = new Date()) {
+  return new Intl.DateTimeFormat("en-GB", { timeZone: timezone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(now);
+}

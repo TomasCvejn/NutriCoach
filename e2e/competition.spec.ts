@@ -77,3 +77,20 @@ test("coach shifts race@'s race-day schedule by +15 min and back", async ({ page
   await page.getByRole("button", { name: "Posunout", exact: true }).click();
   await expect(items.first()).toContainText("05:30");
 });
+
+test("race@ ticks an item of her race-day schedule; it stays ticked after a reload", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "race@demo.cz");
+  await expect(page).toHaveURL("/app");
+  await page.goto("/app/competition");
+  await page.getByRole("link", { name: "Plán závodního dne" }).click();
+  await expect(page.getByRole("heading", { name: "Plán závodního dne", level: 1 })).toBeVisible();
+  await expect(page.getByText("Mezi starty")).toHaveCount(0); // one start only
+  const gel = page.getByRole("checkbox", { name: /^08:45 Gel před startem/ });
+  await expect(gel).not.toBeChecked();
+  await gel.check();
+  await expect(async () => {
+    await page.reload();
+    await expect(gel).toBeChecked({ timeout: 1000 });
+  }).toPass();
+});

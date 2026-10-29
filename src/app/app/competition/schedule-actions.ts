@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { notFound } from "next/navigation";
 import { z } from "zod";
-import { requireCoachOf } from "@/lib/auth";
+import { requireClientAccess, requireCoachOf } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { SCHEDULE_TYPES } from "@/lib/enums";
 import { optional } from "@/lib/forms";
@@ -96,4 +96,13 @@ export async function shiftSchedule(_: { invalid: string[] } | null, form: FormD
   await db.$transaction(moved.map((item) => db.scheduleItem.update({ where: { id: item.id }, data: { time: item.time } })));
   refresh(client.id);
   return null;
+}
+
+// The client (or the coach) ticks an item off on the day.
+export async function tickScheduleItem(form: FormData) {
+  const competition = await db.competition.findUnique({ where: { id: String(form.get("competitionId")) } });
+  const { client } = await requireClientAccess(competition?.clientId ?? "");
+  const { count } = await db.scheduleItem.updateMany({ where: { id: String(form.get("id")), competitionId: competition!.id }, data: { done: form.get("done") === "true" } });
+  if (count === 0) notFound();
+  refresh(client.id);
 }

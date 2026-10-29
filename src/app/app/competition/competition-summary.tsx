@@ -2,16 +2,23 @@ import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import type { Competition } from "@/generated/prisma/client";
 import { competitionPhase } from "@/lib/competition";
-import { diffDays } from "@/lib/dates";
+import { diffDays, nowIn } from "@/lib/dates";
+import { db } from "@/lib/db";
 import { TIMELINE_PHASES } from "@/lib/enums";
+import { toMinutes } from "@/lib/schedule";
 import { timelineOf } from "@/lib/timeline";
 import { TickItem } from "./tick-item";
 
 // The next competition at a glance (competition.md "Competition dashboard"; also client home widget 5): the countdown, the
 // current phase with its nutrition priorities, the open tasks of the current and the next phase, a link to the timeline.
-// ponytail: race day says "today"; hours to the start come with the race-day schedule (its first event).
-export async function CompetitionSummary({ competition, today }: { competition: Competition; today: string }) {
-  const t = await getTranslations("Competition");
+// On race day the countdown is the hours to the schedule's first event (its start).
+export async function CompetitionSummary({ competition, today, timezone }: { competition: Competition; today: string; timezone: string }) {
+  const [t, start, scheduled] = await Promise.all([
+    getTranslations("Competition"),
+    today === competition.date ? db.scheduleItem.findFirst({ where: { competitionId: competition.id, type: "EVENT" }, orderBy: [{ time: "asc" }, { position: "asc" }] }) : null,
+    db.scheduleItem.count({ where: { competitionId: competition.id } }),
+  ]);
+  const toStart = start && toMinutes(start.time) - toMinutes(nowIn(timezone));
   const days = diffDays(today, competition.date);
   const phase = competitionPhase(today, competition.date);
   const timeline = timelineOf(competition.timeline);
@@ -30,7 +37,7 @@ export async function CompetitionSummary({ competition, today }: { competition: 
           </h2>
           {phase && <p className="mt-1 text-sm text-muted-foreground">{t(`phases.${phase}`)}</p>}
         </div>
-        <p className="text-2xl font-bold tabular-nums">{t("countdown", { days })}</p>
+        <p className="text-2xl font-bold tabular-nums">{toStart != null && toStart > 0 ? t("startsIn", { hours: Math.floor(toStart / 60), minutes: toStart % 60 }) : t("countdown", { days })}</p>
       </div>
       {current && timeline.phases[current]?.priorities && <p className="text-sm whitespace-pre-line">{timeline.phases[current]!.priorities}</p>}
       {open.length > 0 && (
@@ -46,9 +53,16 @@ export async function CompetitionSummary({ competition, today }: { competition: 
           </ul>
         </div>
       )}
-      <Link href={`/app/competition/${competition.id}`} className="self-start text-sm font-medium text-primary-ink hover:underline">
-        {t("openTimeline")}
-      </Link>
+      <div className="flex flex-wrap gap-x-5 gap-y-1">
+        <Link href={`/app/competition/${competition.id}`} className="inline-flex h-10 items-center text-sm font-medium text-primary-ink hover:underline sm:h-auto">
+          {t("openTimeline")}
+        </Link>
+        {scheduled > 0 && (
+          <Link href={`/app/competition/${competition.id}/schedule`} className="inline-flex h-10 items-center text-sm font-medium text-primary-ink hover:underline sm:h-auto">
+            {t("openSchedule")}
+          </Link>
+        )}
+      </div>
     </section>
   );
 }

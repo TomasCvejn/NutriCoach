@@ -1464,7 +1464,9 @@
     "nutritionPriorities": "Nutrition priorities",
     "openTasks": "Open tasks",
     "openTimeline": "The whole timeline",
-    "laterOnes": "Later competitions"
+    "laterOnes": "Later competitions",
+    "openSchedule": "Race-day schedule",
+    "startsIn": "{hours, plural, =0 {} other {# h }}{minutes} min to the start"
   },
   "Schedule": {
     "title": "Race-day schedule",
@@ -1518,6 +1520,9 @@
     "shift": "Shift",
     "moveUp": "Move {title} up",
     "moveDown": "Move {title} down",
-    "duplicate": "Duplicate {title}"
+    "duplicate": "Duplicate {title}",
+    "emptyClient": "Your coach hasn't prepared the race-day schedule yet.",
+    "now": "Now {time}",
+    "nowAt": "It is {time} now"
   }
 }

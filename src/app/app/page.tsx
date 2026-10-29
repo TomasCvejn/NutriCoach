@@ -120,7 +120,7 @@ export default async function ClientHome() {
       <HydrationCard clientId={client.id} date={today} target={day.fluidTarget} variant="home" />
 
       {/* Widget 5: the next competition, while one is coming. */}
-      {competes && competition && <CompetitionSummary competition={competition} today={today} />}
+      {competes && competition && <CompetitionSummary competition={competition} today={today} timezone={user.timezone} />}
 
       {/* Widget 6: the check-in reminder while the period is open, and the coach's feedback until it is opened. */}
       {(period.status === "due" || period.status === "overdue") && (

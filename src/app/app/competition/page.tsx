@@ -17,7 +17,7 @@ export default async function ClientCompetition() {
   return (
     <div className="flex max-w-3xl flex-col gap-6">
       <h1 className="text-2xl font-bold tracking-tight">{t("title")}</h1>
-      {next && <CompetitionSummary competition={next} today={today} />}
+      {next && <CompetitionSummary competition={next} today={today} timezone={user.timezone} />}
       <CompetitionList clientId={client.id} timezone={user.timezone} coach={false} except={next?.id} />
     </div>
   );

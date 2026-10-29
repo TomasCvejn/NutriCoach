@@ -1464,7 +1464,9 @@
     "nutritionPriorities": "Výživové priority",
     "openTasks": "Otevřené úkoly",
     "openTimeline": "Celý časový plán",
-    "laterOnes": "Další závody"
+    "laterOnes": "Další závody",
+    "openSchedule": "Plán závodního dne",
+    "startsIn": "{hours, plural, =0 {} other {# h }}{minutes} min do startu"
   },
   "Schedule": {
     "title": "Plán závodního dne",
@@ -1518,6 +1520,9 @@
     "shift": "Posunout",
     "moveUp": "Posunout {title} výš",
     "moveDown": "Posunout {title} níž",
-    "duplicate": "Duplikovat {title}"
+    "duplicate": "Duplikovat {title}",
+    "emptyClient": "Trenér zatím plán závodního dne nepřipravil.",
+    "now": "Teď {time}",
+    "nowAt": "Teď je {time}"
   }
 }

@@ -3,7 +3,7 @@ import { createUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ordered } from "@/lib/schedule";
 import { notFound, redirectsTo, signIn, uniqueEmail } from "@/test/auth";
-import { deleteScheduleItem, duplicateScheduleItem, moveScheduleItem, saveScheduleItem, shiftSchedule } from "./schedule-actions";
+import { deleteScheduleItem, duplicateScheduleItem, moveScheduleItem, saveScheduleItem, shiftSchedule, tickScheduleItem } from "./schedule-actions";
 
 const request = vi.hoisted(() => ({ cookie: "" }));
 vi.mock("next/headers", () => ({ headers: async () => new Headers({ cookie: request.cookie }) }));
@@ -72,4 +72,19 @@ test("bad input, another coach's recipe, the client and another coach are refuse
   request.cookie = await signIn(other.coach.email);
   await expect(shiftSchedule(null, form({ competitionId: competition.id, minutes: "10" }))).rejects.toMatchObject(notFound);
   expect(await db.scheduleItem.count({ where: { competitionId: competition.id } })).toBe(0);
+});
+
+test("the client ticks an item off; another client can't", async () => {
+  const { coach, user, competition } = await setup();
+  request.cookie = await signIn(coach.email);
+  await saveScheduleItem(form(item(competition.id, "09:00", "Start", "EVENT")));
+  const start = await db.scheduleItem.findFirstOrThrow({ where: { competitionId: competition.id } });
+  request.cookie = await signIn(user.email);
+  await tickScheduleItem(form({ competitionId: competition.id, id: start.id, done: "true" }));
+  expect(await db.scheduleItem.findUniqueOrThrow({ where: { id: start.id } })).toMatchObject({ done: true });
+  const other = await setup();
+  request.cookie = await signIn(other.user.email);
+  await expect(tickScheduleItem(form({ competitionId: competition.id, id: start.id, done: "false" }))).rejects.toMatchObject(notFound);
+  await expect(tickScheduleItem(form({ competitionId: other.competition.id, id: start.id, done: "false" }))).rejects.toMatchObject(notFound);
+  expect(await db.scheduleItem.findUniqueOrThrow({ where: { id: start.id } })).toMatchObject({ done: true });
 });
