@@ -4,7 +4,8 @@ import type { Prisma } from "../src/generated/prisma/client";
 import { createUser } from "../src/lib/auth";
 import { addDays, todayIn } from "../src/lib/dates";
 import { db, dbUrl } from "../src/lib/db";
-import { type HistoryPayloads, ONBOARDING_STEPS } from "../src/lib/enums";
+import { CHECK_IN_SCALES, type HistoryPayloads, ONBOARDING_STEPS } from "../src/lib/enums";
+import { currentDueDate } from "../src/lib/check-ins";
 import { nutrientsOf } from "../src/lib/food-log";
 import type { NotificationPayloads } from "../src/lib/notifications";
 
@@ -417,6 +418,28 @@ async function seed() {
     ),
   });
   await db.drinkPreset.create({ data: { clientId: sports, name: "Electrolyte mix", ml: 500, drinkType: "ELECTROLYTE", sodium: 300, carbs: 30 } });
+
+  // Check-ins (Monday): the earlier periods reviewed; sports@ has sent the current one (waiting for review, its
+  // notification already read), general@ and race@ still owe theirs, so their home shows the reminder.
+  const answers = (scores: number[], comments: Record<string, string> = {}) =>
+    Object.fromEntries(CHECK_IN_SCALES.map((scale, i) => [scale, { score: scores[i], comment: comments[scale] ?? null }]));
+  const sets: [clientId: string, onboardedDaysAgo: number, scores: number[], comments: Record<string, string>, questions: string | null][] = [
+    [general, 14, [6, 5, 7, 8, 6, 7, 7], { hunger: "Večer hlad na sladké." }, "Můžu si dát večer ovoce místo sušenky?"],
+    [sports, 14, [7, 6, 6, 8, 8, 8, 8], { recovery: "Long ride on Saturday, legs heavy on Sunday." }, "Should I add carbs before the Wednesday intervals?"],
+    [race, 13, [8, 7, 7, 6, 9, 8, 8], { digestion: "Na dlouhém běhu trochu nafouknutá." }, null],
+  ];
+  for (const [clientId, onboardedDaysAgo, scores, comments, questions] of sets) {
+    const current = currentDueDate(today, 1, addDays(today, -onboardedDaysAgo))!;
+    for (const back of [14, 7]) {
+      const dueDate = addDays(current, -back);
+      if (dueDate < addDays(today, -onboardedDaysAgo)) continue;
+      await db.checkIn.create({ data: { clientId, dueDate, answers: answers(scores.map((v) => Math.max(1, v - back / 7))), reviewedAt: daysAgo(back - 2) } });
+    }
+    if (clientId === sports) {
+      const sent = await db.checkIn.create({ data: { clientId, dueDate: current, answers: answers(scores, comments), questions } });
+      await db.notification.create({ data: { userId: coach.id, type: "CHECK_IN_SUBMITTED", payload: { client: "Emma Walker", checkInId: sent.id } satisfies NotificationPayloads["CHECK_IN_SUBMITTED"], readAt: new Date() } });
+    }
+  }
 
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({

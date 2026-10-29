@@ -17,7 +17,7 @@ const form = (fields: Record<string, string>) => {
 
 const row = (name: string, trackingMode: string, status: ClientRow["status"], adherence: number | null = null, lastLogged: string | null = null): ClientRow => ({
   ...{ id: name, name, email: `${name}@x.cz`, trackingMode, status },
-  ...{ adherence, lastLogged, daysAgo: null },
+  ...{ adherence, lastLogged, daysAgo: null, checkIn: "ok" as const },
 });
 const rows = [row("Šárka", "PORTIONS", "ACTIVE"), row("anna", "CALORIES", "ONBOARDING"), row("Zdeněk", "GUIDANCE", "INACTIVE"), row("Bára", "CALORIES", "ACTIVE")];
 const names = (list: { rows: ClientRow[] }) => list.rows.map((r) => r.name);
@@ -71,7 +71,7 @@ test("a coach lists only their own clients", async () => {
 
   request.cookie = await signIn(other.coach.email);
   expect(await coachClients()).toEqual([
-    { id: other.client.id, name: "List Client", email: other.user.email, trackingMode: "CALORIES", status: "ONBOARDING", lastLogged: null, daysAgo: null, adherence: null },
+    { id: other.client.id, name: "List Client", email: other.user.email, trackingMode: "CALORIES", status: "ONBOARDING", checkIn: "ok", lastLogged: null, daysAgo: null, adherence: null },
   ]);
 
   request.cookie = await signIn("general@demo.cz");

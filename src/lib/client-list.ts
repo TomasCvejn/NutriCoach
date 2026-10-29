@@ -1,16 +1,19 @@
 import { z } from "zod";
 import { requireCoach } from "./auth";
 import { db } from "./db";
-import { TRACKING_MODES } from "./enums";
+import { type CheckInStatus, TRACKING_MODES } from "./enums";
 import { fold } from "./text";
+import { checkInStatuses } from "./check-ins";
 import { type NutritionSummary, nutritionSummaries } from "./adherence";
+
+const CHECK_IN_ORDER: CheckInStatus[] = ["overdue", "due", "toReview", "ok"];
 
 // The coach's client list (/coach/clients): one query for the coach's clients, then search, filters and sorting in memory.
 // ponytail: in memory because a coach has tens of clients and later columns (adherence, check-in status) are computed per row anyway.
 
 export const CLIENT_STATUSES = ["ONBOARDING", "ACTIVE", "INACTIVE"] as const; // also the status sort order
 export const STATUS_FILTERS = ["active", "inactive", "all"] as const;
-export const SORT_COLUMNS = ["name", "mode", "status", "lastLogged", "adherence"] as const;
+export const SORT_COLUMNS = ["name", "mode", "status", "lastLogged", "adherence", "checkIn"] as const;
 
 // Search params as the URL gives them; anything unexpected falls back to the default view.
 export const listParams = z.object({
@@ -22,21 +25,25 @@ export const listParams = z.object({
 });
 export type ListParams = z.infer<typeof listParams>;
 
-export type ClientRow = { id: string; name: string; email: string; trackingMode: string; status: (typeof CLIENT_STATUSES)[number] } & NutritionSummary;
+export type ClientRow = { id: string; name: string; email: string; trackingMode: string; status: (typeof CLIENT_STATUSES)[number]; checkIn: CheckInStatus } & NutritionSummary;
 
 export async function coachClients(): Promise<ClientRow[]> {
   const coach = await requireCoach();
   const clients = await db.client.findMany({
     where: { coachId: coach.id },
-    select: { id: true, trackingMode: true, onboardingCompletedAt: true, user: { select: { name: true, email: true, active: true, timezone: true } } },
+    select: { id: true, trackingMode: true, onboardingCompletedAt: true, checkInWeekday: true, user: { select: { name: true, email: true, active: true, timezone: true } } },
   });
-  const nutrition = await nutritionSummaries(clients.map((c) => ({ id: c.id, trackingMode: c.trackingMode, timezone: c.user.timezone })));
+  const [nutrition, checkIns] = await Promise.all([
+    nutritionSummaries(clients.map((c) => ({ id: c.id, trackingMode: c.trackingMode, timezone: c.user.timezone }))),
+    checkInStatuses(clients.map((c) => ({ ...c, timezone: c.user.timezone }))),
+  ]);
   return clients.map(({ id, trackingMode, onboardingCompletedAt, user }) => ({
     id,
     trackingMode,
     name: user.name,
     email: user.email,
     status: !user.active ? "INACTIVE" : onboardingCompletedAt ? "ACTIVE" : "ONBOARDING",
+    checkIn: checkIns.get(id)!,
     ...nutrition.get(id)!,
   }));
 }
@@ -56,6 +63,7 @@ export function clientList(rows: ClientRow[], p: ListParams, locale: string) {
     status: (r: ClientRow) => CLIENT_STATUSES.indexOf(r.status),
     lastLogged: (r: ClientRow) => r.lastLogged ?? "",
     adherence: (r: ClientRow) => r.adherence ?? -1,
+    checkIn: (r: ClientRow) => CHECK_IN_ORDER.indexOf(r.checkIn), // the most urgent first
   }[p.sort];
   const order = (a: number | string, b: number | string) => (a < b ? -1 : a > b ? 1 : 0);
   const sign = p.dir === "asc" ? 1 : -1;

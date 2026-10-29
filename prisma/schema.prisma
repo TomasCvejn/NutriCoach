@@ -100,6 +100,7 @@ model Client {
   onboardingStep        Int       @default(0)
   onboardingCompletedAt DateTime?
   preferredTrackingMode String? // TRACKING_MODES; the client's wish for the coach, and the mode itself when the invite set none
+  checkInWeekday        Int       @default(1) // ISO weekday of the weekly check-in, 1 = Monday; the coach sets it
 
   // Profile (onboarding-profile.md), every field optional. Validated by PROFILE_SECTIONS (src/lib/profile.ts).
   sex              String? // SEXES
@@ -132,6 +133,7 @@ model Client {
   savedRecipes     SavedRecipe[]
   fluidLogs        FluidLog[]
   drinkPresets     DrinkPreset[]
+  checkIns         CheckIn[]
 
   @@index([coachId])
 }
@@ -428,4 +430,20 @@ model DrinkPreset {
   sodium    Int?
   carbs     Int?
   createdAt DateTime @default(now())
+}
+
+// The weekly check-in (check-ins.md) for the period starting on its due date (the check-in weekday). One per period.
+// answers: { [CHECK_IN_SCALES]: { score: 1–10, comment? } }. reviewedAt is set when the coach publishes feedback.
+model CheckIn {
+  id         String    @id @default(cuid())
+  clientId   String
+  client     Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  dueDate    String // YYYY-MM-DD, the check-in weekday that opened the period
+  answers    Json
+  questions  String?
+  reviewedAt DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@unique([clientId, dueDate])
 }

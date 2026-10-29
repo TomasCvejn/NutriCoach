@@ -47,6 +47,14 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
     client.daysAgo == null ? "—" : client.daysAgo <= 1 ? t(client.daysAgo === 0 ? "Clients.today" : "Clients.yesterday") : t("Clients.daysAgo", { count: client.daysAgo });
   const adherence = (client: ClientRow) => (client.adherence == null ? "—" : format.number(client.adherence / 100, { style: "percent" }));
 
+  // A check-in that needs someone gets a mark; ok is a quiet word.
+  const checkInMark = (status: ClientRow["checkIn"]) =>
+    status === "ok" ? (
+      <span className="text-muted-foreground">{t("Clients.checkIn.ok")}</span>
+    ) : (
+      <Pill tone={status === "overdue" ? "warning" : "accent"}>{t(`Clients.checkIn.${status}`)}</Pill>
+    );
+
   // Active is the normal state, so only the others get a mark.
   const statusMark = (status: ClientRow["status"]) =>
     status === "ACTIVE" ? (
@@ -111,6 +119,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                       {sortHeader("status", "hidden w-40 lg:table-cell")}
                       {sortHeader("lastLogged", "hidden w-32 md:table-cell")}
                       {sortHeader("adherence", "hidden w-28 text-right md:table-cell")}
+                      {sortHeader("checkIn", "hidden w-36 xl:table-cell")}
                       <th className="w-28">
                         <span className="sr-only">{t("Clients.columns.actions")}</span>
                       </th>
@@ -138,6 +147,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                           {lastLogged(client)}
                         </td>
                         <td className="hidden py-3 pr-4 text-right tabular-nums md:table-cell">{adherence(client)}</td>
+                        <td className="hidden py-3 pr-4 xl:table-cell">{checkInMark(client.checkIn)}</td>
                         <td className="py-3 text-right">
                           {client.status === "INACTIVE" ? (
                             <form action={setClientActive}>

@@ -1,7 +1,11 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { setCheckInWeekday } from "@/app/app/check-in/actions";
 import { Pill } from "@/components/pill";
+import { Button } from "@/components/ui/button";
+import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
+import { currentCheckIn } from "@/lib/check-ins";
 import { requireCoachOf } from "@/lib/auth";
 import { ageOn, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
@@ -20,6 +24,7 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
     db.nutritionTarget.findMany({ where: { clientId: client.id } }),
   ]);
   const today = todayIn(user.timezone);
+  const checkIn = await currentCheckIn(client, user.timezone);
   const mode = client.trackingMode as TrackingMode;
   // Today's targets per day type: its own row, else the rest day's (shown as such).
   const targets = DAY_TYPES.map((dayType) => ({ dayType, own: targetFor(targetRows.filter((r) => r.dayType === dayType), today, dayType) }));
@@ -132,6 +137,33 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
           {since && <p className="mt-3 text-xs text-muted-foreground">{t("ClientDashboard.targetsSince", { date: format.dateTime(new Date(since), { dateStyle: "medium", timeZone: "UTC" }) })}</p>}
         </section>
       </div>
+
+      {/* The weekly check-in: its day (the coach sets it) and where the current period stands. */}
+      <section aria-labelledby="overview-check-in" className="flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-card px-6 py-4">
+        <div className="flex flex-wrap items-center gap-3">
+          <h2 id="overview-check-in" className="text-base font-semibold">
+            {t("ClientDashboard.checkIn")}
+          </h2>
+          {checkIn.status !== "ok" ? <Pill tone={checkIn.status === "overdue" ? "warning" : "accent"}>{t(`Clients.checkIn.${checkIn.status}`)}</Pill> : <span className="text-sm text-muted-foreground">{t("Clients.checkIn.ok")}</span>}
+        </div>
+        <form action={setCheckInWeekday} className="flex items-center gap-2">
+          <input type="hidden" name="clientId" value={client.id} />
+          <label htmlFor="check-in-weekday" className="text-sm text-muted-foreground">
+            {t("ClientDashboard.checkInDay")}
+          </label>
+          <NativeSelect id="check-in-weekday" name="weekday" defaultValue={client.checkInWeekday} className="[&_select]:h-10 sm:[&_select]:h-8">
+            {[1, 2, 3, 4, 5, 6, 7].map((d) => (
+              <NativeSelectOption key={d} value={d}>
+                {/* 2024-01-01 was a Monday. */}
+                {format.dateTime(new Date(Date.UTC(2024, 0, d)), { weekday: "long", timeZone: "UTC" })}
+              </NativeSelectOption>
+            ))}
+          </NativeSelect>
+          <Button type="submit" variant="outline" className="h-10 sm:h-8">
+            {t("ClientDashboard.checkInSave")}
+          </Button>
+        </form>
+      </section>
 
       <section aria-labelledby="overview-profile" className="rounded-lg border bg-card p-6">
         <div className="flex items-baseline justify-between gap-4">

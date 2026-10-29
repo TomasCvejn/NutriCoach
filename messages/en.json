@@ -45,7 +45,8 @@
     "nutrition": "Nutrition",
     "library": "Library",
     "recipes": "Recipes",
-    "hydration": "Hydration"
+    "hydration": "Hydration",
+    "checkIn": "Check-in"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -149,7 +150,8 @@
       "status": "Status",
       "actions": "Actions",
       "lastLogged": "Last logged",
-      "adherence": "7-day adherence"
+      "adherence": "7-day adherence",
+      "checkIn": "Check-in"
     },
     "invite": {
       "open": "Invite client",
@@ -172,7 +174,13 @@
     "today": "today",
     "yesterday": "yesterday",
     "daysAgo": "{count, plural, one {# day ago} other {# days ago}}",
-    "summaryLine": "logged {last} · adherence {adherence}"
+    "summaryLine": "logged {last} · adherence {adherence}",
+    "checkIn": {
+      "ok": "Done",
+      "due": "Due",
+      "overdue": "Overdue",
+      "toReview": "To review"
+    }
   },
   "ClientDashboard": {
     "mode": "Tracking: {mode}",
@@ -217,7 +225,10 @@
       "label": "Nutrition views",
       "plan": "Plan and targets",
       "log": "Daily log"
-    }
+    },
+    "checkIn": "Weekly check-in",
+    "checkInDay": "Day",
+    "checkInSave": "Save"
   },
   "Notes": {
     "add": "Add note",
@@ -634,6 +645,67 @@
     "invalid": "Check this value.",
     "today": "Today"
   },
+  "CheckIn": {
+    "title": "Weekly check-in",
+    "due": "Your check-in for the week from {date} is due.",
+    "overdue": "Your check-in for the week from {date} is overdue.",
+    "next": "Next check-in: {date}.",
+    "scales": {
+      "energy": {
+        "title": "Energy",
+        "hint": "How did you feel this week?",
+        "low": "Drained",
+        "high": "Full of energy"
+      },
+      "hunger": {
+        "title": "Hunger",
+        "hint": "How hungry were you during the day?",
+        "low": "Very hungry",
+        "high": "Not hungry"
+      },
+      "recovery": {
+        "title": "Recovery",
+        "hint": "How did you recover, sleep included?",
+        "low": "Poorly",
+        "high": "Very well"
+      },
+      "digestion": {
+        "title": "Digestion",
+        "hint": "How was your digestion?",
+        "low": "Troubled",
+        "high": "No trouble"
+      },
+      "training": {
+        "title": "Training and activity",
+        "hint": "How did training or activity go?",
+        "low": "Not great",
+        "high": "Great"
+      },
+      "adherence": {
+        "title": "Sticking to the plan",
+        "hint": "How well did you stick to the plan?",
+        "low": "Not at all",
+        "high": "Fully"
+      },
+      "mood": {
+        "title": "Mood",
+        "hint": "How was your mood?",
+        "low": "Low",
+        "high": "Great"
+      }
+    },
+    "score": "{scale}: {score} of 10",
+    "pick": "Pick a value from 1 to 10.",
+    "comment": "Comment (optional)",
+    "commentFor": "Comment: {scale}",
+    "questions": "Questions for your coach",
+    "submit": "Send check-in",
+    "already": "This period's check-in has already been sent.",
+    "sentWaiting": "Sent; your coach will go through it soon",
+    "sentReviewed": "Your coach has gone through it",
+    "outOf": "{score} / 10",
+    "notYet": "Your first check-in comes on your next check-in day."
+  },
   "Foods": {
     "title": "Foods",
     "lead": "Your own foods, per 100 g. Your clients find them when they log.",
@@ -831,7 +903,11 @@
     "title": "Today",
     "nutrition": "Today's goals",
     "log": "Log",
-    "meals": "Today's meals"
+    "meals": "Today's meals",
+    "checkIn": "Weekly check-in",
+    "checkInDue": "It's check-in time: a few questions about your week.",
+    "checkInOverdue": "Your check-in is overdue: a few questions about your week.",
+    "checkInOpen": "Fill in the check-in"
   },
   "Notifications": {
     "title": "Notifications",

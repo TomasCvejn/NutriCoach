@@ -45,7 +45,8 @@
     "nutrition": "Výživa",
     "library": "Knihovna",
     "recipes": "Recepty",
-    "hydration": "Hydratace"
+    "hydration": "Hydratace",
+    "checkIn": "Check-in"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -149,7 +150,8 @@
       "status": "Stav",
       "actions": "Akce",
       "lastLogged": "Naposledy zapsáno",
-      "adherence": "Adherence 7 dní"
+      "adherence": "Adherence 7 dní",
+      "checkIn": "Check-in"
     },
     "invite": {
       "open": "Pozvat klienta",
@@ -172,7 +174,13 @@
     "today": "dnes",
     "yesterday": "včera",
     "daysAgo": "před {count, plural, one {# dnem} few {# dny} other {# dny}}",
-    "summaryLine": "zapsáno {last} · adherence {adherence}"
+    "summaryLine": "zapsáno {last} · adherence {adherence}",
+    "checkIn": {
+      "ok": "V pořádku",
+      "due": "K vyplnění",
+      "overdue": "Po termínu",
+      "toReview": "Ke kontrole"
+    }
   },
   "ClientDashboard": {
     "mode": "Sledování: {mode}",
@@ -217,7 +225,10 @@
       "label": "Pohledy výživy",
       "plan": "Plán a cíle",
       "log": "Denní záznam"
-    }
+    },
+    "checkIn": "Týdenní check-in",
+    "checkInDay": "Den",
+    "checkInSave": "Uložit"
   },
   "Notes": {
     "add": "Přidat poznámku",
@@ -634,6 +645,67 @@
     "invalid": "Zkontrolujte tuto hodnotu.",
     "today": "Dnes"
   },
+  "CheckIn": {
+    "title": "Týdenní check-in",
+    "due": "Check-in za týden od {date} je tu.",
+    "overdue": "Check-in za týden od {date} je po termínu.",
+    "next": "Další check-in: {date}.",
+    "scales": {
+      "energy": {
+        "title": "Energie",
+        "hint": "Jak jste se tento týden cítili?",
+        "low": "Vyčerpaně",
+        "high": "Plní energie"
+      },
+      "hunger": {
+        "title": "Hlad",
+        "hint": "Jak velký hlad jste během dne mívali?",
+        "low": "Velký hlad",
+        "high": "Žádný hlad"
+      },
+      "recovery": {
+        "title": "Regenerace",
+        "hint": "Jak jste se zotavovali, včetně spánku?",
+        "low": "Špatně",
+        "high": "Výborně"
+      },
+      "digestion": {
+        "title": "Trávení",
+        "hint": "Jak fungovalo trávení?",
+        "low": "S potížemi",
+        "high": "Bez potíží"
+      },
+      "training": {
+        "title": "Trénink a pohyb",
+        "hint": "Jak šel trénink nebo pohyb?",
+        "low": "Nic moc",
+        "high": "Skvěle"
+      },
+      "adherence": {
+        "title": "Dodržování plánu",
+        "hint": "Jak se vám dařilo držet plánu?",
+        "low": "Vůbec",
+        "high": "Úplně"
+      },
+      "mood": {
+        "title": "Nálada",
+        "hint": "Jaká byla vaše nálada?",
+        "low": "Špatná",
+        "high": "Výborná"
+      }
+    },
+    "score": "{scale}: {score} z 10",
+    "pick": "Vyberte hodnotu 1–10.",
+    "comment": "Komentář (nepovinný)",
+    "commentFor": "Komentář: {scale}",
+    "questions": "Otázky pro trenéra",
+    "submit": "Odeslat check-in",
+    "already": "Check-in za toto období už je odeslaný.",
+    "sentWaiting": "Odesláno, trenér ho brzy projde",
+    "sentReviewed": "Trenér check-in prošel",
+    "outOf": "{score} / 10",
+    "notYet": "První check-in vás čeká v nejbližší den check-inu."
+  },
   "Foods": {
     "title": "Potraviny",
     "lead": "Vaše vlastní potraviny, na 100 g. Klienti je najdou při zapisování.",
@@ -831,7 +903,11 @@
     "title": "Dnes",
     "nutrition": "Dnešní cíle",
     "log": "Zapsat",
-    "meals": "Jídla dnes"
+    "meals": "Jídla dnes",
+    "checkIn": "Týdenní check-in",
+    "checkInDue": "Je čas na check-in: pár otázek k vašemu týdnu.",
+    "checkInOverdue": "Check-in je po termínu: pár otázek k vašemu týdnu.",
+    "checkInOpen": "Vyplnit check-in"
   },
   "Notifications": {
     "title": "Oznámení",

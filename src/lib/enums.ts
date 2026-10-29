@@ -39,6 +39,9 @@ export const ALLERGENS = [
 export const SPORT_LEVELS = ["RECREATIONAL", "AMATEUR_COMPETITIVE", "ELITE"] as const;
 export const NOTE_TYPES = ["NOTE", "DECISION"] as const;
 export const FOOD_SOURCES = ["OFF", "COACH", "CLIENT"] as const;
+// The weekly check-in's 1–10 scales (check-ins.md), in the form's order.
+export const CHECK_IN_SCALES = ["energy", "hunger", "recovery", "digestion", "training", "adherence", "mood"] as const;
+export const CHECK_IN_STATUSES = ["ok", "due", "overdue", "toReview"] as const;
 export const DRINK_TYPES = ["WATER", "ELECTROLYTE", "SPORTS", "COFFEE_TEA", "OTHER"] as const;
 // Recipes (recipes.md): fixed categories, diet flags, statuses.
 export const RECIPE_CATEGORIES = ["BREAKFAST", "LUNCH", "DINNER", "SNACK", "PRE_TRAINING", "POST_TRAINING", "COMPETITION", "DESSERT"] as const;
@@ -71,6 +74,8 @@ export type Goal = (typeof GOALS)[number];
 export type NoteType = (typeof NOTE_TYPES)[number];
 export type Followed = (typeof FOLLOWED)[number];
 export type DrinkType = (typeof DRINK_TYPES)[number];
+export type CheckInScale = (typeof CHECK_IN_SCALES)[number];
+export type CheckInStatus = (typeof CHECK_IN_STATUSES)[number];
 export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
 export type DietFlag = (typeof DIET_FLAGS)[number];
 export type RecipeStatus = (typeof RECIPE_STATUSES)[number];

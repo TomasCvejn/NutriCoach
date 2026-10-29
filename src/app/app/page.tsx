@@ -4,6 +4,8 @@ import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import type { Followed } from "@/lib/enums";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
+import { buttonVariants } from "@/components/ui/button";
+import { currentCheckIn } from "@/lib/check-ins";
 import { HydrationCard } from "./hydration/hydration-card";
 import { DayProgress } from "./nutrition/day-progress";
 
@@ -13,6 +15,7 @@ export default async function ClientHome() {
   const { user, client } = await requireClient();
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const today = todayIn(user.timezone);
+  const period = await currentCheckIn(client, user.timezone);
   const day = await loadDay(
     client.id,
     today,
@@ -59,6 +62,19 @@ export default async function ClientHome() {
 
       {/* Widget 4: today's fluid with the quick adds (widget 3, training, lands with its feature). */}
       <HydrationCard clientId={client.id} date={today} target={day.target?.fluidMl ?? null} variant="home" />
+
+      {/* Widget 6: the check-in reminder while the period is open. */}
+      {(period.status === "due" || period.status === "overdue") && (
+        <section aria-labelledby="home-check-in" className={`rounded-lg border p-5 ${period.status === "overdue" ? "border-warning-edge bg-warning-soft" : "bg-card"}`}>
+          <h2 id="home-check-in" className="text-base font-semibold">
+            {t("ClientHome.checkIn")}
+          </h2>
+          <p className="mt-1 text-sm">{t(period.status === "overdue" ? "ClientHome.checkInOverdue" : "ClientHome.checkInDue")}</p>
+          <Link href="/app/check-in" className={buttonVariants({ className: "mt-3 h-10 px-4" })}>
+            {t("ClientHome.checkInOpen")}
+          </Link>
+        </section>
+      )}
     </div>
   );
 }
