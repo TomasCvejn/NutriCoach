@@ -55,13 +55,8 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
       <Pill tone={status === "overdue" ? "warning" : "accent"}>{t(`Clients.checkIn.${status}`)}</Pill>
     );
 
-  // Active is the normal state, so only the others get a mark.
-  const statusMark = (status: ClientRow["status"]) =>
-    status === "ACTIVE" ? (
-      <span className="text-muted-foreground">{t("Clients.statuses.ACTIVE")}</span>
-    ) : (
-      <Pill tone={status === "ONBOARDING" ? "accent" : "neutral"}>{t(`Clients.statuses.${status}`)}</Pill>
-    );
+  // Active is the normal state, so only the others get a mark, next to the name.
+  const statusMark = (status: ClientRow["status"]) => <Pill tone={status === "ONBOARDING" ? "accent" : "neutral"}>{t(`Clients.statuses.${status}`)}</Pill>;
 
   return (
     <div className="flex flex-col gap-8">
@@ -115,12 +110,12 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                   <thead>
                     <tr className="text-left text-xs text-muted-foreground">
                       {sortHeader("name")}
-                      {sortHeader("mode", "hidden w-28 sm:table-cell")}
-                      {sortHeader("status", "hidden w-40 lg:table-cell")}
-                      {sortHeader("lastLogged", "hidden w-32 md:table-cell")}
-                      {sortHeader("adherence", "hidden w-28 text-right md:table-cell")}
-                      {sortHeader("checkIn", "hidden w-36 xl:table-cell")}
-                      {sortHeader("competition", "hidden w-44 xl:table-cell")}
+                      {sortHeader("mode", "hidden w-24 sm:table-cell")}
+                      {sortHeader("lastLogged", "hidden w-28 md:table-cell")}
+                      {sortHeader("adherence", "hidden w-24 text-right md:table-cell")}
+                      {sortHeader("checkIn", "hidden w-32 xl:table-cell")}
+                      {sortHeader("competition", "hidden w-40 xl:table-cell")}
+                      {sortHeader("unread", "hidden w-24 text-right lg:table-cell")}
                       <th className="w-28">
                         <span className="sr-only">{t("Clients.columns.actions")}</span>
                       </th>
@@ -134,7 +129,7 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                             <Link href={`/coach/clients/${client.id}`} className="truncate font-medium hover:underline">
                               {client.name}
                             </Link>
-                            {client.status !== "ACTIVE" && <span className="lg:hidden">{statusMark(client.status)}</span>}
+                            {client.status !== "ACTIVE" && statusMark(client.status)}
                           </div>
                           <p className="truncate text-xs text-muted-foreground">
                             <span className="sm:hidden">{t(`TrackingModes.${client.trackingMode as TrackingMode}`)} · </span>
@@ -143,7 +138,6 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                           </p>
                         </td>
                         <td className="hidden py-3 pr-4 sm:table-cell">{t(`TrackingModes.${client.trackingMode as TrackingMode}`)}</td>
-                        <td className="hidden py-3 pr-4 lg:table-cell">{statusMark(client.status)}</td>
                         <td className="hidden py-3 pr-4 text-muted-foreground md:table-cell" title={client.lastLogged ?? undefined}>
                           {lastLogged(client)}
                         </td>
@@ -157,6 +151,15 @@ export default async function ClientsPage({ searchParams }: PageProps<"/coach/cl
                                 {client.nextCompetition.name}
                               </span>
                             </>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </td>
+                        <td className="hidden py-3 pr-4 text-right lg:table-cell">
+                          {client.unread > 0 ? (
+                            <Link href={`/coach/messages?client=${client.id}`} className="font-medium text-primary-ink tabular-nums hover:underline" aria-label={t("Messages.unreadOpen", { count: client.unread })}>
+                              {client.unread}
+                            </Link>
                           ) : (
                             <span className="text-muted-foreground">—</span>
                           )}

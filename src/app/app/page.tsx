@@ -5,6 +5,7 @@ import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import type { Followed, Intensity, SessionType } from "@/lib/enums";
 import { featuresOf } from "@/lib/features";
+import { unreadMessages } from "@/lib/messages";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
 import { buttonVariants } from "@/components/ui/button";
 import { currentCheckIn } from "@/lib/check-ins";
@@ -18,11 +19,12 @@ export default async function ClientHome() {
   const { user, client } = await requireClient();
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const today = todayIn(user.timezone);
-  const [period, feedback, { training, competition: competes }, competition] = await Promise.all([
+  const [period, feedback, { training, competition: competes }, competition, messages] = await Promise.all([
     currentCheckIn(client, user.timezone),
     db.checkIn.findFirst({ where: { clientId: client.id, reviewedAt: { not: null }, feedbackSeenAt: null }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
     featuresOf(client, today),
     db.competition.findFirst({ where: { clientId: client.id, date: { gte: today } }, orderBy: { date: "asc" } }),
+    unreadMessages(user),
   ]);
   const day = await loadDay(
     client.id,
@@ -142,6 +144,19 @@ export default async function ClientHome() {
           <p className="mt-1 text-sm">{t("ClientHome.feedbackText", { date: format.dateTime(new Date(feedback.dueDate), { day: "numeric", month: "long", timeZone: "UTC" }) })}</p>
           <Link href={`/app/check-in/${feedback.id}`} className={buttonVariants({ variant: "outline", className: "mt-3 h-10 px-4" })}>
             {t("ClientHome.feedbackOpen")}
+          </Link>
+        </section>
+      )}
+
+      {/* Widget 7: new messages from the coach. */}
+      {messages > 0 && (
+        <section aria-labelledby="home-messages" className="rounded-lg border bg-card p-5">
+          <h2 id="home-messages" className="text-base font-semibold">
+            {t("ClientHome.messages")}
+          </h2>
+          <p className="mt-1 text-sm">{t("Messages.unread", { count: messages })}</p>
+          <Link href="/app/messages" className={buttonVariants({ variant: "outline", className: "mt-3 h-10 px-4" })}>
+            {t("ClientHome.messagesOpen")}
           </Link>
         </section>
       )}

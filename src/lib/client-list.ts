@@ -15,7 +15,7 @@ const CHECK_IN_ORDER: CheckInStatus[] = ["overdue", "due", "toReview", "ok"];
 
 export const CLIENT_STATUSES = ["ONBOARDING", "ACTIVE", "INACTIVE"] as const; // also the status sort order
 export const STATUS_FILTERS = ["active", "inactive", "all"] as const;
-export const SORT_COLUMNS = ["name", "mode", "status", "lastLogged", "adherence", "checkIn", "competition"] as const;
+export const SORT_COLUMNS = ["name", "mode", "status", "lastLogged", "adherence", "checkIn", "competition", "unread"] as const;
 
 // Search params as the URL gives them; anything unexpected falls back to the default view.
 export const listParams = z.object({
@@ -29,6 +29,7 @@ export type ListParams = z.infer<typeof listParams>;
 
 export type ClientRow = { id: string; name: string; email: string; trackingMode: string; status: (typeof CLIENT_STATUSES)[number]; checkIn: CheckInStatus } & {
   nextCompetition: { name: string; days: number } | null;
+  unread: number; // messages from the client the coach hasn't read
 } & NutritionSummary;
 
 export async function coachClients(): Promise<ClientRow[]> {
@@ -38,11 +39,12 @@ export async function coachClients(): Promise<ClientRow[]> {
     select: { id: true, trackingMode: true, onboardingCompletedAt: true, checkInWeekday: true, user: { select: { name: true, email: true, active: true, timezone: true } } },
   });
   const today = new Map(clients.map((c) => [c.id, todayIn(c.user.timezone)]));
-  const [nutrition, checkIns, competitions] = await Promise.all([
+  const [nutrition, checkIns, competitions, unread] = await Promise.all([
     nutritionSummaries(clients.map((c) => ({ id: c.id, trackingMode: c.trackingMode, timezone: c.user.timezone }))),
     checkInStatuses(clients.map((c) => ({ ...c, timezone: c.user.timezone }))),
     // From the earliest "today" of the clients' timezones; each client's own today picks theirs below.
     db.competition.findMany({ where: { clientId: { in: clients.map((c) => c.id) }, date: { gte: [...today.values()].sort()[0] } }, select: { clientId: true, name: true, date: true } }),
+    db.message.groupBy({ by: ["clientId"], where: { client: { coachId: coach.id }, senderId: { not: coach.id }, readAt: null }, _count: true }),
   ]);
   return clients.map(({ id, trackingMode, onboardingCompletedAt, user }) => {
     const next = nextCompetition(
@@ -57,6 +59,7 @@ export async function coachClients(): Promise<ClientRow[]> {
       status: !user.active ? "INACTIVE" : onboardingCompletedAt ? "ACTIVE" : "ONBOARDING",
       checkIn: checkIns.get(id)!,
       nextCompetition: next && { name: next.name, days: diffDays(today.get(id)!, next.date) },
+      unread: unread.find((u) => u.clientId === id)?._count ?? 0,
       ...nutrition.get(id)!,
     };
   });
@@ -79,6 +82,7 @@ export function clientList(rows: ClientRow[], p: ListParams, locale: string) {
     adherence: (r: ClientRow) => r.adherence ?? -1,
     checkIn: (r: ClientRow) => CHECK_IN_ORDER.indexOf(r.checkIn), // the most urgent first
     competition: (r: ClientRow) => r.nextCompetition?.days ?? Infinity, // the nearest first, none last
+    unread: (r: ClientRow) => -r.unread, // the most first
   }[p.sort];
   const order = (a: number | string, b: number | string) => (a < b ? -1 : a > b ? 1 : 0);
   const sign = p.dir === "asc" ? 1 : -1;

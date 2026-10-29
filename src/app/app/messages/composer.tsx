@@ -1,0 +1,57 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+import { useRouter } from "next/navigation";
+import { useActionState, useEffect, useId, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { sendMessage } from "./actions";
+
+// Writing in the thread; a sent message clears the box.
+export function Composer({ clientId }: { clientId: string }) {
+  const t = useTranslations("Messages");
+  const id = useId();
+  const [sent, setSent] = useState(0);
+  const [state, send, pending] = useActionState(async (previous: Awaited<ReturnType<typeof sendMessage>>, form: FormData) => {
+    const result = await sendMessage(previous, form);
+    if (!result) setSent((n) => n + 1);
+    return result;
+  }, null);
+  return (
+    <form action={send} className="flex flex-col gap-2">
+      <input type="hidden" name="clientId" value={clientId} />
+      <label htmlFor={`${id}-text`} className="sr-only">
+        {t("message")}
+      </label>
+      <Textarea
+        key={sent}
+        id={`${id}-text`}
+        name="text"
+        required
+        maxLength={4000}
+        rows={3}
+        placeholder={t("placeholder")}
+        aria-invalid={Boolean(state)}
+        aria-describedby={state ? `${id}-error` : undefined}
+      />
+      <div className="flex items-center justify-between gap-3">
+        <p id={`${id}-error`} className="text-xs text-destructive-ink">
+          {state ? t("invalid") : ""}
+        </p>
+        <Button type="submit" disabled={pending} className="h-10 px-5">
+          {t("send")}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
+// The open thread checks for new messages every 5 s (a refresh also updates the badges).
+export function Poll({ ms = 5000 }: { ms?: number }) {
+  const router = useRouter();
+  useEffect(() => {
+    const timer = setInterval(() => router.refresh(), ms);
+    return () => clearInterval(timer);
+  }, [router, ms]);
+  return null;
+}

@@ -50,7 +50,8 @@
     "checkIns": "Check-ins",
     "progress": "Progress",
     "competition": "Competition",
-    "supplements": "Supplements"
+    "supplements": "Supplements",
+    "messages": "Messages"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -156,7 +157,8 @@
       "lastLogged": "Last logged",
       "adherence": "7-day adherence",
       "checkIn": "Check-in",
-      "competition": "Next competition"
+      "competition": "Next competition",
+      "unread": "Unread"
     },
     "invite": {
       "open": "Invite client",
@@ -200,6 +202,7 @@
       "progress": "Progress",
       "checkIns": "Check-ins",
       "supplements": "Supplements",
+      "messages": "Messages",
       "notes": "Notes"
     },
     "changeMode": {
@@ -249,7 +252,8 @@
       "checkIn": "Check-in average",
       "weight": "Weight"
     },
-    "trendLabel": "{trend}: {values}"
+    "trendLabel": "{trend}: {values}",
+    "message": "Write a message"
   },
   "Notes": {
     "add": "Add note",
@@ -954,7 +958,8 @@
     "tiles": "Summary",
     "activeClients": "Active clients",
     "checkInsWaiting": "Check-ins to review",
-    "competitionsSoon": "Competitions in 30 days"
+    "competitionsSoon": "Competitions in 30 days",
+    "unreadMessages": "Unread messages"
   },
   "ClientHome": {
     "title": "Today",
@@ -971,7 +976,9 @@
     "training": "Today's training",
     "trainingOpen": "Whole week",
     "trainingNone": "No training today.",
-    "fueling": "During: {during}"
+    "fueling": "During: {during}",
+    "messages": "Messages from your coach",
+    "messagesOpen": "Open messages"
   },
   "Notifications": {
     "title": "Notifications",
@@ -1568,5 +1575,24 @@
       "text": "The text is too long.",
       "dates": "“Until” can't be before “From”."
     }
+  },
+  "Messages": {
+    "title": "Messages",
+    "titleClient": "Messages with your coach",
+    "thread": "Conversation",
+    "list": "Messages in the conversation",
+    "empty": "No messages yet. Write the first one.",
+    "you": "You",
+    "delete": "Delete",
+    "deleteFrom": "Delete the message from {time}",
+    "message": "Message",
+    "placeholder": "Write a message…",
+    "send": "Send",
+    "invalid": "Write a message (at most 4,000 characters).",
+    "unread": "{count} unread",
+    "threads": "Conversations with clients",
+    "noMessages": "No messages yet",
+    "choose": "Choose a conversation on the left.",
+    "unreadOpen": "{count, plural, one {Open # unread message} other {Open # unread messages}}"
   }
 }

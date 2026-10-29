@@ -622,6 +622,21 @@ async function seed() {
     ],
   });
 
+  // Messages: race@ asked something the coach hasn't read yet (the badge shows 1); sports@'s thread is all read. No
+  // notifications for them, so the bells start as before.
+  const [raceUserId, sportsUserId] = await Promise.all([race, sports].map(async (id) => (await db.client.findUniqueOrThrow({ where: { id } })).userId));
+  const hoursAgo = (hours: number) => new Date(Date.now() - hours * 60 * 60 * 1000);
+  await db.message.createMany({
+    data: [
+      { clientId: race, senderId: coach.id, text: "Ahoj Terezo, jak se cítíš po tempu? Žaludek v pohodě?", createdAt: hoursAgo(50), readAt: hoursAgo(49) },
+      { clientId: race, senderId: raceUserId, text: "Dobrý, jen na konci jsem byla trochu nafouklá. Mám zkusit jiné gely?", createdAt: hoursAgo(48), readAt: hoursAgo(47) },
+      { clientId: race, senderId: coach.id, text: "Zkus na příštím dlouhém běhu Enervit, bývá šetrnější. A gel zapíjej vodou, ne ionťákem.", createdAt: hoursAgo(46), readAt: hoursAgo(45) },
+      { clientId: race, senderId: raceUserId, text: "Díky! A můžu si den před závodem dát těstoviny s rajčatovou omáčkou?", createdAt: hoursAgo(3) },
+      { clientId: sports, senderId: coach.id, text: "Great week, Emma! Keep the recovery shake after the long ride.", createdAt: hoursAgo(120), readAt: hoursAgo(118) },
+      { clientId: sports, senderId: sportsUserId, text: "Thanks, will do!", createdAt: hoursAgo(117), readAt: hoursAgo(116) },
+    ],
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

@@ -1,13 +1,14 @@
 "use client";
 
-import { ActivityIcon, BellIcon, ChefHatIcon, ClipboardCheckIcon, ClipboardListIcon, DropletIcon, EllipsisIcon, HouseIcon, LibraryBigIcon, type LucideIcon, PillIcon, SettingsIcon, SunIcon, TrendingUpIcon, TrophyIcon, UserRoundIcon, UsersIcon, UtensilsIcon } from "lucide-react";
+import { ActivityIcon, BellIcon, ChefHatIcon, ClipboardCheckIcon, ClipboardListIcon, DropletIcon, EllipsisIcon, HouseIcon, LibraryBigIcon, type LucideIcon, MessageCircleIcon, PillIcon, SettingsIcon, SunIcon, TrendingUpIcon, TrophyIcon, UserRoundIcon, UsersIcon, UtensilsIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { type ReactNode, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { signOut } from "@/app/login/actions";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import type { Badges } from "@/lib/messages";
 import type { Nav, NavItem } from "@/lib/nav";
 import { Logo } from "./logo";
 
@@ -26,6 +27,7 @@ const ICONS: Record<NavItem["key"], LucideIcon> = {
   progress: TrendingUpIcon,
   competition: TrophyIcon,
   supplements: PillIcon,
+  messages: MessageCircleIcon,
   profile: UserRoundIcon,
   settings: SettingsIcon,
 };
@@ -34,12 +36,41 @@ type User = { name: string; email: string };
 
 // Both signed-in areas. Desktop (lg+): a 230px sidebar on the page ground with every entry, no top bar (nothing real to put in one).
 // Phone and tablet: a top bar with the mark, the tabs in a bottom bar, the rest and the account in the "More" sheet.
-// The notification bell sits beside the mark in both (sidebar top, phone top bar).
+// The notification bell sits beside the mark in both (sidebar top, phone top bar); Messages carries its unread count.
+// The badges come with the area layout, which client navigation doesn't re-render, so the shell asks again on each one.
 // Accent ladder: the active row is a pale tint with the hue's dark ink, only its icon takes the full hue
 // (primary-track, because primary-soft disappears on the page ground).
-export function AppShell({ nav, user, unread, children }: { nav: Nav; user: User; unread: number; children: ReactNode }) {
+export function AppShell({ nav, user, badges: initial, children }: { nav: Nav; user: User; badges: Badges; children: ReactNode }) {
   const t = useTranslations();
   const pathname = usePathname();
+  const [badges, setBadges] = useState(initial);
+  // A server re-render (an action, the thread's poll) brings fresh counts; a navigation fetches them.
+  const [seen, setSeen] = useState(initial);
+  if (seen.notifications !== initial.notifications || seen.messages !== initial.messages) {
+    setSeen(initial);
+    setBadges(initial);
+  }
+  const first = useRef(true);
+  useEffect(() => {
+    if (first.current) {
+      first.current = false;
+      return;
+    }
+    fetch("/api/unread")
+      .then((response) => (response.ok ? response.json() : null))
+      .then((fresh: Badges | null) => fresh && setBadges(fresh))
+      .catch(() => {}); // keep the last counts when offline
+  }, [pathname]);
+  const unread = badges.notifications;
+  const count = (key: NavItem["key"]) =>
+    key === "messages" && badges.messages > 0 ? (
+      <>
+        <span className="sr-only">, {t("Messages.unread", { count: badges.messages })}</span>
+        <span aria-hidden className="ml-auto min-w-5 rounded-full bg-primary px-1.5 text-center text-[11px] leading-5 font-medium text-primary-foreground tabular-nums">
+          {badges.messages > 99 ? "99+" : badges.messages}
+        </span>
+      </>
+    ) : null;
   const home = nav.tabs[0].href;
   // The area home matches only itself; every other entry also owns its subpages.
   const isActive = (href: string) => pathname === href || (href !== home && pathname.startsWith(`${href}/`));
@@ -66,6 +97,7 @@ export function AppShell({ nav, user, unread, children }: { nav: Nav; user: User
                   >
                     <Icon className="size-4 group-aria-[current=page]:text-primary" aria-hidden />
                     {t(`Nav.${key}`)}
+                    {count(key)}
                   </Link>
                 </li>
               );
@@ -91,9 +123,17 @@ export function AppShell({ nav, user, unread, children }: { nav: Nav; user: User
         <ul className="grid auto-cols-fr grid-flow-col">
           {nav.tabs.map(({ key, href }) => (
             <li key={key}>
-              <Link href={href} aria-current={isActive(href) ? "page" : undefined} data-active={isActive(href) || undefined} className={TAB}>
+              <Link href={href} aria-current={isActive(href) ? "page" : undefined} data-active={isActive(href) || undefined} className={`relative ${TAB}`}>
                 <TabIcon icon={ICONS[key]} />
                 {t(`Nav.${key}`)}
+                {key === "messages" && badges.messages > 0 && (
+                  <>
+                    <span className="sr-only">, {t("Messages.unread", { count: badges.messages })}</span>
+                    <span aria-hidden className="absolute top-1.5 left-1/2 ml-2 min-w-4 rounded-full bg-primary px-1 text-center text-[11px] leading-4 font-medium text-primary-foreground tabular-nums">
+                      {badges.messages > 99 ? "99+" : badges.messages}
+                    </span>
+                  </>
+                )}
               </Link>
             </li>
           ))}

@@ -1,6 +1,6 @@
 import type { clientFeatures } from "./features";
 
-export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "recipes" | "hydration" | "checkIn" | "checkIns" | "progress" | "competition" | "supplements" | "profile" | "settings"; href: string };
+export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "recipes" | "hydration" | "checkIn" | "checkIns" | "progress" | "competition" | "supplements" | "messages" | "profile" | "settings"; href: string };
 // Phone: the tabs in the bottom bar (at most 4, plus "More") and the rest in the "More" sheet. Desktop: all of them in the sidebar.
 export type Nav = { tabs: NavItem[]; more: NavItem[] };
 
@@ -10,6 +10,7 @@ export const coachNav: Nav = {
     { key: "overview", href: "/coach" },
     { key: "clients", href: "/coach/clients" },
     { key: "checkIns", href: "/coach/check-ins" },
+    { key: "messages", href: "/coach/messages" },
   ],
   more: [
     { key: "library", href: "/coach/library" },
@@ -25,6 +26,7 @@ export function clientNav(features: ReturnType<typeof clientFeatures>): Nav {
     { key: "nutrition", href: "/app/nutrition" },
   ];
   if (features.training) tabs.push({ key: "training", href: "/app/training" });
+  tabs.push({ key: "messages", href: "/app/messages" });
   return {
     tabs,
     more: [

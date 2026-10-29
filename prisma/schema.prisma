@@ -31,6 +31,7 @@ model User {
   recipes           Recipe[]
   fuelingTemplates  FuelingTemplate[]
   timelineTemplates TimelineTemplate[]
+  messages          Message[]
 
   @@map("user")
 }
@@ -140,6 +141,7 @@ model Client {
   trainingSessions TrainingSession[]
   competitions     Competition[]
   supplements      Supplement[]
+  messages         Message[]
 
   @@index([coachId])
 }
@@ -613,4 +615,18 @@ model Supplement {
   updatedAt     DateTime       @updatedAt
 
   @@index([clientId])
+}
+
+// A message in the client's thread with their coach (messaging.md): one thread per client, so the client is the thread.
+model Message {
+  id        String    @id @default(cuid())
+  clientId  String
+  client    Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User      @relation(fields: [senderId], references: [id], onDelete: Cascade)
+  text      String
+  readAt    DateTime? // read by the other party
+  createdAt DateTime  @default(now())
+
+  @@index([clientId, createdAt])
 }

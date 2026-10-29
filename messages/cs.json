@@ -50,7 +50,8 @@
     "checkIns": "Check-iny",
     "progress": "Pokrok",
     "competition": "Závod",
-    "supplements": "Doplňky"
+    "supplements": "Doplňky",
+    "messages": "Zprávy"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -156,7 +157,8 @@
       "lastLogged": "Naposledy zapsáno",
       "adherence": "Adherence 7 dní",
       "checkIn": "Check-in",
-      "competition": "Další závod"
+      "competition": "Další závod",
+      "unread": "Nepřečtené"
     },
     "invite": {
       "open": "Pozvat klienta",
@@ -200,6 +202,7 @@
       "progress": "Pokrok",
       "checkIns": "Check-iny",
       "supplements": "Doplňky",
+      "messages": "Zprávy",
       "notes": "Poznámky"
     },
     "changeMode": {
@@ -249,7 +252,8 @@
       "checkIn": "Check-in, průměr",
       "weight": "Váha"
     },
-    "trendLabel": "{trend}: {values}"
+    "trendLabel": "{trend}: {values}",
+    "message": "Napsat zprávu"
   },
   "Notes": {
     "add": "Přidat poznámku",
@@ -954,7 +958,8 @@
     "tiles": "Souhrn",
     "activeClients": "Aktivní klienti",
     "checkInsWaiting": "Check-iny ke kontrole",
-    "competitionsSoon": "Závody do 30 dní"
+    "competitionsSoon": "Závody do 30 dní",
+    "unreadMessages": "Nepřečtené zprávy"
   },
   "ClientHome": {
     "title": "Dnes",
@@ -971,7 +976,9 @@
     "training": "Dnešní trénink",
     "trainingOpen": "Celý týden",
     "trainingNone": "Dnes žádný trénink.",
-    "fueling": "Během: {during}"
+    "fueling": "Během: {during}",
+    "messages": "Zprávy od trenéra",
+    "messagesOpen": "Otevřít zprávy"
   },
   "Notifications": {
     "title": "Oznámení",
@@ -1568,5 +1575,24 @@
       "text": "Text je příliš dlouhý.",
       "dates": "„Do“ nesmí být před „Od“."
     }
+  },
+  "Messages": {
+    "title": "Zprávy",
+    "titleClient": "Zprávy s trenérem",
+    "thread": "Konverzace",
+    "list": "Zprávy v konverzaci",
+    "empty": "Zatím žádné zprávy. Napište první.",
+    "you": "Vy",
+    "delete": "Smazat",
+    "deleteFrom": "Smazat zprávu z {time}",
+    "message": "Zpráva",
+    "placeholder": "Napište zprávu…",
+    "send": "Odeslat",
+    "invalid": "Napište zprávu (nejvýš 4 000 znaků).",
+    "unread": "{count, plural, one {# nepřečtená} few {# nepřečtené} other {# nepřečtených}}",
+    "threads": "Konverzace s klienty",
+    "noMessages": "Zatím bez zpráv",
+    "choose": "Vyberte konverzaci vlevo.",
+    "unreadOpen": "{count, plural, one {Otevřít # nepřečtenou zprávu} few {Otevřít # nepřečtené zprávy} other {Otevřít # nepřečtených zpráv}}"
   }
 }

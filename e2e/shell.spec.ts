@@ -9,7 +9,7 @@ test("client on a phone: bottom nav with Today and More, the account in the More
 
   // Only the bottom bar is visible at this width; general@ has no sport and no sessions, so no Training tab.
   const nav = page.getByRole("navigation", { name: "Hlavní navigace" });
-  await expect(nav.getByRole("link")).toHaveText(["Dnes", "Výživa"]);
+  await expect(nav.getByRole("link")).toHaveText(["Dnes", "Výživa", /^Zprávy/]);
   await expect(nav.getByRole("link", { name: "Dnes" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByText("Odpočinkový den")).toBeVisible();
 
@@ -29,7 +29,7 @@ test("coach on a desktop: sidebar with the pages so far, active clients tile", a
   await expect(page).toHaveURL("/coach");
 
   const nav = page.getByRole("navigation", { name: "Hlavní navigace" });
-  await expect(nav.getByRole("link")).toHaveText(["Přehled", "Klienti", "Check-iny", "Knihovna", "Nastavení"]);
+  await expect(nav.getByRole("link")).toHaveText(["Přehled", "Klienti", "Check-iny", /^Zprávy/, "Knihovna", "Nastavení"]); // Zprávy may carry an unread count
   await expect(nav.getByRole("link", { name: "Přehled" })).toHaveAttribute("aria-current", "page");
   await expect(page.getByRole("button", { name: "Více" })).toBeHidden();
 

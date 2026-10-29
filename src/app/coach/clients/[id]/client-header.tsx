@@ -20,6 +20,7 @@ const TABS = [
   { key: "progress", segment: "progress" },
   { key: "checkIns", segment: "check-ins" },
   { key: "supplements", segment: "supplements" },
+  { key: "messages", segment: "messages" },
   { key: "notes", segment: "notes" },
 ] as const;
 
