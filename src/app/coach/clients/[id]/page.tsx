@@ -17,11 +17,12 @@ import { type Allergen, DAY_TYPES, type DietType, type Goal, type Sex, type Spor
 // Current targets, the last check-in and key trends join when their features land.
 export default async function ClientOverview({ params }: PageProps<"/coach/clients/[id]">) {
   const { client } = await requireCoachOf((await params).id);
-  const [t, format, user, targetRows] = await Promise.all([
+  const [t, format, user, targetRows, lastCheckIn] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { email: true, timezone: true } }),
     db.nutritionTarget.findMany({ where: { clientId: client.id } }),
+    db.checkIn.findFirst({ where: { clientId: client.id }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
   ]);
   const today = todayIn(user.timezone);
   const checkIn = await currentCheckIn(client, user.timezone);
@@ -145,6 +146,18 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
             {t("ClientDashboard.checkIn")}
           </h2>
           {checkIn.status !== "ok" ? <Pill tone={checkIn.status === "overdue" ? "warning" : "accent"}>{t(`Clients.checkIn.${checkIn.status}`)}</Pill> : <span className="text-sm text-muted-foreground">{t("Clients.checkIn.ok")}</span>}
+          <span className="text-sm text-muted-foreground">
+            {lastCheckIn
+              ? t.rich("ClientDashboard.lastCheckIn", {
+                  date: day(lastCheckIn.dueDate)!,
+                  link: (chunks) => (
+                    <Link href={`/coach/check-ins/${lastCheckIn.id}`} className="font-medium text-primary-ink hover:underline">
+                      {chunks}
+                    </Link>
+                  ),
+                })
+              : t("ClientDashboard.noCheckIn")}
+          </span>
         </div>
         <form action={setCheckInWeekday} className="flex items-center gap-2">
           <input type="hidden" name="clientId" value={client.id} />

@@ -435,20 +435,21 @@ model DrinkPreset {
 // The weekly check-in (check-ins.md) for the period starting on its due date (the check-in weekday). One per period.
 // answers: { [CHECK_IN_SCALES]: { score: 1–10, comment? } }. reviewedAt is set when the coach publishes feedback.
 model CheckIn {
-  id         String    @id @default(cuid())
-  clientId   String
-  client     Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  dueDate    String // YYYY-MM-DD, the check-in weekday that opened the period
-  answers    Json
-  questions  String?
+  id             String    @id @default(cuid())
+  clientId       String
+  client         Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  dueDate        String // YYYY-MM-DD, the check-in weekday that opened the period
+  answers        Json
+  questions      String?
   // The coach's feedback, published together with reviewedAt.
-  response   String?
-  changes    String?
-  newGoals   String?
-  nextSteps  String?
-  reviewedAt DateTime?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
+  response       String?
+  changes        String?
+  newGoals       String?
+  nextSteps      String?
+  reviewedAt     DateTime?
+  feedbackSeenAt DateTime? // the client opened the published feedback
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   @@unique([clientId, dueDate])
 }

@@ -230,7 +230,9 @@
     },
     "checkIn": "Weekly check-in",
     "checkInDay": "Day",
-    "checkInSave": "Save"
+    "checkInSave": "Save",
+    "lastCheckIn": "Last: <link>{date}</link>",
+    "noCheckIn": "None sent yet"
   },
   "Notes": {
     "add": "Add note",
@@ -714,7 +716,22 @@
     "sentWaiting": "Sent; your coach will go through it soon",
     "sentReviewed": "Your coach has gone through it",
     "outOf": "{score} / 10",
-    "notYet": "Your first check-in comes on your next check-in day."
+    "notYet": "Your first check-in comes on your next check-in day.",
+    "readFeedback": "Read the feedback",
+    "earlier": "Earlier check-ins",
+    "weekOf": "Week of {date}",
+    "waiting": "Waiting for your coach",
+    "feedback": "Feedback",
+    "newFeedback": "New feedback",
+    "fromCoach": "Feedback from your coach",
+    "feedbackFields": {
+      "response": "Response",
+      "changes": "Changes made",
+      "newGoals": "New goals",
+      "nextSteps": "Next steps"
+    },
+    "notReviewed": "Your coach hasn't reviewed this check-in yet. Their feedback will show up here.",
+    "yourAnswers": "Your answers"
   },
   "Foods": {
     "title": "Foods",
@@ -918,7 +935,10 @@
     "checkIn": "Weekly check-in",
     "checkInDue": "It's check-in time: a few questions about your week.",
     "checkInOverdue": "Your check-in is overdue: a few questions about your week.",
-    "checkInOpen": "Fill in the check-in"
+    "checkInOpen": "Fill in the check-in",
+    "feedback": "New feedback from your coach",
+    "feedbackText": "On your check-in for the week of {date}.",
+    "feedbackOpen": "Read it"
   },
   "Notifications": {
     "title": "Notifications",

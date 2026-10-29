@@ -72,3 +72,22 @@ test("coach reviews general@'s check-in: queue oldest first, answers with their 
   await expect(page).toHaveURL("/coach/check-ins");
   await expect(queue.getByRole("link")).toHaveText([/^Emma Walker/]);
 });
+
+// After the coach published it above: general@'s home shows the new feedback until it is opened.
+test("client on a phone: the new feedback on the home screen, opened → the widget is gone", async ({ page }) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await logIn(page, "general@demo.cz");
+  await expect(page).toHaveURL("/app");
+  const widget = page.getByRole("region", { name: "Nová zpětná vazba od trenéra" });
+  await widget.getByRole("link", { name: "Přečíst" }).click();
+  const feedback = page.getByRole("region", { name: "Zpětná vazba od trenéra" });
+  await expect(feedback).toContainText("Ovoce večer klidně, ideálně s tvarohem.");
+  await expect(feedback).toContainText("Večer ovoce + tvaroh.");
+  await expect(page.getByRole("region", { name: "Vaše odpovědi" })).toContainText("Můžu večer ovoce místo sušenky?");
+
+  await page.getByRole("link", { name: "Týdenní check-in" }).click(); // back to the check-in page: the history lists it, read
+  await expect(page.getByRole("region", { name: "Předchozí check-iny" }).getByRole("link").first()).toContainText("Zpětná vazba");
+  await page.goto("/app");
+  await expect(page.getByRole("heading", { name: "Dnes", level: 1 })).toBeVisible();
+  await expect(widget).toHaveCount(0);
+});

@@ -2,6 +2,7 @@ import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { requireClient } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
+import { db } from "@/lib/db";
 import type { Followed } from "@/lib/enums";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
 import { buttonVariants } from "@/components/ui/button";
@@ -15,7 +16,10 @@ export default async function ClientHome() {
   const { user, client } = await requireClient();
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const today = todayIn(user.timezone);
-  const period = await currentCheckIn(client, user.timezone);
+  const [period, feedback] = await Promise.all([
+    currentCheckIn(client, user.timezone),
+    db.checkIn.findFirst({ where: { clientId: client.id, reviewedAt: { not: null }, feedbackSeenAt: null }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
+  ]);
   const day = await loadDay(
     client.id,
     today,
@@ -63,7 +67,7 @@ export default async function ClientHome() {
       {/* Widget 4: today's fluid with the quick adds (widget 3, training, lands with its feature). */}
       <HydrationCard clientId={client.id} date={today} target={day.target?.fluidMl ?? null} variant="home" />
 
-      {/* Widget 6: the check-in reminder while the period is open. */}
+      {/* Widget 6: the check-in reminder while the period is open, and the coach's feedback until it is opened. */}
       {(period.status === "due" || period.status === "overdue") && (
         <section aria-labelledby="home-check-in" className={`rounded-lg border p-5 ${period.status === "overdue" ? "border-warning-edge bg-warning-soft" : "bg-card"}`}>
           <h2 id="home-check-in" className="text-base font-semibold">
@@ -72,6 +76,17 @@ export default async function ClientHome() {
           <p className="mt-1 text-sm">{t(period.status === "overdue" ? "ClientHome.checkInOverdue" : "ClientHome.checkInDue")}</p>
           <Link href="/app/check-in" className={buttonVariants({ className: "mt-3 h-10 px-4" })}>
             {t("ClientHome.checkInOpen")}
+          </Link>
+        </section>
+      )}
+      {feedback && (
+        <section aria-labelledby="home-feedback" className="rounded-lg border bg-card p-5">
+          <h2 id="home-feedback" className="text-base font-semibold">
+            {t("ClientHome.feedback")}
+          </h2>
+          <p className="mt-1 text-sm">{t("ClientHome.feedbackText", { date: format.dateTime(new Date(feedback.dueDate), { day: "numeric", month: "long", timeZone: "UTC" }) })}</p>
+          <Link href={`/app/check-in/${feedback.id}`} className={buttonVariants({ variant: "outline", className: "mt-3 h-10 px-4" })}>
+            {t("ClientHome.feedbackOpen")}
           </Link>
         </section>
       )}

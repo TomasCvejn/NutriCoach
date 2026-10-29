@@ -420,8 +420,9 @@ async function seed() {
   });
   await db.drinkPreset.create({ data: { clientId: sports, name: "Electrolyte mix", ml: 500, drinkType: "ELECTROLYTE", sodium: 300, carbs: 30 } });
 
-  // Check-ins (Monday): the earlier periods reviewed; sports@ has sent the current one (waiting for review, its
-  // notification already read), general@ and race@ still owe theirs, so their home shows the reminder.
+  // Check-ins (Monday): the earlier periods reviewed (race@ hasn't opened the last feedback yet); sports@ has sent the
+  // current one (waiting for review, its notification already read), general@ and race@ still owe theirs, so their home
+  // shows the reminder.
   const answers = (scores: number[], comments: Record<string, string> = {}) =>
     Object.fromEntries(CHECK_IN_SCALES.map((scale, i) => [scale, { score: scores[i], comment: comments[scale] ?? null }]));
   const DRIFT = [[1, 0, 2, 1, 0, 1, 1], [0, 1, 1, 2, 1, 0, 1], [2, 1, 0, 1, 2, 1, 0], [1, 2, 1, 0, 1, 2, 2], [0, 1, 2, 1, 0, 1, 1], [1, 0, 1, 2, 1, 0, 2], [2, 1, 1, 1, 2, 1, 1]]; // per week back, per scale
@@ -439,7 +440,8 @@ async function seed() {
       // Scores wander below this week's, differently per scale and a step lower in the first weeks, so each trend has a shape.
       const past = answers(scores.map((v, i) => Math.max(1, v - DRIFT[week - 1][i] - (week >= 5 ? 1 : 0))));
       const feedback = week === 1 ? { response, nextSteps } : { response: steady };
-      await db.checkIn.create({ data: { clientId, dueDate, answers: past, ...feedback, createdAt: new Date(`${dueDate}T08:30:00Z`), reviewedAt: daysAgo(7 * week - 2) } });
+      const unread = clientId === race && week === 1; // race@'s home shows the new feedback
+      await db.checkIn.create({ data: { clientId, dueDate, answers: past, ...feedback, createdAt: new Date(`${dueDate}T08:30:00Z`), reviewedAt: daysAgo(7 * week - 2), feedbackSeenAt: unread ? null : daysAgo(7 * week - 3) } });
     }
     if (clientId === sports) {
       const sent = await db.checkIn.create({ data: { clientId, dueDate: current, answers: answers(scores, comments), questions, createdAt: new Date(Math.min(Date.parse(`${current}T08:30:00Z`), Date.now() - 3_600_000)) } }); // never after now, on the due day itself

@@ -230,7 +230,9 @@
     },
     "checkIn": "Týdenní check-in",
     "checkInDay": "Den",
-    "checkInSave": "Uložit"
+    "checkInSave": "Uložit",
+    "lastCheckIn": "Poslední: <link>{date}</link>",
+    "noCheckIn": "Zatím žádný odeslaný"
   },
   "Notes": {
     "add": "Přidat poznámku",
@@ -714,7 +716,22 @@
     "sentWaiting": "Odesláno, trenér ho brzy projde",
     "sentReviewed": "Trenér check-in prošel",
     "outOf": "{score} / 10",
-    "notYet": "První check-in vás čeká v nejbližší den check-inu."
+    "notYet": "První check-in vás čeká v nejbližší den check-inu.",
+    "readFeedback": "Přečíst zpětnou vazbu",
+    "earlier": "Předchozí check-iny",
+    "weekOf": "Týden od {date}",
+    "waiting": "Čeká na trenéra",
+    "feedback": "Zpětná vazba",
+    "newFeedback": "Nová zpětná vazba",
+    "fromCoach": "Zpětná vazba od trenéra",
+    "feedbackFields": {
+      "response": "Odpověď",
+      "changes": "Co jsme změnili",
+      "newGoals": "Nové cíle",
+      "nextSteps": "Další kroky"
+    },
+    "notReviewed": "Trenér check-in ještě neprošel. Jeho zpětná vazba se objeví tady.",
+    "yourAnswers": "Vaše odpovědi"
   },
   "Foods": {
     "title": "Potraviny",
@@ -918,7 +935,10 @@
     "checkIn": "Týdenní check-in",
     "checkInDue": "Je čas na check-in: pár otázek k vašemu týdnu.",
     "checkInOverdue": "Check-in je po termínu: pár otázek k vašemu týdnu.",
-    "checkInOpen": "Vyplnit check-in"
+    "checkInOpen": "Vyplnit check-in",
+    "feedback": "Nová zpětná vazba od trenéra",
+    "feedbackText": "K vašemu check-inu za týden od {date}.",
+    "feedbackOpen": "Přečíst"
   },
   "Notifications": {
     "title": "Oznámení",
