@@ -1,7 +1,7 @@
 # Coach side
 
 ## Coach home `/coach`
-- Tiles: active clients, check-ins waiting, unread messages, upcoming calls (7 days), competitions coming up (30 days, with client and days left), packages ending within 14 days.
+- Tiles: active clients, check-ins waiting, unread messages, upcoming calls (7 days), competitions coming up (30 days, with client and days left), packages ending within 14 days (deferred with packages).
 - "Needs attention": nothing logged for 2+ days, overdue check-in, check-in to review, unread messages, onboarding done but no nutrition plan yet.
 - Loads with a bounded number of queries (no per-client N+1).
 

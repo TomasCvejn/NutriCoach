@@ -29,3 +29,24 @@ export function ageOn(birthDate: string, today: string) {
 export function nowIn(timezone: string, now = new Date()) {
   return new Intl.DateTimeFormat("en-GB", { timeZone: timezone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(now);
 }
+
+// The offset of a timezone at an instant, in ms (what the wall clock is ahead of UTC).
+function offsetAt(instant: number, timezone: string) {
+  const parts = Object.fromEntries(
+    new Intl.DateTimeFormat("en-US", { timeZone: timezone, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })
+      .formatToParts(new Date(instant))
+      .map((p) => [p.type, Number(p.value)]),
+  );
+  return Date.UTC(parts.year, parts.month - 1, parts.day, parts.hour, parts.minute, parts.second) - Math.floor(instant / 1000) * 1000;
+}
+
+// A wall-clock time ("YYYY-MM-DDTHH:MM", as <input type="datetime-local"> gives it) in a timezone, as an instant. The
+// second pass settles DST changes (a time in the spring gap moves forward; the autumn repeated hour is the later one).
+export function instantOf(local: string, timezone: string) {
+  const wall = Date.parse(`${local}:00Z`);
+  const first = wall - offsetAt(wall, timezone);
+  return new Date(wall - offsetAt(first, timezone));
+}
+
+// An instant as that wall-clock time in a timezone ("YYYY-MM-DDTHH:MM").
+export const localOf = (instant: Date, timezone: string) => `${todayIn(timezone, instant)}T${nowIn(timezone, instant)}`;

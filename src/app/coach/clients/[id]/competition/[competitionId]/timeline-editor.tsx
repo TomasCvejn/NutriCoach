@@ -9,6 +9,7 @@ import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select"
 import { Textarea } from "@/components/ui/textarea";
 import { applyTimelineTemplate, saveTimeline, saveTimelineTemplate } from "@/app/app/competition/actions";
 import { PACKING_GROUPS, TIMELINE_PHASES } from "@/lib/enums";
+import { keepValues } from "@/lib/forms";
 import type { Timeline } from "@/lib/timeline";
 
 type State = { invalid: string[] } | null | "saved";
@@ -66,7 +67,7 @@ export function TimelineEditor({
         </form>
       </div>
 
-      <form action={save} className="flex flex-col gap-4">
+      <form onSubmit={keepValues(save)} className="flex flex-col gap-4">
         <input type="hidden" name="competitionId" value={competitionId} />
         {/* The fields start over when the stored timeline changes (saved, a template applied, a tick), so they show it. */}
         <div key={JSON.stringify(timeline)} className="flex flex-col gap-4">

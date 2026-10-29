@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { addDays, ageOn, diffDays, todayIn, weekday } from "./dates";
+import { addDays, ageOn, diffDays, instantOf, localOf, todayIn, weekday } from "./dates";
 
 test("addDays crosses months, years and leap days", () => {
   expect(addDays("2026-03-01", -1)).toBe("2026-02-28");
@@ -45,4 +45,13 @@ test("ageOn counts a year on the birthday, not the day before", () => {
   expect(ageOn("1990-05-01", "2026-05-01")).toBe(36);
   expect(ageOn("2000-02-29", "2027-02-28")).toBe(26);
   expect(ageOn("2000-02-29", "2027-03-01")).toBe(27);
+});
+
+test("a wall-clock time in a timezone as an instant and back, across DST", () => {
+  expect(instantOf("2026-11-02T18:00", "Europe/Prague").toISOString()).toBe("2026-11-02T17:00:00.000Z"); // winter, UTC+1
+  expect(instantOf("2026-07-01T18:00", "Europe/Prague").toISOString()).toBe("2026-07-01T16:00:00.000Z"); // summer, UTC+2
+  expect(instantOf("2026-10-25T02:30", "Europe/Prague").toISOString()).toBe("2026-10-25T01:30:00.000Z"); // the repeated hour: the later one
+  expect(instantOf("2026-03-29T02:30", "Europe/Prague").toISOString()).toBe("2026-03-29T01:30:00.000Z"); // the skipped hour: moved on
+  expect(instantOf("2026-11-02T18:00", "America/New_York").toISOString()).toBe("2026-11-02T23:00:00.000Z");
+  expect(localOf(new Date("2026-11-02T17:00:00Z"), "Europe/Prague")).toBe("2026-11-02T18:00");
 });

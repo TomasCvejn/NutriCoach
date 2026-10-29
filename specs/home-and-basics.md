@@ -27,7 +27,7 @@ Widgets in this order, each only when relevant (visibility rule in `00-overview.
 ## Settings
 Language, timezone, notification types on/off. Coach also: welcome text for onboarding.
 
-## Subscription / package
+## Subscription / package (deferred by the user 2026-10-29)
 - Coach defines packages in the library: name, description, price (text, display only), duration in weeks, included features (list).
 - Coach assigns a package to a client with a start date (end = start + duration).
 - Client screen: current package, start / end, days left, included features. No payments.

@@ -10,7 +10,8 @@ import { Sparkline } from "@/components/sparkline";
 import { nutritionDays } from "@/lib/adherence";
 import { daysUntilToday, weeklyNutrition, weekStarts } from "@/lib/progress";
 import { requireCoachOf } from "@/lib/auth";
-import { ageOn, todayIn } from "@/lib/dates";
+import { ageOn, localOf, todayIn } from "@/lib/dates";
+import { CallDialog } from "./calls/call-dialog";
 import { db } from "@/lib/db";
 import { latestWeighIn } from "@/lib/body-comp";
 import { latestWeight, targetFor } from "@/lib/nutrition";
@@ -20,14 +21,15 @@ import { type Allergen, DAY_TYPES, type DietType, type Goal, type Sex, type Spor
 // Overview: what the client works toward, the current targets, key trends, the check-in and what to know before planning
 // (profile summary, allergies first in mind).
 export default async function ClientOverview({ params }: PageProps<"/coach/clients/[id]">) {
-  const { client } = await requireCoachOf((await params).id);
-  const [t, format, user, targetRows, lastCheckIn, weighIn] = await Promise.all([
+  const { coach, client } = await requireCoachOf((await params).id);
+  const [t, format, user, targetRows, lastCheckIn, weighIn, calls] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { email: true, timezone: true } }),
     db.nutritionTarget.findMany({ where: { clientId: client.id } }),
     db.checkIn.findFirst({ where: { clientId: client.id }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
     latestWeighIn(client.id),
+    db.call.findMany({ where: { clientId: client.id, startsAt: { gte: new Date() } }, orderBy: { startsAt: "asc" } }),
   ]);
   const today = todayIn(user.timezone);
   // Key trends: the last 4 weeks' adherence, the last 4 check-ins' average score, the last 4 weigh-ins.
@@ -203,6 +205,34 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
           })}
         </dl>
       </section>
+
+      {calls.length > 0 && (
+        <section aria-labelledby="overview-calls" className="rounded-lg border bg-card px-6 py-4">
+          <h2 id="overview-calls" className="text-base font-semibold">
+            {t("Calls.upcoming")}
+          </h2>
+          <ul className="mt-2">
+            {calls.map((call) => (
+              <li key={call.id} className="flex items-center justify-between gap-4 border-t border-rule py-2 text-sm first:border-0">
+                <span>
+                  <span className="font-medium tabular-nums">{format.dateTime(call.startsAt, { weekday: "short", day: "numeric", month: "numeric", hour: "numeric", minute: "2-digit" })}</span>
+                  <span className="text-muted-foreground"> · {[t("Training.minutes", { count: call.durationMin }), call.agenda].filter(Boolean).join(" · ")}</span>
+                </span>
+                <CallDialog
+                  clientId={client.id}
+                  call={call}
+                  startsAt={localOf(call.startsAt, coach.timezone)}
+                  trigger={
+                    <Button variant="ghost" className="-mr-2.5 h-10 px-2.5 sm:h-8" aria-label={t("Calls.editFor", { time: format.dateTime(call.startsAt, { day: "numeric", month: "numeric", hour: "numeric", minute: "2-digit" }) })}>
+                      {t("Calls.edit")}
+                    </Button>
+                  }
+                />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       {/* The weekly check-in: its day (the coach sets it) and where the current period stands. */}
       <section aria-labelledby="overview-check-in" className="flex flex-wrap items-center justify-between gap-4 rounded-lg border bg-card px-6 py-4">

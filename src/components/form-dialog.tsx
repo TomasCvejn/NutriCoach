@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { type ReactElement, type ReactNode, useState } from "react";
+import { type ReactElement, type ReactNode, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
@@ -23,6 +23,7 @@ export function FormDialog({
   const [open, setOpen] = useState(false);
   const [opened, setOpened] = useState(0);
   const [invalid, setInvalid] = useState<string[]>([]);
+  const [pending, startTransition] = useTransition();
   return (
     <Dialog
       open={open}
@@ -36,12 +37,24 @@ export function FormDialog({
     >
       <DialogTrigger render={trigger} />
       <DialogContent showCloseButton={false} className="gap-6 p-6 sm:max-w-lg">
+        {/* Submitted by hand, not through a form action: React resets a form after its action, which would empty what the
+            user typed when the server sends it back as invalid. */}
         <form
           key={opened}
-          action={async (form) => {
-            const result = await save(form);
-            setInvalid(result?.invalid ?? []);
-            if (!result) setOpen(false);
+          onSubmit={(event) => {
+            event.preventDefault();
+            const form = new FormData(event.currentTarget);
+            const removing = (event.nativeEvent as SubmitEvent).submitter?.hasAttribute("data-remove");
+            startTransition(async () => {
+              if (removing) {
+                await remove!(form);
+                setOpen(false);
+                return;
+              }
+              const result = await save(form);
+              setInvalid(result?.invalid ?? []);
+              if (!result) setOpen(false);
+            });
           }}
           className="flex flex-col gap-6"
         >
@@ -55,17 +68,17 @@ export function FormDialog({
                 type="submit"
                 variant="destructive"
                 formNoValidate
-                formAction={async (form) => {
-                  await remove(form);
-                  setOpen(false);
-                }}
+                data-remove
+                disabled={pending}
                 className="sm:mr-auto"
               >
                 {t("delete")}
               </Button>
             )}
             <DialogClose render={<Button variant="outline" />}>{t("cancel")}</DialogClose>
-            <Button type="submit">{t("save")}</Button>
+            <Button type="submit" disabled={pending}>
+              {t("save")}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

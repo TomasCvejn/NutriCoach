@@ -959,7 +959,8 @@
     "activeClients": "Aktivní klienti",
     "checkInsWaiting": "Check-iny ke kontrole",
     "competitionsSoon": "Závody do 30 dní",
-    "unreadMessages": "Nepřečtené zprávy"
+    "unreadMessages": "Nepřečtené zprávy",
+    "callsSoon": "Hovory do 7 dní"
   },
   "ClientHome": {
     "title": "Dnes",
@@ -978,7 +979,8 @@
     "trainingNone": "Dnes žádný trénink.",
     "fueling": "Během: {during}",
     "messages": "Zprávy od trenéra",
-    "messagesOpen": "Otevřít zprávy"
+    "messagesOpen": "Otevřít zprávy",
+    "upcoming": "Příštích 7 dní"
   },
   "Notifications": {
     "title": "Oznámení",
@@ -1600,6 +1602,38 @@
     "context": {
       "NUTRITION_DAY": "Komentář k výživě {date}",
       "CHECK_IN": "Komentář k check-inu {date}"
+    }
+  },
+  "Calls": {
+    "schedule": "Naplánovat hovor",
+    "addTitle": "Nový hovor",
+    "editTitle": "Upravit hovor",
+    "edit": "Upravit",
+    "editFor": "Upravit hovor {time}",
+    "upcoming": "Nadcházející hovory",
+    "fields": {
+      "startsAt": "Kdy",
+      "durationMin": "Délka (min)",
+      "link": "Odkaz na schůzku",
+      "agenda": "Program"
+    },
+    "yourTime": "Ve vašem časovém pásmu.",
+    "linkHint": "Odkaz https:// (Meet, Zoom, Teams…).",
+    "invalid": {
+      "startsAt": "Zadejte datum a čas.",
+      "durationMin": "Zadejte 5–480 minut.",
+      "link": "Jen odkaz začínající https:// nebo http://."
+    }
+  },
+  "Calendar": {
+    "today": "Dnes",
+    "call": "Hovor s trenérem",
+    "checkIn": "Týdenní check-in",
+    "types": {
+      "SESSION": "Trénink",
+      "COMPETITION": "Závod",
+      "CALL": "Hovor",
+      "CHECK_IN": "Check-in"
     }
   }
 }

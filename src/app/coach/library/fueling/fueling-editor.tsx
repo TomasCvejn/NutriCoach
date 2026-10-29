@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import type { FuelingTemplate } from "@/generated/prisma/client";
 import { INTENSITIES, SESSION_TYPES } from "@/lib/enums";
+import { keepValues } from "@/lib/forms";
 import { deleteFuelingTemplate, saveFuelingTemplate } from "./actions";
 
 type Pre = { timing: string; text: string; carbs?: number | null };
@@ -41,7 +42,7 @@ export function FuelingEditor({ template }: { template?: FuelingTemplate }) {
 
   return (
     <div className="flex max-w-4xl flex-col gap-6">
-      <form action={save} className="flex flex-col gap-6">
+      <form onSubmit={keepValues(save)} className="flex flex-col gap-6">
         {template && <input type="hidden" name="id" value={template.id} />}
         <Field id={`${id}-name`} label={t("fields.name")} error={invalid("name") ? t("invalidName") : undefined} className="max-w-md">
           <Input id={`${id}-name`} name="name" required maxLength={100} defaultValue={template?.name ?? ""} aria-describedby={`${id}-name-note`} className="h-10" />

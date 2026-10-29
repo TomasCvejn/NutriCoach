@@ -2,7 +2,8 @@ import { ChevronLeftIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { Pill } from "@/components/pill";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { CallDialog } from "./calls/call-dialog";
 import { requireCoachOf } from "@/lib/auth";
 import { diffDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
@@ -40,10 +41,11 @@ export default async function ClientLayout({ params, children }: LayoutProps<"/c
             {t("ClientDashboard.mode", { mode: t(`TrackingModes.${mode}`) })} · {client.primaryGoal ? t(`Goals.${client.primaryGoal as Goal}`) : t("ClientDashboard.noGoal")}
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Link href={`/coach/clients/${client.id}/messages`} className={buttonVariants({ variant: "outline", className: "h-10 px-3 sm:h-8" })}>
             {t("ClientDashboard.message")}
           </Link>
+          <CallDialog clientId={client.id} trigger={<Button variant="outline" className="h-10 px-3 sm:h-8">{t("Calls.schedule")}</Button>} />
           <NoteDialog clientId={client.id} today={today} />
           <TrackingModeDialog clientId={client.id} name={user.name} mode={mode} />
         </div>

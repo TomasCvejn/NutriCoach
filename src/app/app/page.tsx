@@ -1,9 +1,10 @@
 import { getFormatter, getTranslations } from "next-intl/server";
 import Link from "next/link";
 import { requireClient } from "@/lib/auth";
-import { todayIn } from "@/lib/dates";
+import { addDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import type { Followed, Intensity, SessionType } from "@/lib/enums";
+import { loadCalendar } from "@/lib/calendar";
 import { featuresOf } from "@/lib/features";
 import { unreadMessages } from "@/lib/messages";
 import { FALLBACK_SLOTS, loadDay } from "./nutrition/day-data";
@@ -11,6 +12,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { currentCheckIn } from "@/lib/check-ins";
 import { CompetitionSummary } from "./competition/competition-summary";
 import { HydrationCard } from "./hydration/hydration-card";
+import { UpcomingEvents } from "./upcoming-events";
 import { DayProgress } from "./nutrition/day-progress";
 
 
@@ -19,12 +21,14 @@ export default async function ClientHome() {
   const { user, client } = await requireClient();
   const [t, format] = await Promise.all([getTranslations(), getFormatter()]);
   const today = todayIn(user.timezone);
-  const [period, feedback, { training, competition: competes }, competition, messages] = await Promise.all([
+  const [period, feedback, { training, competition: competes }, competition, messages, latest, upcoming] = await Promise.all([
     currentCheckIn(client, user.timezone),
     db.checkIn.findFirst({ where: { clientId: client.id, reviewedAt: { not: null }, feedbackSeenAt: null }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
     featuresOf(client, today),
     db.competition.findFirst({ where: { clientId: client.id, date: { gte: today } }, orderBy: { date: "asc" } }),
     unreadMessages(user),
+    db.message.findFirst({ where: { clientId: client.id, senderId: { not: user.id }, readAt: null }, orderBy: { createdAt: "desc" }, select: { text: true } }),
+    loadCalendar([{ ...client, user }], today, addDays(today, 6), user.timezone),
   ]);
   const day = await loadDay(
     client.id,
@@ -148,18 +152,22 @@ export default async function ClientHome() {
         </section>
       )}
 
-      {/* Widget 7: new messages from the coach. */}
+      {/* Widget 7: new messages from the coach, the latest one previewed. */}
       {messages > 0 && (
         <section aria-labelledby="home-messages" className="rounded-lg border bg-card p-5">
           <h2 id="home-messages" className="text-base font-semibold">
             {t("ClientHome.messages")}
           </h2>
-          <p className="mt-1 text-sm">{t("Messages.unread", { count: messages })}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{t("Messages.unread", { count: messages })}</p>
+          {latest && <p className="mt-1 line-clamp-2 text-sm">{latest.text}</p>}
           <Link href="/app/messages" className={buttonVariants({ variant: "outline", className: "mt-3 h-10 px-4" })}>
             {t("ClientHome.messagesOpen")}
           </Link>
         </section>
       )}
+
+      {/* Widget 8: what the next seven days hold. */}
+      {upcoming.length > 0 && <UpcomingEvents items={upcoming} today={today} />}
     </div>
   );
 }

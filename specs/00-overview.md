@@ -72,10 +72,11 @@ Plus a GUIDANCE client can be created by switching any of them.
 14. Supplements — `supplements.md`
 15. Messaging — `messaging.md`
 16. Calls, calendar, coach home — `coach.md`, `home-and-basics.md`
-17. Settings, package, help/FAQ, privacy & account — `home-and-basics.md`
+17. Settings, help/FAQ, privacy & account (packages deferred) — `home-and-basics.md`
 Client home and coach home grow with every feature: when a feature lands, add its widget.
 
 ## Out of scope
 - No barcode scanning or EAN lookup, no bloodwork, no micronutrients beyond fiber and sodium (user decision 2026-10-28: not a full calorie-table app).
+- Deferred by the user: photos and file uploads (2026-10-28), subscription packages (2026-10-29) — kept in the specs, built later (IMPLEMENTATION_PLAN.md "Later").
 - Phase 2: education hub / lessons, community feed, community events & Q&A, coach profile page, chat availability indicator.
 - Payment processing, workout programming (sessions are logged, not programmed), native apps, email/push notifications, AI features, wearable integrations, imperial units.

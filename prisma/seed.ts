@@ -2,7 +2,7 @@ import { execSync } from "node:child_process";
 import { rmSync } from "node:fs";
 import type { Prisma } from "../src/generated/prisma/client";
 import { createUser } from "../src/lib/auth";
-import { addDays, todayIn } from "../src/lib/dates";
+import { addDays, instantOf, todayIn } from "../src/lib/dates";
 import { db, dbUrl } from "../src/lib/db";
 import { CHECK_IN_SCALES, type HistoryPayloads, ONBOARDING_STEPS } from "../src/lib/enums";
 import { currentDueDate } from "../src/lib/check-ins";
@@ -634,6 +634,14 @@ async function seed() {
       { clientId: race, senderId: raceUserId, text: "Díky! A můžu si den před závodem dát těstoviny s rajčatovou omáčkou?", createdAt: hoursAgo(3) },
       { clientId: sports, senderId: coach.id, text: "Great week, Emma! Keep the recovery shake after the long ride.", createdAt: hoursAgo(120), readAt: hoursAgo(118) },
       { clientId: sports, senderId: sportsUserId, text: "Thanks, will do!", createdAt: hoursAgo(117), readAt: hoursAgo(116) },
+    ],
+  });
+
+  // Calls the coach scheduled (her clock: Prague), without notifications so the bells start as before.
+  await db.call.createMany({
+    data: [
+      { clientId: race, startsAt: instantOf(`${addDays(today, 2)}T18:00`, "Europe/Prague"), durationMin: 30, link: "https://meet.google.com/demo-race", agenda: "Plán závodního dne a gely" },
+      { clientId: sports, startsAt: instantOf(`${addDays(today, 4)}T07:30`, "Europe/Prague"), durationMin: 20, link: "https://meet.google.com/demo-sports", agenda: "Bike fueling" },
     ],
   });
 

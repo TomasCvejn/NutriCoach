@@ -142,6 +142,7 @@ model Client {
   competitions     Competition[]
   supplements      Supplement[]
   messages         Message[]
+  calls            Call[]
 
   @@index([coachId])
 }
@@ -633,4 +634,19 @@ model Message {
 
   @@index([clientId, createdAt])
   @@index([clientId, contextType, contextKey])
+}
+
+// A call the coach scheduled with a client (coach.md): an instant, shown in each viewer's timezone.
+model Call {
+  id          String   @id @default(cuid())
+  clientId    String
+  client      Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  startsAt    DateTime
+  durationMin Int
+  link        String? // http(s) only
+  agenda      String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([clientId, startsAt])
 }
