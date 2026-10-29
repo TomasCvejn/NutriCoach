@@ -1,6 +1,6 @@
 "use client";
 
-import { ActivityIcon, BellIcon, ChefHatIcon, ClipboardCheckIcon, ClipboardListIcon, DropletIcon, EllipsisIcon, HouseIcon, LibraryBigIcon, type LucideIcon, SettingsIcon, SunIcon, UserRoundIcon, UsersIcon, UtensilsIcon } from "lucide-react";
+import { ActivityIcon, BellIcon, ChefHatIcon, ClipboardCheckIcon, ClipboardListIcon, DropletIcon, EllipsisIcon, HouseIcon, LibraryBigIcon, type LucideIcon, SettingsIcon, SunIcon, TrendingUpIcon, UserRoundIcon, UsersIcon, UtensilsIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -23,6 +23,7 @@ const ICONS: Record<NavItem["key"], LucideIcon> = {
   hydration: DropletIcon,
   checkIn: ClipboardCheckIcon,
   checkIns: ClipboardCheckIcon,
+  progress: TrendingUpIcon,
   profile: UserRoundIcon,
   settings: SettingsIcon,
 };

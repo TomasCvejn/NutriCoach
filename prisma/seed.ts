@@ -449,6 +449,20 @@ async function seed() {
     }
   }
 
+  // Body composition about monthly; each client's latest weigh-in is their profile weight (the targets' g/kg use it).
+  await db.bodyComp.createMany({
+    data: [
+      { clientId: general, date: addDays(today, -56), method: "SCALE", weightKg: 97.2, waistCm: 106 },
+      { clientId: general, date: addDays(today, -28), method: "SCALE", weightKg: 95.8, waistCm: 104 },
+      { clientId: general, date: addDays(today, -7), method: "SCALE", weightKg: 94.5, waistCm: 102.5, note: "Ráno nalačno." },
+      { clientId: sports, date: addDays(today, -56), method: "BIOIMPEDANCE", weightKg: 62.4, bodyFatPct: 21, waistCm: 69.5, hipsCm: 93, thighCm: 55 },
+      { clientId: sports, date: addDays(today, -28), method: "BIOIMPEDANCE", weightKg: 61.8, bodyFatPct: 20.2 },
+      { clientId: sports, date: addDays(today, -3), method: "BIOIMPEDANCE", weightKg: 61.2, bodyFatPct: 19.6, waistCm: 68, hipsCm: 92, thighCm: 54 },
+      { clientId: race, date: addDays(today, -30), method: "DEXA", weightKg: 58.9, bodyFatPct: 18.4, leanMassKg: 46.1 },
+      { clientId: race, date: addDays(today, -6), method: "SCALE", weightKg: 58.4 },
+    ],
+  });
+
   // One pending invite (accept it at /invite/demo-invite with dev accept).
   await db.invite.create({
     data: { coachId: coach.id, token: "demo-invite", name: "Martin Beneš", email: "martin@demo.cz", expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) },

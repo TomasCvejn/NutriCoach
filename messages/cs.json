@@ -47,7 +47,8 @@
     "recipes": "Recepty",
     "hydration": "Hydratace",
     "checkIn": "Check-in",
-    "checkIns": "Check-iny"
+    "checkIns": "Check-iny",
+    "progress": "Pokrok"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -190,6 +191,7 @@
       "label": "Sekce klienta",
       "overview": "Přehled",
       "nutrition": "Výživa",
+      "progress": "Pokrok",
       "checkIns": "Check-iny",
       "notes": "Poznámky"
     },
@@ -731,7 +733,8 @@
       "nextSteps": "Další kroky"
     },
     "notReviewed": "Trenér check-in ještě neprošel. Jeho zpětná vazba se objeví tady.",
-    "yourAnswers": "Vaše odpovědi"
+    "yourAnswers": "Vaše odpovědi",
+    "bodyComp": "Máte nové měření těla? <link>Přidat měření</link>"
   },
   "Foods": {
     "title": "Potraviny",
@@ -1119,6 +1122,64 @@
     "none": "Klient zatím neodeslal žádný check-in.",
     "history": "Check-iny klienta",
     "weekOf": "Týden od",
-    "status": "Stav"
+    "status": "Stav",
+    "weight": "Poslední váha"
+  },
+  "Progress": {
+    "title": "Pokrok"
+  },
+  "Charts": {
+    "showTable": "Tabulka",
+    "showChart": "Graf",
+    "label": "{title}, {from} až {to}, naposledy {latest}"
+  },
+  "BodyComp": {
+    "title": "Tělesné složení",
+    "add": "Přidat měření",
+    "addTitle": "Nové měření",
+    "edit": "Upravit",
+    "editTitle": "Upravit měření",
+    "editFrom": "Upravit měření z {date}",
+    "empty": "Zatím žádné měření. Stačí občas, třeba jednou za měsíc: váha, případně tuk a obvody.",
+    "entries": "Všechna měření",
+    "change": "změna",
+    "leanHint": "Prázdné = dopočítá se z hmotnosti a tuku.",
+    "invalid": "Zadejte číslo v rozumném rozsahu.",
+    "invalidDate": "Zadejte platné datum.",
+    "noValues": "Zadejte aspoň jednu hodnotu.",
+    "methods": {
+      "SCALE": "Váha",
+      "BIOIMPEDANCE": "Bioimpedance",
+      "DEXA": "DEXA",
+      "SKINFOLDS": "Kožní řasy",
+      "TAPE": "Krejčovský metr"
+    },
+    "fields": {
+      "date": "Datum",
+      "method": "Metoda",
+      "weightKg": "Hmotnost (kg)",
+      "bodyFatPct": "Tělesný tuk (%)",
+      "leanMassKg": "Aktivní hmota (kg)",
+      "waistCm": "Pas (cm)",
+      "hipsCm": "Boky (cm)",
+      "chestCm": "Hrudník (cm)",
+      "thighCm": "Stehno (cm)",
+      "armCm": "Paže (cm)",
+      "note": "Poznámka"
+    },
+    "columns": {
+      "weightKg": "Hmotnost kg",
+      "bodyFatPct": "Tuk %",
+      "leanMassKg": "Akt. hmota kg",
+      "waistCm": "Pas cm",
+      "hipsCm": "Boky cm",
+      "chestCm": "Hrudník cm",
+      "thighCm": "Stehno cm",
+      "armCm": "Paže cm"
+    },
+    "charts": {
+      "weightKg": "Hmotnost",
+      "bodyFatPct": "Tělesný tuk"
+    }
   }
 }

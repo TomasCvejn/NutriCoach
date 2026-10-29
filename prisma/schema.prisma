@@ -134,6 +134,7 @@ model Client {
   fluidLogs        FluidLog[]
   drinkPresets     DrinkPreset[]
   checkIns         CheckIn[]
+  bodyComps        BodyComp[]
 
   @@index([coachId])
 }
@@ -452,4 +453,26 @@ model CheckIn {
   updatedAt      DateTime  @updatedAt
 
   @@unique([clientId, dueDate])
+}
+
+// An occasional body-composition entry, added by the client or their coach (progress.md).
+model BodyComp {
+  id         String   @id @default(cuid())
+  clientId   String
+  client     Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  date       String // YYYY-MM-DD
+  method     String
+  weightKg   Float?
+  bodyFatPct Float?
+  leanMassKg Float? // as entered; lib/body-comp.ts computes it from weight and body fat when empty
+  waistCm    Float?
+  hipsCm     Float?
+  chestCm    Float?
+  thighCm    Float?
+  armCm      Float?
+  note       String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([clientId, date])
 }

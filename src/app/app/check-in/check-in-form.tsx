@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import { useActionState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -51,6 +52,15 @@ export function CheckInForm() {
         </label>
         <Textarea id={`${id}-questions`} name="questions" maxLength={2000} rows={4} className="mt-3" />
       </div>
+      <p className="text-sm text-muted-foreground">
+        {t.rich("bodyComp", {
+          link: (chunks) => (
+            <Link href="/app/progress#body" className="font-medium text-primary-ink hover:underline">
+              {chunks}
+            </Link>
+          ),
+        })}
+      </p>
       {state && "already" in state && <p className="text-sm text-destructive-ink">{t("already")}</p>}
       <Button type="submit" disabled={pending} className="h-11 self-start px-5">
         {t("submit")}

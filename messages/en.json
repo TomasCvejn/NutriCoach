@@ -47,7 +47,8 @@
     "recipes": "Recipes",
     "hydration": "Hydration",
     "checkIn": "Check-in",
-    "checkIns": "Check-ins"
+    "checkIns": "Check-ins",
+    "progress": "Progress"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -190,6 +191,7 @@
       "label": "Client sections",
       "overview": "Overview",
       "nutrition": "Nutrition",
+      "progress": "Progress",
       "checkIns": "Check-ins",
       "notes": "Notes"
     },
@@ -731,7 +733,8 @@
       "nextSteps": "Next steps"
     },
     "notReviewed": "Your coach hasn't reviewed this check-in yet. Their feedback will show up here.",
-    "yourAnswers": "Your answers"
+    "yourAnswers": "Your answers",
+    "bodyComp": "Measured yourself lately? <link>Add a measurement</link>"
   },
   "Foods": {
     "title": "Foods",
@@ -1119,6 +1122,64 @@
     "none": "The client hasn't sent a check-in yet.",
     "history": "The client's check-ins",
     "weekOf": "Week of",
-    "status": "Status"
+    "status": "Status",
+    "weight": "Latest weight"
+  },
+  "Progress": {
+    "title": "Progress"
+  },
+  "Charts": {
+    "showTable": "Table",
+    "showChart": "Chart",
+    "label": "{title}, {from} to {to}, latest {latest}"
+  },
+  "BodyComp": {
+    "title": "Body composition",
+    "add": "Add measurement",
+    "addTitle": "New measurement",
+    "edit": "Edit",
+    "editTitle": "Edit measurement",
+    "editFrom": "Edit the measurement from {date}",
+    "empty": "No measurements yet. Now and then is enough, say once a month: weight, and body fat and girths if you have them.",
+    "entries": "All measurements",
+    "change": "change",
+    "leanHint": "Leave empty to compute it from weight and body fat.",
+    "invalid": "Enter a number in a sensible range.",
+    "invalidDate": "Enter a valid date.",
+    "noValues": "Enter at least one value.",
+    "methods": {
+      "SCALE": "Scale",
+      "BIOIMPEDANCE": "Bioimpedance",
+      "DEXA": "DEXA",
+      "SKINFOLDS": "Skinfolds",
+      "TAPE": "Tape measure"
+    },
+    "fields": {
+      "date": "Date",
+      "method": "Method",
+      "weightKg": "Weight (kg)",
+      "bodyFatPct": "Body fat (%)",
+      "leanMassKg": "Lean mass (kg)",
+      "waistCm": "Waist (cm)",
+      "hipsCm": "Hips (cm)",
+      "chestCm": "Chest (cm)",
+      "thighCm": "Thigh (cm)",
+      "armCm": "Arm (cm)",
+      "note": "Note"
+    },
+    "columns": {
+      "weightKg": "Weight kg",
+      "bodyFatPct": "Fat %",
+      "leanMassKg": "Lean kg",
+      "waistCm": "Waist cm",
+      "hipsCm": "Hips cm",
+      "chestCm": "Chest cm",
+      "thighCm": "Thigh cm",
+      "armCm": "Arm cm"
+    },
+    "charts": {
+      "weightKg": "Weight",
+      "bodyFatPct": "Body fat"
+    }
   }
 }

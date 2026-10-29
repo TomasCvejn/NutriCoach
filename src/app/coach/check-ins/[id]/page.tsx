@@ -7,9 +7,11 @@ import { Sparkline } from "@/components/sparkline";
 import { nutritionSummaries } from "@/lib/adherence";
 import { requireCoachOf } from "@/lib/auth";
 import type { CheckInAnswers } from "@/lib/check-ins";
+import { latestWeighIn } from "@/lib/body-comp";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { CHECK_IN_SCALES, FEEDBACK_FIELDS, type TrackingMode } from "@/lib/enums";
+import { latestWeight } from "@/lib/nutrition";
 import { FeedbackForm } from "./feedback-form";
 
 // One check-in for the coach: the answers with each scale's trend over the last 8 check-ins, the client's questions, the
@@ -18,13 +20,15 @@ export default async function CheckInReview({ params }: PageProps<"/coach/check-
   const found = await db.checkIn.findUnique({ where: { id: (await params).id } });
   const { client } = await requireCoachOf(found?.clientId ?? "");
   const checkIn = found!;
-  const [t, format, user, history, notes] = await Promise.all([
+  const [t, format, user, history, notes, weighIn] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, timezone: true } }),
     db.checkIn.findMany({ where: { clientId: client.id, dueDate: { lte: checkIn.dueDate } }, orderBy: { dueDate: "desc" }, take: 8, select: { dueDate: true, answers: true } }),
     db.coachNote.findMany({ where: { clientId: client.id }, orderBy: [{ pinned: "desc" }, { date: "desc" }, { createdAt: "desc" }], take: 5 }),
+    latestWeighIn(client.id, checkIn.dueDate),
   ]);
+  const weight = latestWeight(client.weightKg, weighIn);
   const week = (await nutritionSummaries([{ id: client.id, trackingMode: client.trackingMode, timezone: user.timezone, today: checkIn.dueDate }])).get(client.id)!;
   const answers = checkIn.answers as CheckInAnswers;
   const trend = history.reverse().map((c) => ({ date: c.dueDate, answers: c.answers as CheckInAnswers }));
@@ -124,6 +128,10 @@ export default async function CheckInReview({ params }: PageProps<"/coach/check-
               <div className="flex justify-between gap-4 border-t border-rule py-2">
                 <dt className="text-muted-foreground">{t("CheckInReview.adherence")}</dt>
                 <dd className="tabular-nums">{week.adherence == null ? "–" : format.number(week.adherence / 100, { style: "percent" })}</dd>
+              </div>
+              <div className="flex justify-between gap-4 border-t border-rule py-2">
+                <dt className="text-muted-foreground">{t("CheckInReview.weight")}</dt>
+                <dd className="tabular-nums">{weight == null ? "–" : format.number(weight, { style: "unit", unit: "kilogram", maximumFractionDigits: 1 })}</dd>
               </div>
             </dl>
             <Link href={`/coach/clients/${client.id}/nutrition`} className="mt-3 inline-flex h-10 items-center text-sm font-medium text-primary-ink hover:underline sm:h-8">

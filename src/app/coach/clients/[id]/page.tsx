@@ -9,6 +9,7 @@ import { currentCheckIn } from "@/lib/check-ins";
 import { requireCoachOf } from "@/lib/auth";
 import { ageOn, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
+import { latestWeighIn } from "@/lib/body-comp";
 import { latestWeight, targetFor } from "@/lib/nutrition";
 import { targetSummary } from "@/lib/target-summary";
 import { type Allergen, DAY_TYPES, type DietType, type Goal, type Sex, type SportLevel, type TrackingMode } from "@/lib/enums";
@@ -17,12 +18,13 @@ import { type Allergen, DAY_TYPES, type DietType, type Goal, type Sex, type Spor
 // Current targets, the last check-in and key trends join when their features land.
 export default async function ClientOverview({ params }: PageProps<"/coach/clients/[id]">) {
   const { client } = await requireCoachOf((await params).id);
-  const [t, format, user, targetRows, lastCheckIn] = await Promise.all([
+  const [t, format, user, targetRows, lastCheckIn, weighIn] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { email: true, timezone: true } }),
     db.nutritionTarget.findMany({ where: { clientId: client.id } }),
     db.checkIn.findFirst({ where: { clientId: client.id }, orderBy: { dueDate: "desc" }, select: { id: true, dueDate: true } }),
+    latestWeighIn(client.id),
   ]);
   const today = todayIn(user.timezone);
   const checkIn = await currentCheckIn(client, user.timezone);
@@ -80,7 +82,7 @@ export default async function ClientOverview({ params }: PageProps<"/coach/clien
   ];
 
   const figures: [string, ReactNode][] = [
-    [t("ClientDashboard.weight"), kg(latestWeight(client.weightKg))],
+    [t("ClientDashboard.weight"), kg(latestWeight(client.weightKg, weighIn))],
     [t("ClientDashboard.targetWeight"), kg(client.targetWeightKg)],
     [t("Profile.fields.targetDate"), day(client.targetDate)],
   ];

@@ -3,6 +3,7 @@ import { requireCoachOf } from "@/lib/auth";
 import { todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { DAY_TYPES, type DayType, type TrackingMode } from "@/lib/enums";
+import { latestWeighIn } from "@/lib/body-comp";
 import { latestWeight, TARGET_VALUE_FIELDS, targetFor } from "@/lib/nutrition";
 import { CopyPlanDialog, MealsEditor, RecommendationsEditor, SpecificsForm } from "./plan-editor";
 import { targetSummary } from "@/lib/target-summary";
@@ -12,7 +13,7 @@ import { TargetsEditor } from "./targets-editor";
 // history. The daily log joins later.
 export default async function ClientNutrition({ params }: PageProps<"/coach/clients/[id]/nutrition">) {
   const { client } = await requireCoachOf((await params).id);
-  const [t, format, user, rows, meals, recommendations, others, recipes] = await Promise.all([
+  const [t, format, user, rows, meals, recommendations, others, recipes, weighIn] = await Promise.all([
     getTranslations(),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { name: true, timezone: true } }),
@@ -23,6 +24,7 @@ export default async function ClientNutrition({ params }: PageProps<"/coach/clie
     db.client.findMany({ where: { coachId: client.coachId, NOT: { id: client.id } }, select: { id: true, user: { select: { name: true } } }, orderBy: { user: { name: "asc" } } }),
     // Recipe options for meals: the coach's published recipes (the ones the client can open).
     db.recipe.findMany({ where: { coachId: client.coachId, status: "PUBLISHED" }, select: { id: true, name: true }, orderBy: { name: "asc" } }),
+    latestWeighIn(client.id),
   ]);
   const mode = client.trackingMode as TrackingMode;
   const today = todayIn(user.timezone);
@@ -49,7 +51,7 @@ export default async function ClientNutrition({ params }: PageProps<"/coach/clie
             clientId={client.id}
             mode={mode}
             today={today}
-            weightKg={latestWeight(client.weightKg)}
+            weightKg={latestWeight(client.weightKg, weighIn)}
             profile={{ sex: client.sex, birthDate: client.birthDate, heightCm: client.heightCm, primaryGoal: client.primaryGoal }}
             current={current}
           />

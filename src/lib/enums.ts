@@ -43,6 +43,8 @@ export const FOOD_SOURCES = ["OFF", "COACH", "CLIENT"] as const;
 export const CHECK_IN_SCALES = ["energy", "hunger", "recovery", "digestion", "training", "adherence", "mood"] as const;
 export const CHECK_IN_STATUSES = ["ok", "due", "overdue", "toReview"] as const;
 export const FEEDBACK_FIELDS = ["response", "changes", "newGoals", "nextSteps"] as const;
+export const BODY_COMP_METHODS = ["SCALE", "BIOIMPEDANCE", "DEXA", "SKINFOLDS", "TAPE"] as const;
+export const BODY_FIELDS = ["weightKg", "bodyFatPct", "leanMassKg", "waistCm", "hipsCm", "chestCm", "thighCm", "armCm"] as const;
 export const DRINK_TYPES = ["WATER", "ELECTROLYTE", "SPORTS", "COFFEE_TEA", "OTHER"] as const;
 // Recipes (recipes.md): fixed categories, diet flags, statuses.
 export const RECIPE_CATEGORIES = ["BREAKFAST", "LUNCH", "DINNER", "SNACK", "PRE_TRAINING", "POST_TRAINING", "COMPETITION", "DESSERT"] as const;
@@ -77,6 +79,8 @@ export type Followed = (typeof FOLLOWED)[number];
 export type DrinkType = (typeof DRINK_TYPES)[number];
 export type CheckInScale = (typeof CHECK_IN_SCALES)[number];
 export type CheckInStatus = (typeof CHECK_IN_STATUSES)[number];
+export type BodyCompMethod = (typeof BODY_COMP_METHODS)[number];
+export type BodyField = (typeof BODY_FIELDS)[number];
 export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];
 export type DietFlag = (typeof DIET_FLAGS)[number];
 export type RecipeStatus = (typeof RECIPE_STATUSES)[number];
