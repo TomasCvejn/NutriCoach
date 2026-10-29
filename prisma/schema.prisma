@@ -535,9 +535,9 @@ model FuelingTemplate {
 
 // A client's competition (competition.md): the coach creates it, the client or the coach records the result.
 model Competition {
-  id        String   @id @default(cuid())
+  id        String         @id @default(cuid())
   clientId  String
-  client    Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client    Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
   name      String
   date      String // YYYY-MM-DD
   sport     String?
@@ -548,9 +548,10 @@ model Competition {
   result    String?
   felt      Int?
   // Phases' priorities and tasks and the race-day packing list (lib/timeline.ts); ticks live in it.
-  timeline  Json     @default("{}")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  timeline  Json           @default("{}")
+  schedule  ScheduleItem[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
 
   @@index([clientId, date])
 }
@@ -564,4 +565,27 @@ model TimelineTemplate {
   name      String
   content   Json
   createdAt DateTime @default(now())
+}
+
+// One item of a competition's race-day schedule (competition.md): at a time of the day, ordered by time and then
+// position; amounts are optional. The client ticks it off on the day.
+model ScheduleItem {
+  id            String      @id @default(cuid())
+  competitionId String
+  competition   Competition @relation(fields: [competitionId], references: [id], onDelete: Cascade)
+  time          String // HH:MM
+  position      Int         @default(0)
+  type          String
+  title         String
+  details       String?
+  carbs         Int? // g
+  fluid         Int? // ml
+  sodium        Int? // mg
+  caffeine      Int? // mg
+  recipeId      String?
+  done          Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@index([competitionId, time])
 }

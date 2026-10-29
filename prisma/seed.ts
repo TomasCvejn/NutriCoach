@@ -398,6 +398,21 @@ async function seed() {
   marathon.phases["4_WEEKS"]!.tasks = marathon.phases["4_WEEKS"]!.tasks.map((task) => ({ ...task, done: true }));
   await db.competition.updateMany({ where: { clientId: race, date: addDays(today, 10) }, data: { timeline: marathon } });
   await db.competition.updateMany({ where: { clientId: sports }, data: { timeline: fromContent(timelines.en) } });
+  // race@'s race-day schedule: breakfast, the start, gels and drinks on the course, recovery.
+  const marathonId = (await db.competition.findFirstOrThrow({ where: { clientId: race, date: addDays(today, 10) } })).id;
+  await db.scheduleItem.createMany({
+    data: [
+      { time: "05:30", type: "MEAL", title: "Snídaně", details: "Rýžové chlebíčky s medem, banán", carbs: 120, fluid: 400 },
+      { time: "07:30", type: "HYDRATION", title: "Iontový nápoj", fluid: 500, sodium: 300 },
+      { time: "08:45", type: "CARBS", title: "Gel před startem", carbs: 25 },
+      { time: "09:00", type: "EVENT", title: "Start maratonu" },
+      { time: "09:30", type: "CARBS", title: "Gel", carbs: 25 },
+      { time: "10:00", type: "CARBS", title: "Gel s kofeinem", carbs: 25, caffeine: 75 },
+      { time: "10:00", type: "HYDRATION", title: "Ionťák na občerstvovačce", fluid: 200, sodium: 150, position: 1 },
+      { time: "10:30", type: "CARBS", title: "Gel", carbs: 25 },
+      { time: "12:45", type: "RECOVERY", title: "Regenerační nápoj", carbs: 60, fluid: 500 },
+    ].map((item) => ({ ...item, competitionId: marathonId })),
+  });
 
   // Fueling templates from training.md (the coach should review the numbers); the long and the very hard one rank highest.
   const pre = (carbs: number) => [

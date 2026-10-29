@@ -9,19 +9,22 @@ import { competitionPhase } from "@/lib/competition";
 import { diffDays, todayIn } from "@/lib/dates";
 import { db } from "@/lib/db";
 import { timelineOf } from "@/lib/timeline";
+import { ScheduleBuilder } from "./schedule-builder";
 import { TimelineEditor } from "./timeline-editor";
 
-// The coach's plan for one competition (competition.md): its details and its timeline. The race-day schedule joins here.
+// The coach's plan for one competition (competition.md): its details, its timeline and the race-day schedule.
 export default async function CompetitionPlan({ params }: PageProps<"/coach/clients/[id]/competition/[competitionId]">) {
   const { id, competitionId } = await params;
   const { coach, client } = await requireCoachOf(id);
-  const competition = await db.competition.findFirst({ where: { id: competitionId, clientId: client.id } });
+  const competition = await db.competition.findFirst({ where: { id: competitionId, clientId: client.id }, include: { schedule: true } });
   if (!competition) notFound();
-  const [t, format, user, templates] = await Promise.all([
+  const [t, format, user, templates, recipes] = await Promise.all([
     getTranslations("Competition"),
     getFormatter(),
     db.user.findUniqueOrThrow({ where: { id: client.userId }, select: { timezone: true } }),
     db.timelineTemplate.findMany({ where: { coachId: coach.id }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    // Schedule items can link one of the coach's published recipes (the ones the client can open).
+    db.recipe.findMany({ where: { coachId: coach.id, status: "PUBLISHED" }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
   ]);
   const today = todayIn(user.timezone);
   const days = diffDays(today, competition.date);
@@ -55,6 +58,7 @@ export default async function CompetitionPlan({ params }: PageProps<"/coach/clie
         </h3>
         <TimelineEditor competitionId={competition.id} timeline={timelineOf(competition.timeline)} templates={templates} />
       </section>
+      <ScheduleBuilder competitionId={competition.id} items={competition.schedule} recipes={recipes} />
     </div>
   );
 }

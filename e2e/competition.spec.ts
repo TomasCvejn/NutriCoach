@@ -54,3 +54,26 @@ test("race@'s home shows the marathon in 10 days, the two-weeks phase and its op
   await widget.getByRole("link", { name: "Celý časový plán" }).click();
   await expect(page.getByRole("heading", { name: "Podzimní maraton Praha", level: 1 })).toBeVisible();
 });
+
+// Back by 15 at the end, so the schedule stays as seeded for the client-view test below.
+test("coach shifts race@'s race-day schedule by +15 min and back", async ({ page }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await logIn(page, "coach@demo.cz");
+  await expect(page).toHaveURL("/coach");
+  await page.goto("/coach/clients");
+  await page.getByRole("link", { name: "Tereza Svobodová" }).click();
+  await page.getByRole("navigation", { name: "Sekce klienta" }).getByRole("link", { name: "Závody" }).click();
+  await page.getByRole("link", { name: "Podzimní maraton Praha", exact: true }).click();
+  const items = page.getByRole("list", { name: "Položky závodního dne" }).getByRole("listitem");
+  await expect(items.first()).toContainText("05:30");
+  await expect(page.getByText("Celkem za den:")).toBeVisible();
+
+  await page.getByLabel("Posunout vše o (min)").fill("15");
+  await page.getByRole("button", { name: "Posunout", exact: true }).click();
+  await expect(items.first()).toContainText("05:45");
+  await expect(items.filter({ hasText: "Start maratonu" })).toContainText("09:15");
+
+  await page.getByLabel("Posunout vše o (min)").fill("-15");
+  await page.getByRole("button", { name: "Posunout", exact: true }).click();
+  await expect(items.first()).toContainText("05:30");
+});

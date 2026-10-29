@@ -1465,5 +1465,59 @@
     "openTasks": "Open tasks",
     "openTimeline": "The whole timeline",
     "laterOnes": "Later competitions"
+  },
+  "Schedule": {
+    "title": "Race-day schedule",
+    "add": "Add item",
+    "addTitle": "New item",
+    "editTitle": "Edit item",
+    "edit": "Edit",
+    "editFor": "Edit {time} {title}",
+    "empty": "Empty so far. Add the start, meals, gels and drinks at their times of the day.",
+    "items": "Race-day items",
+    "fields": {
+      "time": "Time",
+      "type": "Type",
+      "title": "Title",
+      "details": "Details",
+      "carbs": "Carbs (g)",
+      "fluid": "Fluid (ml)",
+      "sodium": "Sodium (mg)",
+      "caffeine": "Caffeine (mg)",
+      "recipe": "Recipe"
+    },
+    "types": {
+      "EVENT": "Start",
+      "MEAL": "Meal",
+      "SNACK": "Snack",
+      "CARBS": "Carbs",
+      "HYDRATION": "Drink",
+      "RECOVERY": "Recovery",
+      "SUPPLEMENT": "Supplement",
+      "OTHER": "Other"
+    },
+    "invalid": {
+      "time": "Enter a time 00:00–23:59.",
+      "title": "Enter a title (at most 100 characters).",
+      "recipeId": "Choose one of your published recipes.",
+      "amount": "Enter 0–5,000.",
+      "shift": "That would move an item out of the day (00:00–23:59)."
+    },
+    "noRecipe": "No recipe",
+    "recipe": "Recipe: {name}",
+    "amounts": {
+      "carbs": "{value} g carbs",
+      "fluid": "{value} ml",
+      "sodium": "{value} mg sodium",
+      "caffeine": "{value} mg caffeine"
+    },
+    "between": "Between starts: {amounts}",
+    "nothing": "nothing",
+    "dayTotal": "Day total:",
+    "shiftBy": "Shift all by (min)",
+    "shift": "Shift",
+    "moveUp": "Move {title} up",
+    "moveDown": "Move {title} down",
+    "duplicate": "Duplicate {title}"
   }
 }

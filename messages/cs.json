@@ -1465,5 +1465,59 @@
     "openTasks": "Otevřené úkoly",
     "openTimeline": "Celý časový plán",
     "laterOnes": "Další závody"
+  },
+  "Schedule": {
+    "title": "Plán závodního dne",
+    "add": "Přidat položku",
+    "addTitle": "Nová položka",
+    "editTitle": "Upravit položku",
+    "edit": "Upravit",
+    "editFor": "Upravit {time} {title}",
+    "empty": "Zatím prázdný. Přidejte start, jídla, gely a pití v časech závodního dne.",
+    "items": "Položky závodního dne",
+    "fields": {
+      "time": "Čas",
+      "type": "Typ",
+      "title": "Název",
+      "details": "Podrobnosti",
+      "carbs": "Sacharidy (g)",
+      "fluid": "Tekutiny (ml)",
+      "sodium": "Sodík (mg)",
+      "caffeine": "Kofein (mg)",
+      "recipe": "Recept"
+    },
+    "types": {
+      "EVENT": "Start",
+      "MEAL": "Jídlo",
+      "SNACK": "Svačina",
+      "CARBS": "Sacharidy",
+      "HYDRATION": "Pití",
+      "RECOVERY": "Regenerace",
+      "SUPPLEMENT": "Doplněk",
+      "OTHER": "Jiné"
+    },
+    "invalid": {
+      "time": "Zadejte čas 00:00–23:59.",
+      "title": "Zadejte název (nejvýš 100 znaků).",
+      "recipeId": "Vyberte jeden ze svých zveřejněných receptů.",
+      "amount": "Zadejte 0–5 000.",
+      "shift": "Posun by vyvedl položku mimo den (00:00–23:59)."
+    },
+    "noRecipe": "Bez receptu",
+    "recipe": "Recept: {name}",
+    "amounts": {
+      "carbs": "{value} g sacharidů",
+      "fluid": "{value} ml",
+      "sodium": "{value} mg sodíku",
+      "caffeine": "{value} mg kofeinu"
+    },
+    "between": "Mezi starty: {amounts}",
+    "nothing": "nic",
+    "dayTotal": "Celkem za den:",
+    "shiftBy": "Posunout vše o (min)",
+    "shift": "Posunout",
+    "moveUp": "Posunout {title} výš",
+    "moveDown": "Posunout {title} níž",
+    "duplicate": "Duplikovat {title}"
   }
 }
