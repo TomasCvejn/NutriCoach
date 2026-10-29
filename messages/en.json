@@ -52,7 +52,8 @@
     "competition": "Competition",
     "supplements": "Supplements",
     "messages": "Messages",
-    "calendar": "Calendar"
+    "calendar": "Calendar",
+    "help": "Help"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -1680,5 +1681,60 @@
     "nothing": "Nothing",
     "more": "+{count} more",
     "callWith": "Call"
+  },
+  "Help": {
+    "title": "Help",
+    "modes": {
+      "CALORIES": {
+        "title": "Calories",
+        "text": "You log meals from the food database, recipes or a quick entry. The app adds up energy, protein, carbs, fat, fibre and sodium and shows them against your daily targets."
+      },
+      "PORTIONS": {
+        "title": "Portions",
+        "text": "Instead of weighing you count hand portions: palms of protein, cupped hands of carbs, fists of vegetables and thumbs of fats. The target is a number of portions a day."
+      },
+      "GUIDANCE": {
+        "title": "Guidance",
+        "text": "No counting: for each meal of your plan you mark whether you followed it – yes, partly or no."
+      }
+    },
+    "client": {
+      "lead": "How to use the app and what you see in it.",
+      "using": {
+        "title": "Using the app",
+        "text": "Today – your day at a glance: targets, training, fluids, your competition and what your coach expects from you.\nNutrition – logging in your mode; the arrows switch days.\nMessages – your conversation with your coach.\nMore – nutrition plan, recipes, hydration, progress, supplements, calendar, check-in, profile and settings."
+      },
+      "modes": {
+        "title": "Tracking modes",
+        "text": "Your coach sets one of three modes. If it changes, what you logged before stays saved."
+      },
+      "checkIns": {
+        "title": "How check-ins work",
+        "text": "Once a week, on the day your coach sets, you fill in a short check-in: how you feel on a 1–10 scale and any questions. The bell and your home screen remind you. Your coach reviews it and writes feedback, which you find in the check-in and on your home screen."
+      },
+      "contact": {
+        "title": "Contacting your coach",
+        "text": "Write in Messages. You can comment on a particular nutrition day or check-in right there – your coach sees it in the conversation too. You can delete your own message within 5 minutes."
+      }
+    },
+    "coach": {
+      "lead": "How to work with your clients in the app.",
+      "using": {
+        "title": "Using the app",
+        "text": "Overview – who needs attention, check-ins to review, messages, calls and competitions.\nClients – the list with filters; per client the nutrition plan, training, competitions, progress, check-ins, supplements, messages and notes.\nCalendar – every client's sessions, competitions, calls and check-in days.\nLibrary – foods, recipes, fueling and timeline templates."
+      },
+      "modes": {
+        "title": "Tracking modes",
+        "text": "Switch a client's mode in their header (Change tracking). The data of the other modes stays saved."
+      },
+      "checkIns": {
+        "title": "Check-ins",
+        "text": "Set the check-in day on the client's overview. Sent check-ins wait under Check-ins, oldest first. The detail shows the answers with their trend, the week's context and your notes; publish your feedback and the client is notified."
+      },
+      "contact": {
+        "title": "Talking to clients",
+        "text": "Each client has one conversation with you. Unread messages show under Messages, in the client list and on your overview. Comment on a nutrition day or check-in right there. Schedule a call from the client's header."
+      }
+    }
   }
 }

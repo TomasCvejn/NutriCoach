@@ -26,11 +26,11 @@ const HANDS: Record<(typeof TARGET_FIELDS.PORTIONS)[number], ReactNode> = {
   ),
 };
 
-// "How to count portions": what each hand portion means, folded away until needed (PORTIONS day).
-export async function PortionGuide() {
+// "How to count portions": what each hand portion means, folded away until needed (PORTIONS day; open in the help).
+export async function PortionGuide({ open = false }: { open?: boolean }) {
   const t = await getTranslations("Portions.guide");
   return (
-    <details className="rounded-lg border bg-card p-5 text-sm">
+    <details open={open} className="rounded-lg border bg-card p-5 text-sm">
       <summary className="cursor-pointer font-semibold">{t("title")}</summary>
       <ul className="mt-4 grid gap-4 sm:grid-cols-2">
         {TARGET_FIELDS.PORTIONS.map((kind) => (

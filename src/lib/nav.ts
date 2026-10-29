@@ -1,6 +1,6 @@
 import type { clientFeatures } from "./features";
 
-export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "recipes" | "hydration" | "checkIn" | "checkIns" | "progress" | "competition" | "supplements" | "messages" | "calendar" | "profile" | "settings"; href: string };
+export type NavItem = { key: "overview" | "clients" | "library" | "today" | "nutrition" | "training" | "plan" | "recipes" | "hydration" | "checkIn" | "checkIns" | "progress" | "competition" | "supplements" | "messages" | "calendar" | "help" | "profile" | "settings"; href: string };
 // Phone: the tabs in the bottom bar (at most 4, plus "More") and the rest in the "More" sheet. Desktop: all of them in the sidebar.
 export type Nav = { tabs: NavItem[]; more: NavItem[] };
 
@@ -15,6 +15,7 @@ export const coachNav: Nav = {
   more: [
     { key: "calendar", href: "/coach/calendar" },
     { key: "library", href: "/coach/library" },
+    { key: "help", href: "/coach/help" },
     { key: "settings", href: "/coach/settings" },
   ],
 };
@@ -40,6 +41,7 @@ export function clientNav(features: ReturnType<typeof clientFeatures>): Nav {
       { key: "calendar", href: "/app/calendar" },
       { key: "checkIn", href: "/app/check-in" },
       { key: "profile", href: "/app/profile" },
+      { key: "help", href: "/app/help" },
       { key: "settings", href: "/app/settings" },
     ],
   };

@@ -52,7 +52,8 @@
     "competition": "Závod",
     "supplements": "Doplňky",
     "messages": "Zprávy",
-    "calendar": "Kalendář"
+    "calendar": "Kalendář",
+    "help": "Nápověda"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -1680,5 +1681,60 @@
     "nothing": "Nic",
     "more": "+{count} další",
     "callWith": "Hovor"
+  },
+  "Help": {
+    "title": "Nápověda",
+    "modes": {
+      "CALORIES": {
+        "title": "Kalorie",
+        "text": "Zapisujete jídla z databáze potravin, receptů nebo rychlým zápisem. Aplikace sčítá energii, bílkoviny, sacharidy, tuky, vlákninu a sodík a ukazuje je proti denním cílům."
+      },
+      "PORTIONS": {
+        "title": "Porce",
+        "text": "Místo vážení počítáte porce rukou: dlaně bílkovin, hrsti sacharidů, pěsti zeleniny a palce tuků. Cíl je počet porcí na den."
+      },
+      "GUIDANCE": {
+        "title": "Vedení",
+        "text": "Bez počítání: u každého jídla z plánu jen označíte, jestli jste se ho drželi – ano, částečně, nebo ne."
+      }
+    },
+    "client": {
+      "lead": "Jak s aplikací pracovat a co znamená, co v ní vidíte.",
+      "using": {
+        "title": "Jak aplikaci používat",
+        "text": "Dnes – přehled dne: cíle, trénink, pití, závod a to, co od vás trenér čeká.\nVýživa – zápis jídel podle vašeho režimu; šipkami přepínáte dny.\nZprávy – konverzace s trenérem.\nVíce – plán výživy, recepty, hydratace, pokrok, doplňky, kalendář, check-in, profil a nastavení."
+      },
+      "modes": {
+        "title": "Režimy sledování",
+        "text": "Trenér vám nastaví jeden ze tří režimů. Změní-li ho, vaše dřívější zápisy zůstanou uložené."
+      },
+      "checkIns": {
+        "title": "Jak fungují check-iny",
+        "text": "Jednou týdně, v den, který určí trenér, vyplníte krátký check-in: jak se cítíte na škále 1–10 a případné otázky. Upozorní vás zvonek i úvodní obrazovka. Trenér ho projde a napíše zpětnou vazbu, kterou najdete v check-inu i na úvodní obrazovce."
+      },
+      "contact": {
+        "title": "Jak kontaktovat trenéra",
+        "text": "Napište mu v záložce Zprávy. Ke konkrétnímu dni výživy nebo check-inu můžete přidat komentář přímo tam – trenér ho uvidí i v konverzaci. Svou zprávu můžete do 5 minut smazat."
+      }
+    },
+    "coach": {
+      "lead": "Jak s klienty pracovat v aplikaci.",
+      "using": {
+        "title": "Jak aplikaci používat",
+        "text": "Přehled – kdo potřebuje pozornost, check-iny ke kontrole, zprávy, hovory a závody.\nKlienti – seznam s filtry; u klienta plán výživy, trénink, závody, pokrok, check-iny, doplňky, zprávy a poznámky.\nKalendář – tréninky, závody, hovory a dny check-inů všech klientů.\nKnihovna – potraviny, recepty, šablony doplňování a časových plánů."
+      },
+      "modes": {
+        "title": "Režimy sledování",
+        "text": "Režim klientovi přepnete v jeho hlavičce (Změnit sledování). Data ostatních režimů zůstávají uložená."
+      },
+      "checkIns": {
+        "title": "Check-iny",
+        "text": "Den check-inu nastavíte v přehledu klienta. Odeslané check-iny čekají v sekci Check-iny, nejstarší první. V detailu vidíte odpovědi s trendem, kontext týdne a poznámky; zpětnou vazbu zveřejníte a klient dostane oznámení."
+      },
+      "contact": {
+        "title": "Komunikace s klienty",
+        "text": "Každý klient má s vámi jednu konverzaci. Nepřečtené zprávy uvidíte u Zpráv, v seznamu klientů i v přehledu. Komentář ke dni výživy nebo check-inu napíšete přímo tam. Hovor naplánujete v hlavičce klienta."
+      }
+    }
   }
 }

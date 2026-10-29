@@ -10,13 +10,13 @@ test("clientNav: Training is a tab only when the client trains", () => {
   expect(keys(clientNav({ training: false, competition: true }).tabs)).toEqual(["today", "nutrition", "messages"]);
 });
 
-test("clientNav: plan, recipes, hydration, progress, supplements, calendar, check-in, profile and settings under More", () => {
-  expect(keys(clientNav({ training: false, competition: false }).more)).toEqual(["plan", "recipes", "hydration", "progress", "supplements", "calendar", "checkIn", "profile", "settings"]);
+test("clientNav: plan, recipes, hydration, progress, supplements, calendar, check-in, profile, help and settings under More", () => {
+  expect(keys(clientNav({ training: false, competition: false }).more)).toEqual(["plan", "recipes", "hydration", "progress", "supplements", "calendar", "checkIn", "profile", "help", "settings"]);
 });
 
-test("coachNav: Overview, Clients, Check-ins and Messages as tabs; Calendar, Library and Settings under More", () => {
+test("coachNav: Overview, Clients, Check-ins and Messages as tabs; Calendar, Library, Help and Settings under More", () => {
   expect(keys(coachNav.tabs)).toEqual(["overview", "clients", "checkIns", "messages"]);
-  expect(keys(coachNav.more)).toEqual(["calendar", "library", "settings"]);
+  expect(keys(coachNav.more)).toEqual(["calendar", "library", "help", "settings"]);
 });
 
 test("clientNav: Competition leads the More sheet only with an upcoming or recent competition", () => {

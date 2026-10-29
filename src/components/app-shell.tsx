@@ -1,6 +1,6 @@
 "use client";
 
-import { ActivityIcon, BellIcon, CalendarDaysIcon, ChefHatIcon, ClipboardCheckIcon, ClipboardListIcon, DropletIcon, EllipsisIcon, HouseIcon, LibraryBigIcon, type LucideIcon, MessageCircleIcon, PillIcon, SettingsIcon, SunIcon, TrendingUpIcon, TrophyIcon, UserRoundIcon, UsersIcon, UtensilsIcon } from "lucide-react";
+import { ActivityIcon, BellIcon, CalendarDaysIcon, CircleHelpIcon, ChefHatIcon, ClipboardCheckIcon, ClipboardListIcon, DropletIcon, EllipsisIcon, HouseIcon, LibraryBigIcon, type LucideIcon, MessageCircleIcon, PillIcon, SettingsIcon, SunIcon, TrendingUpIcon, TrophyIcon, UserRoundIcon, UsersIcon, UtensilsIcon } from "lucide-react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -29,6 +29,7 @@ const ICONS: Record<NavItem["key"], LucideIcon> = {
   supplements: PillIcon,
   messages: MessageCircleIcon,
   calendar: CalendarDaysIcon,
+  help: CircleHelpIcon,
   profile: UserRoundIcon,
   settings: SettingsIcon,
 };
