@@ -51,7 +51,8 @@
     "progress": "Progress",
     "competition": "Competition",
     "supplements": "Supplements",
-    "messages": "Messages"
+    "messages": "Messages",
+    "calendar": "Calendar"
   },
   "DayTypes": {
     "REST": "Rest day",
@@ -1634,6 +1635,24 @@
       "COMPETITION": "Competition",
       "CALL": "Call",
       "CHECK_IN": "Check-in"
-    }
+    },
+    "title": "Calendar",
+    "client": "Client",
+    "allClients": "All clients",
+    "filter": "Show",
+    "period": "Period",
+    "previous": "Previous",
+    "next": "Next",
+    "view": "View",
+    "views": {
+      "week": "Week",
+      "month": "Month"
+    },
+    "legend": "Legend",
+    "week": "Days of the week",
+    "month": "Days of the month",
+    "nothing": "Nothing",
+    "more": "+{count} more",
+    "callWith": "Call"
   }
 }

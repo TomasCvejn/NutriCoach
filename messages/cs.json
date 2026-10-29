@@ -51,7 +51,8 @@
     "progress": "Pokrok",
     "competition": "Závod",
     "supplements": "Doplňky",
-    "messages": "Zprávy"
+    "messages": "Zprávy",
+    "calendar": "Kalendář"
   },
   "DayTypes": {
     "REST": "Odpočinkový den",
@@ -1634,6 +1635,24 @@
       "COMPETITION": "Závod",
       "CALL": "Hovor",
       "CHECK_IN": "Check-in"
-    }
+    },
+    "title": "Kalendář",
+    "client": "Klient",
+    "allClients": "Všichni klienti",
+    "filter": "Zobrazit",
+    "period": "Období",
+    "previous": "Předchozí",
+    "next": "Další",
+    "view": "Zobrazení",
+    "views": {
+      "week": "Týden",
+      "month": "Měsíc"
+    },
+    "legend": "Legenda",
+    "week": "Dny týdne",
+    "month": "Dny měsíce",
+    "nothing": "Nic",
+    "more": "+{count} další",
+    "callWith": "Hovor"
   }
 }
