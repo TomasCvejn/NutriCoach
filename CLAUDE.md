@@ -21,7 +21,7 @@ Nutrition coaching app (coach + clients). Specs: `specs/`. Task list: `IMPLEMENT
 
 ## Gotchas
 - `create-next-app` refuses a non-empty directory: scaffold into a temp subfolder, then move the files up (keep the existing `.gitignore` lines).
-- A Json `@default("{}")` on a table Prisma redefines (SQLite) comes out unquoted in migration.sql (`DEFAULT {}`) and fails to apply: quote it (`DEFAULT '{}'`), then `npm run db:seed`. (`[]` happens to pass.)
+- Prisma writes a Json `@default("{}")` / `@default("[]")` unquoted into SQLite migration.sql: `DEFAULT {}` fails to apply, `DEFAULT []` applies but gives rows that already exist an empty string Prisma can't parse (the app 500s). Quote it (`DEFAULT '[]'`) in the new migration.sql before applying.
 - Prisma 7 blocks `prisma migrate reset` for AI agents: reset with `npm run db:seed` (deletes the SQLite file + `migrate deploy`). Never run `prisma init`: it writes a `.env` and agent skills into `.agents/`, `.windsurf/`, `.claude/skills/`.
 - Better Auth rejects cookie-carrying POSTs without an `Origin` header (CSRF check, skipped under Vitest): API calls in Playwright need `headers: { origin: baseURL }`.
 - Better Auth checks the Prisma schema on every request and fails all of them if one of its columns is missing (e.g. the unused `account.password`): never drop a Better Auth column.
