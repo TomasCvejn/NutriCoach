@@ -1,12 +1,15 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { setLocaleCookie } from "@/app/login/actions";
-import { inviteChoices, requireCoach, requireUser } from "@/lib/auth";
+import { translatorFor } from "@/i18n/messages";
+import { inviteChoices, requireClient, requireCoach, requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ROLE_NOTIFICATIONS } from "@/lib/enums";
 import { optional } from "@/lib/forms";
+import { notify } from "@/lib/notifications";
 
 // Shared by /app/settings and /coach/settings. Writes only the signed-in user's own row.
 // The same language + IANA zone choices the invite page asks for.
@@ -27,6 +30,17 @@ export async function saveNotificationSettings(form: FormData) {
   const on = form.getAll("on");
   await db.user.update({ where: { id: user.id }, data: { mutedNotifications: types.filter((type) => !on.includes(type)) } });
   revalidatePath("/", "layout");
+}
+
+// Client only: deletes the account once the confirmation word (in the user's language) is typed. Every row of the client
+// cascades from their user (schema onDelete), sessions included, so the cookie left behind signs no one in.
+export async function deleteAccount(form: FormData) {
+  const { user, client } = await requireClient();
+  const t = await translatorFor(user.locale);
+  if (form.get("confirm") !== t("Settings.data.word")) return; // the input's pattern refuses it in the browser already
+  await db.user.delete({ where: { id: user.id } });
+  await notify(client.coachId, "CLIENT_DELETED_ACCOUNT", { client: user.name });
+  redirect("/login");
 }
 
 const welcome = z.object({ welcomeText: optional(z.string().trim().max(2000)) });

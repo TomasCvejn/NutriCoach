@@ -1,5 +1,7 @@
 import { getFormatter, getNow, getTranslations } from "next-intl/server";
-import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { NativeSelect, NativeSelectOption } from "@/components/ui/native-select";
 import { Textarea } from "@/components/ui/textarea";
@@ -7,7 +9,7 @@ import { LOCALES, TIMEZONES } from "@/i18n/locales";
 import { requireUser } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { ROLE_NOTIFICATIONS } from "@/lib/enums";
-import { saveNotificationSettings, saveSettings, saveWelcomeText } from "./actions";
+import { deleteAccount, saveNotificationSettings, saveSettings, saveWelcomeText } from "./actions";
 
 // The signed-in user's own settings. Also the coach's page (/coach/settings re-exports it); the area layout has
 // already checked the role. Each section is a row: its title and what it does beside a panel with one Save.
@@ -63,6 +65,30 @@ export default async function SettingsPage() {
           </Button>
         </form>
       </section>
+      <section aria-labelledby="account" className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
+        <div className="lg:pt-6">
+          <h2 id="account" className="text-base font-semibold">
+            {t("Settings.account.title")}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t("Settings.account.text")}</p>
+        </div>
+        <div className="flex flex-col gap-4 rounded-lg border bg-card p-6">
+          <dl className="text-sm">
+            <div className="flex justify-between gap-4 py-1.5">
+              <dt className="text-muted-foreground">{t("Settings.account.name")}</dt>
+              <dd>{user.name}</dd>
+            </div>
+            <div className="flex justify-between gap-4 border-t border-rule py-1.5">
+              <dt className="text-muted-foreground">{t("Settings.account.email")}</dt>
+              <dd className="break-all">{user.email}</dd>
+            </div>
+          </dl>
+          <p className="text-xs text-muted-foreground">{t("Settings.account.google")}</p>
+          <Link href="/privacy" className="self-start text-sm font-medium text-primary-ink hover:underline">
+            {t("Privacy.link")}
+          </Link>
+        </div>
+      </section>
       <section aria-labelledby="notifications" className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
         <div className="lg:pt-6">
           <h2 id="notifications" className="text-base font-semibold">
@@ -85,6 +111,36 @@ export default async function SettingsPage() {
           </Button>
         </form>
       </section>
+      {user.role === "CLIENT" && (
+        <section aria-labelledby="data" className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
+          <div className="lg:pt-6">
+            <h2 id="data" className="text-base font-semibold">
+              {t("Settings.data.title")}
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">{t("Settings.data.text")}</p>
+          </div>
+          <div className="flex flex-col gap-6 rounded-lg border bg-card p-6">
+            <div className="flex flex-col gap-3">
+              <p className="text-sm text-muted-foreground">{t("Settings.data.exportHint")}</p>
+              <a href="/api/export" download className={buttonVariants({ variant: "outline", className: "h-10 self-start px-4 sm:h-8" })}>
+                {t("Settings.data.export")}
+              </a>
+            </div>
+            {/* The browser refuses anything but the exact word (pattern); the action checks it again. */}
+            <form action={deleteAccount} className="flex flex-col gap-3 border-t border-rule pt-6">
+              <h3 className="text-sm font-semibold">{t("Settings.data.deleteTitle")}</h3>
+              <p className="text-sm text-muted-foreground">{t("Settings.data.deleteText")}</p>
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="confirm">{t("Settings.data.confirm", { word: t("Settings.data.word") })}</Label>
+                <Input id="confirm" name="confirm" required pattern={t("Settings.data.word")} autoComplete="off" className="h-10 sm:h-8" />
+              </div>
+              <Button type="submit" variant="destructive" className="h-10 self-end px-4 sm:h-8">
+                {t("Settings.data.delete")}
+              </Button>
+            </form>
+          </div>
+        </section>
+      )}
       {coach && (
         <section aria-labelledby="welcome" className="grid gap-4 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] lg:gap-6">
           <div className="lg:pt-6">

@@ -1044,6 +1044,24 @@
         "CHECK_IN_SUBMITTED": "A client sent a check-in",
         "CLIENT_DELETED_ACCOUNT": "A client deleted their account"
       }
+    },
+    "account": {
+      "title": "Account and privacy",
+      "text": "The account you sign in with, and how we handle your data.",
+      "name": "Name",
+      "email": "Email",
+      "google": "You sign in with your Google account; email and password are changed at Google, not here."
+    },
+    "data": {
+      "title": "Your data",
+      "text": "Download a copy of everything you have in the app, or delete your account.",
+      "export": "Download my data",
+      "exportHint": "A JSON file with your profile, targets and plan, food and fluid logs, training, competitions, check-ins, supplements, messages and calls.",
+      "deleteTitle": "Delete account",
+      "deleteText": "Deletes your account and all your data for good; it can't be undone. Your coach is notified.",
+      "word": "DELETE",
+      "confirm": "To confirm, type {word}",
+      "delete": "Delete account for good"
     }
   },
   "Profile": {
@@ -1736,5 +1754,8 @@
         "text": "Each client has one conversation with you. Unread messages show under Messages, in the client list and on your overview. Comment on a nutrition day or check-in right there. Schedule a call from the client's header."
       }
     }
+  },
+  "Privacy": {
+    "link": "Privacy policy"
   }
 }

@@ -1044,6 +1044,24 @@
         "CHECK_IN_SUBMITTED": "Klient odeslal check-in",
         "CLIENT_DELETED_ACCOUNT": "Klient smazal účet"
       }
+    },
+    "account": {
+      "title": "Účet a soukromí",
+      "text": "Účet, kterým se přihlašujete, a jak zacházíme s vašimi údaji.",
+      "name": "Jméno",
+      "email": "E-mail",
+      "google": "Přihlašujete se účtem Google; e-mail a heslo se mění u Googlu, ne tady."
+    },
+    "data": {
+      "title": "Vaše data",
+      "text": "Stáhněte si kopii všeho, co v aplikaci máte, nebo účet smažte.",
+      "export": "Stáhnout moje data",
+      "exportHint": "Soubor JSON s profilem, cíli a plánem, zápisy jídel a pití, tréninky, závody, check-iny, doplňky, zprávami a hovory.",
+      "deleteTitle": "Smazat účet",
+      "deleteText": "Smaže účet i všechna vaše data natrvalo, vrátit to nejde. Trenér dostane oznámení.",
+      "word": "SMAZAT",
+      "confirm": "Pro potvrzení napište {word}",
+      "delete": "Smazat účet natrvalo"
     }
   },
   "Profile": {
@@ -1736,5 +1754,8 @@
         "text": "Každý klient má s vámi jednu konverzaci. Nepřečtené zprávy uvidíte u Zpráv, v seznamu klientů i v přehledu. Komentář ke dni výživy nebo check-inu napíšete přímo tam. Hovor naplánujete v hlavičce klienta."
       }
     }
+  },
+  "Privacy": {
+    "link": "Zásady ochrany osobních údajů"
   }
 }

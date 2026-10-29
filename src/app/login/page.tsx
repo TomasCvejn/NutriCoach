@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { GoogleMark, PublicHeader } from "@/components/public-header";
 import { Button } from "@/components/ui/button";
@@ -83,6 +84,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           )}
         </div>
       </main>
+      <footer className="px-4 pb-8 text-center text-sm text-muted-foreground">
+        <Link href="/privacy" className="hover:text-foreground hover:underline">
+          {t("Privacy.link")}
+        </Link>
+      </footer>
     </div>
   );
 }
