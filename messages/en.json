@@ -810,7 +810,8 @@
       "label": "Library sections",
       "foods": "Foods",
       "recipes": "Recipes",
-      "fueling": "Fueling"
+      "fueling": "Fueling",
+      "timelines": "Timelines"
     }
   },
   "Recipes": {
@@ -1427,6 +1428,39 @@
     "upcoming": "Upcoming",
     "past": "Past",
     "none": "No competition planned. Your coach adds them.",
-    "noneCoach": "No competition planned."
+    "noneCoach": "No competition planned.",
+    "now": "Now",
+    "from": "from {date}",
+    "tasksOf": "Tasks: {phase}",
+    "packing": "Race-day packing list",
+    "packingGroups": {
+      "FOOD": "Food",
+      "HYDRATION": "Hydration",
+      "SUPPLEMENTS": "Supplements",
+      "OTHER": "Other"
+    },
+    "noTimeline": "Your coach hasn't prepared a timeline for this competition yet.",
+    "timeline": "Timeline",
+    "editDetails": "Edit details",
+    "applyTemplate": "Template from the library",
+    "applyHint": "Replaces the current timeline (ticks too).",
+    "apply": "Apply",
+    "saveAsTemplate": "Save as a template",
+    "templateHint": "The template's name in the library.",
+    "templateSaved": "Saved to the library.",
+    "saveTemplate": "Save template",
+    "ticked": "{done} of {all} done",
+    "tasks": "Tasks",
+    "perLine": "One per line.",
+    "saveTimeline": "Save timeline",
+    "saved": "Saved",
+    "invalidTimeline": "A field is too long (at most 4,000 characters).",
+    "templates": "Timelines",
+    "templatesLead": "Competition timeline templates. Save them from a competition's plan and apply them there.",
+    "noTemplates": "No templates yet.",
+    "templateSummary": "{phases, plural, one {# phase} other {# phases}} · {tasks, plural, one {# task} other {# tasks}} · {packing, plural, one {# item} other {# items}} to pack",
+    "deleteTemplate": "Delete template {name}",
+    "delete": "Delete",
+    "nutritionPriorities": "Nutrition priorities"
   }
 }

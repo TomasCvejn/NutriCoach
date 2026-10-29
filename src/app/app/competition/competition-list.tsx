@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations } from "next-intl/server";
+import Link from "next/link";
 import { Pill } from "@/components/pill";
 import { Button } from "@/components/ui/button";
 import type { Competition } from "@/generated/prisma/client";
@@ -8,7 +9,8 @@ import { db } from "@/lib/db";
 import { CompetitionDialog, ResultDialog } from "./competition-dialogs";
 
 // A client's competitions for the client and the coach (`coach`: adds and edits them): the upcoming ones nearest first
-// with the days to go and the phase, then the past ones with their result (either of them records it).
+// with the days to go and the phase, then the past ones with their result (either of them records it). The name opens the
+// competition (the client's timeline, the coach's plan).
 export async function CompetitionList({ clientId, timezone, coach }: { clientId: string; timezone: string; coach: boolean }) {
   const today = todayIn(timezone);
   const [t, format, competitions] = await Promise.all([getTranslations("Competition"), getFormatter(), db.competition.findMany({ where: { clientId }, orderBy: { date: "asc" } })]);
@@ -24,7 +26,9 @@ export async function CompetitionList({ clientId, timezone, coach }: { clientId:
         <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
           <div className="min-w-0">
             <h3 className="flex flex-wrap items-center gap-2 text-base font-semibold">
-              {competition.name}
+              <Link href={coach ? `/coach/clients/${clientId}/competition/${competition.id}` : `/app/competition/${competition.id}`} className="hover:underline">
+                {competition.name}
+              </Link>
               <Pill tone={competition.priority === "A" ? "accent" : "neutral"}>{t("priorityShort", { priority: competition.priority })}</Pill>
             </h3>
             <p className="mt-1 text-sm text-muted-foreground first-letter:uppercase">{[day(competition.date), competition.sport, competition.location].filter(Boolean).join(" · ")}</p>

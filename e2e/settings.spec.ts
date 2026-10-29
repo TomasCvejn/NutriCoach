@@ -1,7 +1,8 @@
 import { expect, test } from "@playwright/test";
 import { logIn } from "./dev-login";
 
-// race@ because no other spec reads its UI; the test switches it back to Czech at the end.
+// Runs before every other spec (its own project in playwright.config.ts), so the moment race@ is in English can't meet
+// another spec reading race@'s Czech UI; it switches back at the end.
 test("client on a phone switches to English: the UI is English at once and after reload", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await logIn(page, "race@demo.cz");

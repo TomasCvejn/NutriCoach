@@ -7,7 +7,12 @@ export default defineConfig({
   // `next dev` compiles a route on its first hit.
   expect: { timeout: 15_000 },
   use: { baseURL: `http://localhost:${port}`, trace: "retain-on-failure" },
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  // settings.spec switches a demo client's language for a moment, so it runs on its own before the rest (which read the
+  // demo clients' UI in Czech).
+  projects: [
+    { name: "settings", testMatch: /settings\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
+    { name: "chromium", testIgnore: /settings\.spec\.ts/, dependencies: ["settings"], use: { ...devices["Desktop Chrome"] } },
+  ],
   webServer: {
     // Fresh e2e.db on every run. `next dev`, not a production build: e2e signs in with dev login, which production refuses.
     command: `npm run db:seed && npx next dev -p ${port}`,

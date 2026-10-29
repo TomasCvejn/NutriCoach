@@ -49,6 +49,8 @@ export const INTENSITIES = ["LOW", "MODERATE", "HIGH", "VERY_HIGH"] as const;
 // Competitions (competition.md): the phases in order, "BASE" before the first one (no tasks).
 export const COMPETITION_PRIORITIES = ["A", "B", "C"] as const;
 export const PHASES = ["BASE", "4_WEEKS", "2_WEEKS", "RACE_WEEK", "DAY_BEFORE", "RACE_DAY"] as const;
+export const TIMELINE_PHASES = ["4_WEEKS", "2_WEEKS", "RACE_WEEK", "DAY_BEFORE", "RACE_DAY"] as const; // the ones with priorities and tasks
+export const PACKING_GROUPS = ["FOOD", "HYDRATION", "SUPPLEMENTS", "OTHER"] as const;
 export const BODY_COMP_METHODS = ["SCALE", "BIOIMPEDANCE", "DEXA", "SKINFOLDS", "TAPE"] as const;
 export const BODY_FIELDS = ["weightKg", "bodyFatPct", "leanMassKg", "waistCm", "hipsCm", "chestCm", "thighCm", "armCm"] as const;
 export const DRINK_TYPES = ["WATER", "ELECTROLYTE", "SPORTS", "COFFEE_TEA", "OTHER"] as const;
@@ -88,6 +90,8 @@ export type CheckInStatus = (typeof CHECK_IN_STATUSES)[number];
 export type SessionType = (typeof SESSION_TYPES)[number];
 export type Intensity = (typeof INTENSITIES)[number];
 export type Phase = (typeof PHASES)[number];
+export type TimelinePhase = (typeof TIMELINE_PHASES)[number];
+export type PackingGroup = (typeof PACKING_GROUPS)[number];
 export type BodyCompMethod = (typeof BODY_COMP_METHODS)[number];
 export type BodyField = (typeof BODY_FIELDS)[number];
 export type RecipeCategory = (typeof RECIPE_CATEGORIES)[number];

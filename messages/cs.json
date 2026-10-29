@@ -810,7 +810,8 @@
       "label": "Sekce knihovny",
       "foods": "Potraviny",
       "recipes": "Recepty",
-      "fueling": "Doplňování"
+      "fueling": "Doplňování",
+      "timelines": "Časové plány"
     }
   },
   "Recipes": {
@@ -1427,6 +1428,39 @@
     "upcoming": "Nadcházející",
     "past": "Proběhlé",
     "none": "Žádný naplánovaný závod. Závody zakládá trenér.",
-    "noneCoach": "Žádný naplánovaný závod."
+    "noneCoach": "Žádný naplánovaný závod.",
+    "now": "Teď",
+    "from": "od {date}",
+    "tasksOf": "Úkoly: {phase}",
+    "packing": "Co si zabalit na závod",
+    "packingGroups": {
+      "FOOD": "Jídlo",
+      "HYDRATION": "Pití",
+      "SUPPLEMENTS": "Doplňky",
+      "OTHER": "Ostatní"
+    },
+    "noTimeline": "Trenér pro tento závod zatím nepřipravil časový plán.",
+    "timeline": "Časový plán",
+    "editDetails": "Upravit údaje",
+    "applyTemplate": "Šablona z knihovny",
+    "applyHint": "Nahradí současný plán (i odškrtnuté úkoly).",
+    "apply": "Použít",
+    "saveAsTemplate": "Uložit jako šablonu",
+    "templateHint": "Název šablony v knihovně.",
+    "templateSaved": "Uloženo do knihovny.",
+    "saveTemplate": "Uložit šablonu",
+    "ticked": "Hotovo {done} z {all}",
+    "tasks": "Úkoly",
+    "perLine": "Jeden na řádek.",
+    "saveTimeline": "Uložit plán",
+    "saved": "Uloženo",
+    "invalidTimeline": "Text je příliš dlouhý (nejvýš 4 000 znaků v poli).",
+    "templates": "Časové plány",
+    "templatesLead": "Šablony časového plánu závodu. Uložíte je z plánu závodu a tam je také použijete.",
+    "noTemplates": "Zatím žádné šablony.",
+    "templateSummary": "{phases, plural, one {# fáze} few {# fáze} other {# fází}} · {tasks, plural, one {# úkol} few {# úkoly} other {# úkolů}} · {packing, plural, one {# věc} few {# věci} other {# věcí}} k zabalení",
+    "deleteTemplate": "Smazat šablonu {name}",
+    "delete": "Smazat",
+    "nutritionPriorities": "Výživové priority"
   }
 }

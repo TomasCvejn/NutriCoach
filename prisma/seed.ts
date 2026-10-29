@@ -8,6 +8,7 @@ import { CHECK_IN_SCALES, type HistoryPayloads, ONBOARDING_STEPS } from "../src/
 import { currentDueDate } from "../src/lib/check-ins";
 import { nutrientsOf } from "../src/lib/food-log";
 import type { NotificationPayloads } from "../src/lib/notifications";
+import { fromContent, type TimelineContent } from "../src/lib/timeline";
 
 // Full reset of the local SQLite DB: delete the file and re-apply every migration.
 // ponytail: file delete + `migrate deploy` instead of `migrate reset`, which Prisma blocks for AI agents.
@@ -337,6 +338,66 @@ async function seed() {
       { clientId: sports, name: "Olympic-distance triathlon", date: addDays(today, 45), sport: "Triathlon", location: "Roudnice", priority: "A" },
     ],
   });
+
+  // The default timeline template (competition.md) in cs and en, applied to the coming competitions; race@ has ticked off
+  // the four-weeks tasks (she is two weeks out).
+  const timelines: Record<"cs" | "en", TimelineContent> = {
+    cs: {
+      phases: {
+        "4_WEEKS": {
+          priorities: "Pravidelná jídla a dost sacharidů kolem tréninků. Na dlouhých trénincích zkoušet závodní snídani i gely.",
+          tasks: ["Vyzkoušet závodní snídani před dlouhým tréninkem", "Otestovat gely a iontový nápoj na dlouhém tréninku", "Zjistit, co bude na občerstvovačkách"],
+        },
+        "2_WEEKS": { priorities: "Žádné nové potraviny ani doplňky. Spánek a regenerace mají přednost.", tasks: ["Naplánovat jídla na závodní týden", "Nakoupit gely a iontové nápoje"] },
+        RACE_WEEK: {
+          priorities: "Ke konci týdne méně vlákniny; 2–3 dny před závodem navýšit sacharidy na 8–10 g/kg.",
+          tasks: ["Začít se sacharidovou superkompenzací (2–3 dny před)", "Připravit si závodní snídani na zkoušku"],
+        },
+        DAY_BEFORE: { priorities: "Lehká, známá jídla s málo vlákniny a tuku. Pít průběžně.", tasks: ["Sbalit si věci podle seznamu", "Večeře do 19:00"] },
+        RACE_DAY: { priorities: "Snídaně 3 h před startem, pak jen gely a pití podle plánu.", tasks: ["Snídaně 3 h před startem", "Gel 15 min před startem"] },
+      },
+      packing: [
+        { group: "FOOD", text: "Závodní snídaně" },
+        { group: "FOOD", text: "Banán" },
+        { group: "HYDRATION", text: "Iontový nápoj 500 ml" },
+        { group: "HYDRATION", text: "Láhev vody" },
+        { group: "SUPPLEMENTS", text: "Gely ×6" },
+        { group: "SUPPLEMENTS", text: "Kofeinový gel" },
+        { group: "OTHER", text: "Startovní číslo a špendlíky" },
+      ],
+    },
+    en: {
+      phases: {
+        "4_WEEKS": {
+          priorities: "Regular meals and enough carbs around training. Practise race breakfast and gels on long sessions.",
+          tasks: ["Practise race breakfast before a long session", "Test gels and sports drink on a long session", "Find out what the aid stations serve"],
+        },
+        "2_WEEKS": { priorities: "No new foods or supplements. Sleep and recovery come first.", tasks: ["Plan race-week meals", "Buy gels and sports drinks"] },
+        RACE_WEEK: { priorities: "Less fibre towards the end of the week; 2–3 days out, carbs up to 8–10 g/kg.", tasks: ["Start carb loading (2–3 days out)", "Rehearse race breakfast"] },
+        DAY_BEFORE: { priorities: "Light, familiar meals, low in fibre and fat. Keep drinking.", tasks: ["Pack from the list", "Dinner by 7 pm"] },
+        RACE_DAY: { priorities: "Breakfast 3 h before the start, then gels and drinks to plan.", tasks: ["Breakfast 3 h before the start", "Gel 15 min before the start"] },
+      },
+      packing: [
+        { group: "FOOD", text: "Race breakfast" },
+        { group: "FOOD", text: "Banana" },
+        { group: "HYDRATION", text: "Sports drink 500 ml" },
+        { group: "HYDRATION", text: "Water bottle" },
+        { group: "SUPPLEMENTS", text: "Gels ×6" },
+        { group: "SUPPLEMENTS", text: "Caffeine gel" },
+        { group: "OTHER", text: "Race number and pins" },
+      ],
+    },
+  };
+  await db.timelineTemplate.createMany({
+    data: [
+      { coachId: coach.id, name: "Výchozí plán – vytrvalostní závod", content: timelines.cs },
+      { coachId: coach.id, name: "Default plan – endurance race", content: timelines.en },
+    ],
+  });
+  const marathon = fromContent(timelines.cs);
+  marathon.phases["4_WEEKS"]!.tasks = marathon.phases["4_WEEKS"]!.tasks.map((task) => ({ ...task, done: true }));
+  await db.competition.updateMany({ where: { clientId: race, date: addDays(today, 10) }, data: { timeline: marathon } });
+  await db.competition.updateMany({ where: { clientId: sports }, data: { timeline: fromContent(timelines.en) } });
 
   // Fueling templates from training.md (the coach should review the numbers); the long and the very hard one rank highest.
   const pre = (carbs: number) => [

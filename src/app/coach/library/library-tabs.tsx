@@ -9,6 +9,7 @@ const TABS = [
   { key: "foods", segment: null },
   { key: "recipes", segment: "recipes" },
   { key: "fueling", segment: "fueling" },
+  { key: "timelines", segment: "timelines" },
 ] as const;
 
 export function LibraryTabs() {
