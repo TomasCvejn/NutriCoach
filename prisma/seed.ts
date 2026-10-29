@@ -622,10 +622,11 @@ async function seed() {
     ],
   });
 
-  // Messages: race@ asked something the coach hasn't read yet (the badge shows 1); sports@'s thread is all read. No
-  // notifications for them, so the bells start as before.
-  const [raceUserId, sportsUserId] = await Promise.all([race, sports].map(async (id) => (await db.client.findUniqueOrThrow({ where: { id } })).userId));
+  // Messages: race@ asked something the coach hasn't read yet (the badge shows 1); sports@'s and general@'s threads are all
+  // read, general@'s with a comment on a nutrition day. No notifications for them, so the bells start as before.
+  const [raceUserId, sportsUserId, generalUserId] = await Promise.all([race, sports, general].map(async (id) => (await db.client.findUniqueOrThrow({ where: { id } })).userId));
   const hoursAgo = (hours: number) => new Date(Date.now() - hours * 60 * 60 * 1000);
+  const onDay = { contextType: "NUTRITION_DAY", contextKey: addDays(today, -3) }; // a comment on that day's log
   await db.message.createMany({
     data: [
       { clientId: race, senderId: coach.id, text: "Ahoj Terezo, jak se cítíš po tempu? Žaludek v pohodě?", createdAt: hoursAgo(50), readAt: hoursAgo(49) },
@@ -634,14 +635,29 @@ async function seed() {
       { clientId: race, senderId: raceUserId, text: "Díky! A můžu si den před závodem dát těstoviny s rajčatovou omáčkou?", createdAt: hoursAgo(3) },
       { clientId: sports, senderId: coach.id, text: "Great week, Emma! Keep the recovery shake after the long ride.", createdAt: hoursAgo(120), readAt: hoursAgo(118) },
       { clientId: sports, senderId: sportsUserId, text: "Thanks, will do!", createdAt: hoursAgo(117), readAt: hoursAgo(116) },
+      { clientId: general, senderId: coach.id, text: "Dobrý den, Petře, plán je nahraný. Ozvěte se, kdyby se něco nedalo sníst po směně.", createdAt: hoursAgo(310), readAt: hoursAgo(300) },
+      { clientId: general, senderId: generalUserId, text: "Díky, zkusím to podle plánu.", createdAt: hoursAgo(299), readAt: hoursAgo(290) },
+      { clientId: general, senderId: coach.id, text: "Od pondělí počítáme porce rukou místo kalorií, návod najdete u výživy.", createdAt: hoursAgo(170), readAt: hoursAgo(160) },
+      { clientId: general, senderId: generalUserId, text: "Po noční jsem večeřel až ve dvě ráno, větší porce.", ...onDay, createdAt: hoursAgo(60), readAt: hoursAgo(50) },
+      { clientId: general, senderId: coach.id, text: "V pořádku, po noční to tak bude. Hlavně ať je u večeře dlaň bílkovin.", ...onDay, createdAt: hoursAgo(49), readAt: hoursAgo(30) },
     ],
   });
+  // The client's notes on a day for the coach, and saved recipes in each client's language (general@ saves his own in e2e).
+  await db.nutritionDay.createMany({
+    data: [
+      { clientId: general, date: addDays(today, -3), note: "Noční směna, večeře posunutá na druhou ráno." },
+      { clientId: sports, date: addDays(today, -2), note: "Long ride in the heat, drank more than planned." },
+      { clientId: race, date: addDays(today, -4), note: "Tempo ráno, odpoledne bez hladu." },
+    ],
+  });
+  await db.savedRecipe.createMany({ data: [{ clientId: race, recipeId: porridge.id }, { clientId: sports, recipeId: overnight.id }] });
 
   // Calls the coach scheduled (her clock: Prague), without notifications so the bells start as before.
   await db.call.createMany({
     data: [
       { clientId: race, startsAt: instantOf(`${addDays(today, 2)}T18:00`, "Europe/Prague"), durationMin: 30, link: "https://meet.google.com/demo-race", agenda: "Plán závodního dne a gely" },
       { clientId: sports, startsAt: instantOf(`${addDays(today, 4)}T07:30`, "Europe/Prague"), durationMin: 20, link: "https://meet.google.com/demo-sports", agenda: "Bike fueling" },
+      { clientId: general, startsAt: instantOf(`${addDays(today, -14)}T17:00`, "Europe/Prague"), durationMin: 30, link: "https://meet.google.com/demo-general", agenda: "Úvodní hovor" },
     ],
   });
 

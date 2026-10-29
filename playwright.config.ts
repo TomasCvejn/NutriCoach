@@ -8,10 +8,11 @@ export default defineConfig({
   expect: { timeout: 15_000 },
   use: { baseURL: `http://localhost:${port}`, trace: "retain-on-failure" },
   // settings.spec switches a demo client's language for a moment, so it runs on its own before the rest (which read the
-  // demo clients' UI in Czech).
+  // demo clients' UI in Czech); the walkthrough opens every screen (reading threads and feedback), so it runs after them.
   projects: [
     { name: "settings", testMatch: /settings\.spec\.ts/, use: { ...devices["Desktop Chrome"] } },
-    { name: "chromium", testIgnore: /settings\.spec\.ts/, dependencies: ["settings"], use: { ...devices["Desktop Chrome"] } },
+    { name: "chromium", testIgnore: /(settings|walkthrough)\.spec\.ts/, dependencies: ["settings"], use: { ...devices["Desktop Chrome"] } },
+    { name: "walkthrough", testMatch: /walkthrough\.spec\.ts/, dependencies: ["chromium"], use: { ...devices["Desktop Chrome"] } },
   ],
   webServer: {
     // Fresh e2e.db on every run. `next dev`, not a production build: e2e signs in with dev login, which production refuses.
